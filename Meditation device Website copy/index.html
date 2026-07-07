@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GodAura Devices — Intelligent wearable meditation headbands for mind transformation.">
+  <title>GodAura Devices</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <!-- Default theme: light. Dark only if user previously enabled it. -->
+  <script>(function(){if(localStorage.getItem("godaura-theme")==="dark")document.documentElement.setAttribute("data-theme","dark");})();</script>
+  <link rel="icon" href="assets/images/logo.png" type="image/png">
+</head>
+<body>
+  <a href="#home" class="skip-link">Skip to main content</a>
+
+  <div id="splash-screen" class="splash-screen" aria-hidden="true">
+    <img src="assets/images/logo.png" alt="" class="splash-screen__logo" width="80" height="80">
+    <div class="splash-screen__loader" aria-hidden="true"></div>
+    <p class="splash-screen__text">GODAURA</p>
+  </div>
+
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <div class="cursor-glow" aria-hidden="true"></div>
+
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="ambient-bg__gradient"></div>
+    <div class="ambient-shape ambient-shape--1"></div>
+    <div class="ambient-shape ambient-shape--2"></div>
+    <div class="ambient-shape ambient-shape--3"></div>
+  </div>
+  <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+  <header class="navbar" role="banner">
+    <div class="navbar__inner">
+      <a href="#home" class="navbar__brand" aria-label="GodAura Devices Home">
+        <img src="assets/images/logo.png" alt="" class="navbar__logo" width="40" height="40">
+        <span>GodAura Devices</span>
+      </a>
+      <nav class="navbar__nav" aria-label="Main navigation">
+        <a href="#home" class="navbar__link" data-section="home">Home</a>
+        <a href="#about" class="navbar__link" data-section="about">About Us</a>
+        <a href="#research" class="navbar__link" data-section="research">Research</a>
+        <a href="#products" class="navbar__link" data-section="products">Products</a>
+      </nav>
+      <div class="navbar__actions">
+        <button type="button" class="theme-toggle" aria-label="Toggle dark mode"></button>
+        <button type="button" class="btn btn--primary navbar__login" data-modal-open="auth-modal-overlay">Login / Sign In</button>
+        <button type="button" class="navbar__toggle" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="page-content">
+
+    <!-- HOME -->
+    <section id="home" class="page-section page-section--home hero" aria-label="Home">
+      <div class="container">
+        <div class="hero__grid">
+          <div class="hero__visual reveal">
+            <div class="hero__image-wrap animate-float">
+              <img src="assets/images/hero-meditation.png" alt="Person meditating with GodAura headband and chakra visualization" class="hero__image" width="400" height="420">
+            </div>
+          </div>
+          <div class="hero__content reveal reveal-delay-1">
+            <h1>Transform Your Mind Through <span class="highlight">Intelligent Meditation</span></h1>
+            <p class="hero__subtitle">
+              GodAura Devices merges neuroscience, biofeedback, and elegant design into a wearable headband that adapts to your mind — helping you cultivate focus, calm, and restorative sleep.
+            </p>
+          </div>
+        </div>
+        <div class="hero__cta reveal reveal-delay-2">
+          <div class="btn-group">
+            <button type="button" class="btn btn--primary" data-modal-open="auth-modal-overlay">Sign In</button>
+            <a href="learn-more.html" class="btn btn--outline">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT US -->
+    <section id="about" class="page-section section" aria-label="About Us">
+      <div class="container">
+        <div class="section-title reveal">
+          <h2>About <span class="highlight">GodAura</span></h2>
+          <p>Pioneering the future of mindful technology through neuroscience and design.</p>
+        </div>
+        <div class="about-blocks">
+          <article class="about-block reveal">
+            <div class="about-block__text">
+              <div class="about-block__accent"></div>
+              <h2>Our Mission</h2>
+              <p>Founded in 2022, GodAura Devices was born from a simple belief: meditation should be measurable, personal, and beautifully integrated into modern life. We combine clinical-grade biosensors with adaptive AI to create headbands that listen to your nervous system and guide you toward deeper states of calm and focus.</p>
+              <p>Our team of neuroscientists, engineers, and wellness designers work at the intersection of brain-computer interfaces and human-centered design — building tools that feel as premium as they perform.</p>
+            </div>
+            <div class="about-block__visual card reveal reveal-delay-1" aria-hidden="true">
+              <p style="font-family:var(--font-display);font-size:3rem;color:var(--cyan-400);text-align:center;padding:2rem;">◈ NEURAL ◈</p>
+            </div>
+          </article>
+          <article class="about-block reveal">
+            <div class="about-block__text">
+              <div class="about-block__accent"></div>
+              <h2>Science Meets Serenity</h2>
+              <p>Every GodAura device is validated through peer-reviewed protocols measuring HRV, EEG patterns, cortisol proxies, and subjective wellness scores. We partner with university labs and corporate wellness programs to continuously refine our algorithms.</p>
+              <p>From sleep optimization to executive focus training, our platform evolves with you — delivering insights through a calming, minimalist interface that respects your attention and your data privacy.</p>
+            </div>
+            <div class="about-block__visual card reveal reveal-delay-1" aria-hidden="true">
+              <p style="font-family:var(--font-display);font-size:3rem;color:var(--cyan-400);text-align:center;padding:2rem;">◎ WELLNESS</p>
+            </div>
+          </article>
+        </div>
+        <div class="about-cta reveal">
+          <a href="achievements.html" class="btn btn--primary">View Our Past Achievements</a>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- COMMUNITY GALLERY CAROUSEL -->
+    <section id="gallery" class="page-section section" aria-label="Community gallery">
+      <div class="container">
+        <div class="section-title reveal">
+          <h2>In <span class="highlight">Practice</span></h2>
+          <p>Real moments from our community meditating with GodAura devices.</p>
+        </div>
+        <div class="carousel reveal" data-carousel>
+          <button type="button" class="carousel__btn carousel__btn--prev" aria-label="Previous image">&#10094;</button>
+          <div class="carousel__viewport">
+            <div class="carousel__track"></div>
+          </div>
+          <button type="button" class="carousel__btn carousel__btn--next" aria-label="Next image">&#10095;</button>
+          <div class="carousel__dots" role="tablist" aria-label="Gallery slides"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESEARCH -->
+    <section id="research" class="page-section section" aria-label="Research">
+      <div class="container">
+        <div class="section-title reveal">
+          <h2>Clinical <span class="highlight">Research</span></h2>
+          <p>Data-driven insights from thousands of meditation sessions across our beta community.</p>
+        </div>
+        <div class="research-grid stagger-children">
+          <div class="chart-card reveal">
+            <h3>Meditation Consistency Improvement</h3>
+            <canvas id="chart-consistency" aria-label="Meditation consistency chart"></canvas>
+          </div>
+          <div class="chart-card reveal reveal-delay-1">
+            <h3>Stress Reduction Percentage</h3>
+            <canvas id="chart-stress" aria-label="Stress reduction chart"></canvas>
+          </div>
+          <div class="chart-card reveal reveal-delay-2">
+            <h3>Sleep Quality Analysis</h3>
+            <canvas id="chart-sleep" aria-label="Sleep quality chart"></canvas>
+          </div>
+          <div class="chart-card reveal reveal-delay-3">
+            <h3>Focus Enhancement Tracking</h3>
+            <canvas id="chart-focus" aria-label="Focus enhancement chart"></canvas>
+          </div>
+        </div>
+        <div class="research-cta reveal">
+          <a href="all-researches.html" class="btn btn--primary">View All Researches</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section id="products" class="page-section section" aria-label="Products">
+      <div class="container">
+        <div class="section-title reveal">
+          <h2>Our <span class="highlight">Products</span></h2>
+          <p>Premium wearable meditation headbands engineered for every level of practice.</p>
+        </div>
+        <div class="products-grid stagger-children">
+          <article class="card card--product reveal">
+            <div class="card__image"><img src="assets/images/product-pro.png" alt="GodAura Pro X1" width="200" height="200"></div>
+            <h3 class="card__title">GodAura Pro X1</h3>
+            <p class="card__desc">Flagship neural-sync headband with adaptive biofeedback.</p>
+            <button type="button" class="btn btn--outline" data-product-id="aura-pro">Buy Now</button>
+          </article>
+          <article class="card card--product reveal reveal-delay-1">
+            <div class="card__image"><img src="assets/images/product-lite.png" alt="GodAura Lite S2" width="200" height="200"></div>
+            <h3 class="card__title">GodAura Lite S2</h3>
+            <p class="card__desc">Essential mindfulness companion for daily practice.</p>
+            <button type="button" class="btn btn--outline" data-product-id="aura-lite">Buy Now</button>
+          </article>
+          <article class="card card--product reveal reveal-delay-2">
+            <div class="card__image"><img src="assets/images/product-elite.svg" alt="GodAura Elite Neural" width="200" height="200"></div>
+            <h3 class="card__title">GodAura Elite Neural</h3>
+            <p class="card__desc">Clinical-grade research edition for power users.</p>
+            <button type="button" class="btn btn--outline" data-product-id="aura-elite">Buy Now</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__column">
+          <h4>Explore</h4>
+          <ul class="footer__links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#research">Research</a></li>
+            <li><a href="#products">Products</a></li>
+          </ul>
+        </div>
+        <div class="footer__column">
+          <h4>Resources</h4>
+          <ul class="footer__links">
+            <li><a href="learn-more.html">Learn More</a></li>
+            <li><a href="achievements.html">Achievements</a></li>
+            <li><a href="all-researches.html">All Researches</a></li>
+          </ul>
+        </div>
+        <div class="footer__column">
+          <h4>Account</h4>
+          <ul class="footer__links">
+            <li><a href="#" data-modal-open="auth-modal-overlay">Sign In</a></li>
+            <li><a href="#" data-modal-open="auth-modal-overlay">Login</a></li>
+            <li><a href="#">Download Our App</a></li>
+            <li><a href="#products">Buy Our Products</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__contact reveal">
+        <h4>Contact Us</h4>
+        <p>Phone: <a href="tel:+919425022443">+91 9425022443</a></p>
+        <p><a href="https://www.instagram.com/godauradevices?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="footer__instagram" target="_blank" rel="noopener noreferrer">@godauradevices on Instagram</a></p>
+      </div>
+      <div class="footer__bottom">
+        <a href="#home">GodAura Devices</a>
+        <p>© GodAura Devices™. All rights reserved. Made in 2022.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="auth-modal-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" aria-hidden="true">
+    <div class="modal">
+      <div class="modal__header">
+        <h2 id="auth-modal-title" class="modal__title">Sign In</h2>
+        <button type="button" class="modal__close" data-modal-close aria-label="Close">&times;</button>
+      </div>
+      <div class="modal__body">
+        <form id="auth-form" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="auth-email">Email</label>
+            <input type="email" id="auth-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+          <div class="form-group">
+            <label for="auth-password">Password</label>
+            <input type="password" id="auth-password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+          </div>
+          <button type="button" id="send-code-btn" class="btn btn--ghost btn-full">Send Confirmation Code</button>
+          <div id="confirmation-code-group" class="form-group hidden">
+            <label for="auth-code">Confirmation Code</label>
+            <input type="text" id="auth-code" name="code" placeholder="Enter 6-digit code" inputmode="numeric" maxlength="6">
+          </div>
+          <button type="submit" class="btn btn--primary btn-full">Sign In</button>
+        </form>
+        <div class="auth-divider">or</div>
+        <button type="button" class="btn-google" aria-label="Continue with Google">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continue with Google
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="product-modal-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="product-modal-title" aria-hidden="true">
+    <div class="modal modal--lg" id="product-modal">
+      <div class="modal__header">
+        <h2 id="product-modal-title" class="modal__title" data-product-name>Product</h2>
+        <button type="button" class="modal__close" data-modal-close aria-label="Close">&times;</button>
+      </div>
+      <div class="modal__body">
+        <div class="product-detail">
+          <div class="product-detail__gallery" data-product-image></div>
+          <div>
+            <p data-product-desc></p>
+            <p class="product-detail__price" data-product-price></p>
+            <h3>Features</h3>
+            <ul class="product-detail__features" data-product-features></ul>
+            <h3>Specifications</h3>
+            <ul class="product-detail__specs" data-product-specs></ul>
+            <button type="button" class="btn btn--primary">Add to Cart — Coming Soon</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/navbar.js"></script>
+  <script src="assets/js/scroll-nav.js"></script>
+  <script src="assets/js/particles.js"></script>
+  <script src="assets/js/modal.js"></script>
+  <script src="assets/js/charts.js"></script>
+  <script src="assets/js/carousel.js"></script>
+  <script src="assets/js/animations.js"></script>
+  <script src="assets/js/cursor.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

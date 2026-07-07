@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 420" fill="none">
+  <defs>
+    <linearGradient id="aura" x1="200" y1="40" x2="200" y2="380" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00d4cf" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#00d4cf" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <ellipse cx="200" cy="200" rx="140" ry="160" fill="url(#aura)"/>
+  <!-- Headband -->
+  <path d="M120 95 Q200 55 280 95 Q285 110 275 118 Q200 88 125 118 Q115 110 120 95Z" fill="#0a1628" stroke="#00d4cf" stroke-width="2" filter="url(#glow)"/>
+  <rect x="155" y="78" width="90" height="12" rx="6" fill="#00d4cf" opacity="0.9"/>
+  <circle cx="200" cy="84" r="5" fill="#00d4cf" class="pulse-dot"/>
+  <!-- Head -->
+  <circle cx="200" cy="130" r="42" fill="#1a2d4a" stroke="#00d4cf" stroke-width="1.5" opacity="0.9"/>
+  <!-- Body silhouette -->
+  <path d="M200 172 C160 172 140 220 130 280 L130 360 L170 360 L170 280 C175 240 185 220 200 220 C215 220 225 240 230 280 L230 360 L270 360 L270 280 C260 220 240 172 200 172Z" fill="#1a2d4a" stroke="#00d4cf" stroke-width="1" opacity="0.85"/>
+  <!-- Meditation pose arms -->
+  <path d="M155 230 Q120 250 110 290" stroke="#00d4cf" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.7"/>
+  <path d="M245 230 Q280 250 290 290" stroke="#00d4cf" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.7"/>
+  <!-- Energy rings -->
+  <circle cx="200" cy="200" r="100" stroke="#00d4cf" stroke-width="0.5" opacity="0.2" fill="none"/>
+  <circle cx="200" cy="200" r="130" stroke="#00d4cf" stroke-width="0.5" opacity="0.12" fill="none"/>
+</svg>

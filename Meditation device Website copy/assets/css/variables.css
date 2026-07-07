@@ -1,0 +1,89 @@
+/* ============================================
+   GodAura Devices — Design Tokens
+   Backend-ready: swap values via CMS later
+   ============================================ */
+
+:root {
+  /* Brand colors */
+  --cyan-50: #e6fffe;
+  --cyan-100: #b3f5f3;
+  --cyan-200: #66ebe8;
+  --cyan-300: #33e0dc;
+  --cyan-400: #00d4cf;
+  --cyan-500: #00b8b3;
+  --cyan-600: #009a96;
+  --cyan-glow: rgba(0, 212, 207, 0.45);
+  --cyan-glow-soft: rgba(0, 212, 207, 0.15);
+
+  /* Light theme (default) */
+  --bg-primary: #f8fcfc;
+  --bg-secondary: #ffffff;
+  --bg-elevated: rgba(255, 255, 255, 0.72);
+  --bg-glass: rgba(255, 255, 255, 0.55);
+  --text-primary: #0a1628;
+  --text-secondary: #3d4f66;
+  --text-muted: #6b7c93;
+  --border-color: rgba(0, 184, 179, 0.22);
+  --shadow-color: rgba(10, 22, 40, 0.08);
+  --overlay: rgba(10, 22, 40, 0.55);
+
+  /* Footer */
+  --footer-bg: #0a1628;
+  --footer-text: var(--cyan-400);
+  --footer-hover: #ffffff;
+
+  /* Typography */
+  --font-display: "Orbitron", "Rajdhani", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Spacing scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
+
+  /* Layout */
+  --nav-height: 72px;
+  --container-max: 1280px;
+  --container-narrow: 960px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast: 0.2s var(--ease-smooth);
+  --transition-base: 0.35s var(--ease-smooth);
+  --transition-slow: 0.6s var(--ease-smooth);
+  --theme-transition: background-color 0.5s var(--ease-smooth),
+    color 0.5s var(--ease-smooth),
+    border-color 0.5s var(--ease-smooth),
+    box-shadow 0.5s var(--ease-smooth);
+
+  /* Effects */
+  --blur-glass: 16px;
+  --shadow-soft: 0 4px 24px var(--shadow-color);
+  --shadow-glow: 0 0 40px var(--cyan-glow-soft);
+  --shadow-glow-strong: 0 0 60px var(--cyan-glow);
+}
+
+/* Dark mode theme */
+[data-theme="dark"] {
+  --bg-primary: #050a12;
+  --bg-secondary: #0a1628;
+  --bg-elevated: rgba(10, 22, 40, 0.85);
+  --bg-glass: rgba(10, 22, 40, 0.65);
+  --text-primary: #f0fafa;
+  --text-secondary: #a8c4c4;
+  --text-muted: #6b8a8a;
+  --border-color: rgba(0, 212, 207, 0.25);
+  --shadow-color: rgba(0, 0, 0, 0.4);
+  --overlay: rgba(0, 0, 0, 0.7);
+}
