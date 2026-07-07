@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GodAura - Wearable Meditation Technology</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Identity Services (GSI) - for Google-only sign-in -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,500&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background 0.4s, color 0.4s;
+        }
+
+        /* ===== LAVENDER THEME VARIABLES ===== */
+        :root {
+            --bg-primary: #faf8ff;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-input: #f3f0ff;
+            --text-primary: #1e1b4b;
+            --text-secondary: #4c4574;
+            --text-muted: #8b83a8;
+            --border-color: rgba(139, 92, 246, 0.1);
+            --border-hover: rgba(139, 92, 246, 0.2);
+            --nav-bg: rgba(250, 248, 255, 0.88);
+            --shadow-sm: 0 1px 3px rgba(139, 92, 246, 0.06);
+            --shadow-md: 0 4px 20px rgba(139, 92, 246, 0.08);
+            --shadow-lg: 0 10px 40px rgba(139, 92, 246, 0.1);
+            --accent-color: #7C3AED;
+            --accent-shadow: 0 0 8px rgba(124, 58, 237, 0.2);
+            --accent-bright: #8B5CF6;
+            --accent-bright-shadow: 0 0 12px rgba(139, 92, 246, 0.3), 0 0 30px rgba(139, 92, 246, 0.1);
+            --accent-subtle: #7C3AED;
+            --accent-subtle-shadow: 0 0 6px rgba(124, 58, 237, 0.15);
+            --accent-bg: rgba(139, 92, 246, 0.08);
+            --accent-border: rgba(139, 92, 246, 0.2);
+            --btn-bg: #7C3AED;
+            --btn-hover: #6D28D9;
+            --btn-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+            --btn-hover-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+            --glow-opacity: 0.07;
+            --progress-bg: rgba(139, 92, 246, 0.06);
+            --grid-line: rgba(139, 92, 246, 0.03);
+            --modal-overlay: rgba(30, 27, 75, 0.4);
+            --carousel-overlay: rgba(250, 248, 255, 0.9);
+            --dot-inactive: rgba(139, 92, 246, 0.15);
+            --footer-bg: #f3f0ff;
+            --social-bg: rgba(139, 92, 246, 0.06);
+            --social-border: rgba(139, 92, 246, 0.1);
+            --page-bg: #faf8ff;
+            --timeline-line: rgba(139, 92, 246, 0.15);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0c0a1a;
+            --bg-secondary: #120e24;
+            --bg-card: rgba(30, 27, 55, 0.5);
+            --bg-input: rgba(139, 92, 246, 0.06);
+            --text-primary: #e8e0ff;
+            --text-secondary: #b4a8d8;
+            --text-muted: #7c6fa0;
+            --border-color: rgba(139, 92, 246, 0.1);
+            --border-hover: rgba(139, 92, 246, 0.2);
+            --nav-bg: rgba(12, 10, 26, 0.88);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
+            --accent-color: #C4B5FD;
+            --accent-shadow: 0 0 10px rgba(196, 181, 253, 0.4), 0 0 25px rgba(196, 181, 253, 0.15);
+            --accent-bright: #DDD6FE;
+            --accent-bright-shadow: 0 0 15px rgba(221, 214, 254, 0.5), 0 0 35px rgba(221, 214, 254, 0.2), 0 0 60px rgba(221, 214, 254, 0.08);
+            --accent-subtle: #A78BFA;
+            --accent-subtle-shadow: 0 0 8px rgba(167, 139, 250, 0.3);
+            --accent-bg: rgba(139, 92, 246, 0.12);
+            --accent-border: rgba(167, 139, 250, 0.25);
+            --btn-bg: #8B5CF6;
+            --btn-hover: #A78BFA;
+            --btn-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            --btn-hover-shadow: 0 0 30px rgba(167, 139, 250, 0.3);
+            --glow-opacity: 0.08;
+            --progress-bg: rgba(139, 92, 246, 0.08);
+            --grid-line: rgba(139, 92, 246, 0.04);
+            --modal-overlay: rgba(0, 0, 0, 0.7);
+            --carousel-overlay: rgba(12, 10, 26, 0.9);
+            --dot-inactive: rgba(196, 181, 253, 0.2);
+            --footer-bg: rgba(18, 14, 36, 0.6);
+            --social-bg: rgba(139, 92, 246, 0.08);
+            --social-border: rgba(139, 92, 246, 0.12);
+            --page-bg: #0c0a1a;
+            --timeline-line: rgba(139, 92, 246, 0.2);
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .accent-text {
+            color: var(--accent-color);
+            text-shadow: var(--accent-shadow);
+        }
+
+        .accent-text-bright {
+            color: var(--accent-bright);
+            text-shadow: var(--accent-bright-shadow);
+        }
+
+        .accent-text-subtle {
+            color: var(--accent-subtle);
+            text-shadow: var(--accent-subtle-shadow);
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        @keyframes pulse-slow {
+
+            0%,
+            100% {
+                opacity: var(--glow-opacity);
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: calc(var(--glow-opacity) + 0.04);
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .animate-in {
+            animation: slideInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .float {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .grid-bg {
+            background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .section-hidden {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s ease-out;
+        }
+
+        .section-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== CAROUSEL - 5 visible, center bigger ===== */
+        .carousel-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .carousel-viewport {
+            position: relative;
+            width: 100%;
+            height: 560px;
+            overflow: visible;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 260px;
+            height: 460px;
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            border: 2px solid var(--border-color);
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            background: var(--bg-secondary);
+        }
+
+        /* Center (0) */
+        .slide-pos-center {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            z-index: 5;
+            border-color: var(--accent-border);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Immediate left & right (offset -1, +1) */
+        .slide-pos-left1 {
+            transform: translate(calc(-50% - 280px), -50%) scale(0.82);
+            opacity: 0.75;
+            z-index: 4;
+        }
+
+        .slide-pos-right1 {
+            transform: translate(calc(-50% + 280px), -50%) scale(0.82);
+            opacity: 0.75;
+            z-index: 4;
+        }
+
+        /* Second left & right (offset -2, +2) */
+        .slide-pos-left2 {
+            transform: translate(calc(-50% - 540px), -50%) scale(0.65);
+            opacity: 0.4;
+            z-index: 2;
+        }
+
+        .slide-pos-right2 {
+            transform: translate(calc(-50% + 540px), -50%) scale(0.65);
+            opacity: 0.4;
+            z-index: 2;
+        }
+
+        .slide-pos-hidden {
+            transform: translate(-50%, -50%) scale(0.55);
+            opacity: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .carousel-viewport {
+                height: 480px;
+            }
+
+            .carousel-slide {
+                width: 260px;
+                height: 440px;
+            }
+
+            .slide-pos-left1,
+            .slide-pos-right1,
+            .slide-pos-left2,
+            .slide-pos-right2 {
+                opacity: 0;
+                pointer-events: none;
+                transform: translate(-50%, -50%) scale(0.7);
+            }
+
+            .slide-pos-center {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .carousel-arrow {
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent-bg);
+            border: 1px solid var(--accent-border);
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .carousel-arrow:hover {
+            background: var(--accent-border);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+            transform: scale(1.08);
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--dot-inactive);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .carousel-dot.active {
+            background: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-border);
+            width: 28px;
+            border-radius: 5px;
+        }
+
+        /* Progress bars */
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--progress-bg);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(to right, #7C3AED, #A78BFA);
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.2);
+            transition: width 1.5s ease-out;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: var(--modal-overlay);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        /* Product card */
+        .product-card {
+            transition: all 0.3s;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+        }
+
+        .product-card:hover {
+            border-color: var(--accent-border);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.08);
+            transform: translateY(-4px);
+        }
+
+        /* Nav */
+        .nav-link {
+            position: relative;
+            transition: color 0.3s;
+            color: var(--text-secondary);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--accent-color);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #7C3AED;
+            border-radius: 3px;
+        }
+
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.12) 50%, transparent 60%);
+            animation: shimmer 3s infinite;
+        }
+
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        .theme-toggle {
+            width: 52px;
+            height: 28px;
+            border-radius: 14px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            background: #1e1b4b;
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+
+        .theme-toggle-knob {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: white;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s, background 0.3s;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        [data-theme="dark"] .theme-toggle-knob {
+            transform: translateX(24px);
+            background: #2e1065;
+        }
+
+        .themed-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .themed-card:hover {
+            border-color: var(--accent-border);
+        }
+
+        .section-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 32px;
+            transition: all 0.3s;
+        }
+
+        .themed-input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            transition: all 0.3s;
+        }
+
+        .themed-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .themed-input:focus {
+            outline: none;
+            border-color: var(--accent-border);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
+        }
+
+        /* ===== SUB PAGES ===== */
+        .sub-page {
+            display: none;
+            min-height: 100vh;
+            background: var(--page-bg);
+        }
+
+        .sub-page.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        #mainSite.hidden-page {
+            display: none;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            padding-bottom: 40px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 28px;
+            bottom: 0;
+            width: 2px;
+            background: var(--timeline-line);
+        }
+
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 6px;
+            top: 6px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-bg);
+            border: 2px solid var(--accent-border);
+            z-index: 1;
+        }
+
+        .timeline-dot.filled {
+            background: var(--accent-color);
+        }
+
+        .research-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s;
+        }
+
+        .research-card:hover {
+            border-color: var(--accent-border);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-color);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            background: none;
+            font-size: 15px;
+            padding: 0;
+        }
+
+        .back-btn:hover {
+            gap: 12px;
+            color: var(--accent-bright);
+        }
+
+        /* Color slider preview */
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body class="grid-bg">
+
+    <!-- Background Glow Orbs -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] bg-violet-400 rounded-full blur-[120px]"
+            style="animation: pulse-slow 6s ease-in-out infinite; opacity: var(--glow-opacity);"></div>
+        <div class="absolute top-[40%] right-[-150px] w-[500px] h-[500px] bg-purple-500 rounded-full blur-[120px]"
+            style="animation: pulse-slow 8s ease-in-out infinite 2s; opacity: var(--glow-opacity);"></div>
+        <div class="absolute bottom-[-100px] left-[30%] w-[700px] h-[500px] bg-fuchsia-400 rounded-full blur-[120px]"
+            style="animation: pulse-slow 7s ease-in-out infinite 1s; opacity: var(--glow-opacity);"></div>
+    </div>
+
+    <!-- ==================== MAIN SITE ==================== -->
+    <div id="mainSite">
+
+        <!-- Navigation -->
+        <nav class="sticky top-0 z-50 backdrop-blur-md border-b transition-all duration-300"
+            style="background: var(--nav-bg); border-color: var(--border-color);">
+            <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+                <a href="#home" class="flex items-center gap-3 group">
+                    <img src="https://t1.chatglm.cn/file/6a17f3287e51c32c5fa4a189.png?expired_at=1780386535&sign=f460238d531a8229d3523c04aee82fab&ext=png"
+                        alt="GodAura Logo"
+                        class="h-10 w-auto rounded-lg transition-transform duration-300 group-hover:scale-110">
+                    <span class="text-xl font-semibold accent-text-bright tracking-tight">GodAura</span>
+                </a>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#home" class="nav-link text-sm font-medium active">Home</a>
+                    <a href="#about" class="nav-link text-sm font-medium">About Us</a>
+                    <a href="#research" class="nav-link text-sm font-medium">Research</a>
+                    <a href="#products" class="nav-link text-sm font-medium">Products</a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleTheme()" class="theme-toggle" aria-label="Toggle theme">
+                        <div class="theme-toggle-knob">
+                            <i data-lucide="sun" class="w-3.5 h-3.5" id="themeIconSun" style="color: #f59e0b;"></i>
+                            <i data-lucide="moon" class="w-3.5 h-3.5" id="themeIconMoon"
+                                style="color: #a78bfa; display: none;"></i>
+                        </div>
+                    </button>
+                    <!-- Dynamic auth container -->
+                    <div id="desktopAuthContainer">
+                        <button onclick="openSignIn()" id="desktopSignInBtn"
+                            class="hidden md:flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all duration-300 text-white"
+                            style="background: var(--btn-bg); box-shadow: var(--btn-shadow);">Sign In</button>
+                        <div id="desktopProfile" style="display:none;" class="relative group">
+                            <button class="flex items-center gap-2 rounded-full p-1 border"
+                                style="border-color: var(--accent-border);">
+                                <img id="userAvatar" src="" class="w-8 h-8 rounded-full">
+                                <span id="userNameDisplay" class="text-sm font-medium hidden sm:inline"
+                                    style="color: var(--text-primary);"></span>
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 rounded-xl shadow-lg hidden group-hover:block"
+                                style="background: var(--bg-card); border:1px solid var(--border-color);">
+                                <a href="#" onclick="signOut()" class="block px-4 py-2 text-sm hover:bg-accent-bg">Sign
+                                    Out</a>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="toggleMobileMenu()" class="md:hidden" style="color: var(--text-secondary);"><i
+                            data-lucide="menu" class="w-6 h-6"></i></button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 bottom-0 w-72 z-[60] backdrop-blur-xl p-6"
+            style="background: var(--bg-secondary); border-left: 1px solid var(--border-color);">
+            <div class="flex justify-between items-center mb-8">
+                <span class="accent-text-bright font-semibold text-lg">GodAura</span>
+                <button onclick="toggleMobileMenu()" style="color: var(--text-muted);"><i data-lucide="x"
+                        class="w-6 h-6"></i></button>
+            </div>
+            <div class="flex flex-col gap-4">
+                <a href="#home" onclick="toggleMobileMenu()" style="color: var(--text-secondary);" class="py-2 border-b"
+                    style="border-color: var(--border-color);">Home</a>
+                <a href="#about" onclick="toggleMobileMenu()" style="color: var(--text-secondary);"
+                    class="py-2 border-b" style="border-color: var(--border-color);">About Us</a>
+                <a href="#research" onclick="toggleMobileMenu()" style="color: var(--text-secondary);"
+                    class="py-2 border-b" style="border-color: var(--border-color);">Research</a>
+                <a href="#products" onclick="toggleMobileMenu()" style="color: var(--text-secondary);"
+                    class="py-2 border-b" style="border-color: var(--border-color);">Products</a>
+                <button onclick="openSignIn(); toggleMobileMenu();" id="mobileSignInBtn"
+                    class="mt-4 text-white rounded-xl px-5 py-3 text-sm font-medium"
+                    style="background: var(--btn-bg);">Sign In</button>
+                <div id="mobileProfile" style="display:none;" class="mt-4 flex items-center gap-3 p-3 rounded-xl"
+                    style="background: var(--accent-bg);">
+                    <img id="mobileUserAvatar" src="" class="w-8 h-8 rounded-full">
+                    <span id="mobileUserName" class="text-sm font-medium"></span>
+                    <button onclick="signOut()" class="ml-auto text-xs text-accent">Sign Out</button>
+                </div>
+            </div>
+        </div>
+        <div id="mobileOverlay" class="fixed inset-0 bg-black/50 z-[55] hidden" onclick="toggleMobileMenu()"></div>
+
+        <!-- Hero (reduced spacing) -->
+        <section id="home" class="relative pt-12 pb-16 md:pt-16 md:pb-20">
+            <div class="max-w-5xl mx-auto px-6 text-center">
+                <div class="animate-in">
+                    <span
+                        class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] accent-text mb-6"
+                        style="background: var(--accent-bg); border: 1px solid var(--accent-border);">
+                        <span class="w-2 h-2 bg-violet-500 rounded-full"></span>
+                        Wearable Meditation Technology
+                    </span>
+                </div>
+                <h1
+                    class="animate-in delay-1 text-4xl md:text-6xl lg:text-7xl font-semibold leading-[1.1] tracking-tight mb-6">
+                    <span style="color: var(--text-primary);">Calm Your Mind.</span><br>
+                    <span class="accent-text-bright">Feel The Aura.</span>
+                </h1>
+                <p class="animate-in delay-2 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
+                    style="color: var(--text-secondary);">
+                    GodAura Devices creates <span class="accent-text-subtle font-medium">wearable meditation
+                        technology</span> that blends neuroscience, calming vibrations, and modern design. Our goal is
+                    to make meditation easier for people struggling with stress, overthinking, anxiety, insomnia, and
+                    mental exhaustion.
+                </p>
+                <div class="animate-in delay-3 flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="openSignIn()"
+                        class="btn-shine text-white rounded-xl px-8 py-4 text-lg font-semibold transition-all duration-300"
+                        style="background: var(--btn-bg); box-shadow: var(--btn-shadow);">Sign In</button>
+                    <button onclick="showPage('learnMore')"
+                        class="rounded-xl px-8 py-4 text-lg font-medium transition-all duration-300 cursor-pointer"
+                        style="background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent-color);">Learn
+                        More</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- About (reduced spacing) -->
+        <section id="about" class="relative py-16 md:py-20 section-hidden">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-4">Our
+                            Mission</span>
+                        <h2 class="text-3xl md:text-5xl font-semibold leading-[1.1] tracking-tight mb-6"
+                            style="color: var(--text-primary);">
+                            Meditation should be <span class="accent-text-bright italic"
+                                style="font-family: 'Playfair Display', serif;">easier</span> for everyone
+                        </h2>
+                        <p class="text-lg leading-relaxed mb-6" style="color: var(--text-secondary);">
+                            GodAura Devices was founded in 2022 with one idea — <span
+                                class="accent-text-subtle font-medium">meditation should be easier for everyone</span>.
+                        </p>
+                        <p class="text-lg leading-relaxed mb-6" style="color: var(--text-secondary);">
+                            After seeing how many people struggled with stress, anxiety, insomnia, and constant
+                            overthinking, we wanted to create something that could genuinely help. Meditation has always
+                            been powerful, but many people find it difficult to quiet their minds and fully relax.
+                        </p>
+                        <p class="text-lg leading-relaxed" style="color: var(--text-secondary);">
+                            That inspired the idea behind GodAura: a <span
+                                class="accent-text-subtle font-medium">wearable device that uses carefully tuned
+                                rhythmic vibrations</span> to help guide the brain into a calmer, more focused state.
+                        </p>
+                        <div class="mt-8">
+                            <button onclick="showPage('achievements')"
+                                class="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-300 cursor-pointer"
+                                style="background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent-color);">
+                                View Our Past Achievements <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="rounded-2xl overflow-hidden"
+                            style="border: 1px solid var(--border-color); box-shadow: var(--shadow-lg);">
+                            <img src="https://t1.chatglm.cn/file/6a17f344c4e0c0347f04fd3d.jpeg?expired_at=1780386535&sign=0d9cbaba2a19f89742b74a731be395a8&ext=jpeg"
+                                alt="Meditation" class="w-full h-[380px] md:h-[460px] object-cover">
+                        </div>
+                        <div class="absolute -bottom-6 -right-6 rounded-2xl p-5"
+                            style="background: var(--bg-secondary); border: 1px solid var(--accent-border); box-shadow: var(--shadow-md);">
+                            <div class="text-3xl font-bold accent-text-bright">2022</div>
+                            <div class="text-xs mt-1" style="color: var(--text-muted);">Founded</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Science Meets Serenity (reduced spacing) -->
+        <section class="relative py-16 md:py-20 section-hidden">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="section-card p-8 md:p-12 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-violet-400 rounded-full blur-[150px]"
+                        style="opacity: 0.05;"></div>
+                    <div class="relative z-10 grid md:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <span
+                                class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-4">Science
+                                Meets Serenity</span>
+                            <h2 class="text-3xl md:text-5xl font-semibold leading-[1.1] tracking-tight mb-6"
+                                style="color: var(--text-primary);">
+                                Every device is <span class="accent-text-bright">carefully designed</span>
+                            </h2>
+                            <p class="text-lg leading-relaxed mb-6" style="color: var(--text-secondary);">
+                                Every GodAura device is carefully designed to help people feel relief from <span
+                                    class="accent-text-subtle font-medium">stress, anxiety, insomnia, overthinking, and
+                                    mental fatigue</span> through guided vibration-based meditation.
+                            </p>
+                            <p class="text-lg leading-relaxed" style="color: var(--text-secondary);">
+                                Before launching any new model, our devices go through testing and real-user trials to
+                                study <span class="accent-text-subtle font-medium">relaxation levels, sleep improvement,
+                                    focus, and overall mental wellness</span> progress.
+                            </p>
+                        </div>
+                        <div class="flex justify-center">
+                            <div class="relative">
+                                <div class="w-64 h-64 md:w-80 md:h-80 rounded-full flex items-center justify-center float"
+                                    style="border: 1px solid var(--accent-border);">
+                                    <div class="w-48 h-48 md:w-60 md:h-60 rounded-full flex items-center justify-center"
+                                        style="border: 1px solid rgba(139, 92, 246, 0.1);">
+                                        <div class="w-32 h-32 md:w-40 md:h-40 rounded-full flex items-center justify-center"
+                                            style="background: var(--accent-bg); box-shadow: 0 0 40px rgba(139, 92, 246, 0.08);">
+                                            <i data-lucide="brain" class="w-16 h-16 accent-text-bright"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="absolute top-2 right-2 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider accent-text"
+                                    style="background: var(--bg-primary); border: 1px solid var(--accent-border);">EEG
+                                </div>
+                                <div class="absolute bottom-6 left-0 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider accent-text"
+                                    style="background: var(--bg-primary); border: 1px solid var(--accent-border);">
+                                    Haptic</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Carousel (10 images, 5 visible desktop, 1 mobile) -->
+        <section id="carousel" class="relative py-16 md:py-20 section-hidden">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-12">
+                    <span class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-4">Visual
+                        Experience</span>
+                    <h2 class="text-3xl md:text-5xl font-semibold leading-[1.1] tracking-tight mb-4"
+                        style="color: var(--text-primary);">
+                        Inside The <span class="accent-text-bright">GodAura</span> Experience
+                    </h2>
+                    <p class="text-lg max-w-2xl mx-auto" style="color: var(--text-secondary);">
+                        Explore the serene world of GodAura — where <span
+                            class="accent-text-subtle font-medium">technology meets tranquility</span>.
+                    </p>
+                </div>
+
+                <div class="carousel-wrapper">
+                    <button class="carousel-arrow" onclick="moveCarousel(-1)">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <div class="carousel-viewport" id="carouselViewport">
+                        <!-- 10 portrait (9:16) images. Replace src with your own images -->
+                        <div class="carousel-slide" data-index="0"><img src="e26cac33-6745-407f-9985-8434fe238cc7.jpeg"
+                                alt="GodAura 1"></div>
+                        <div class="carousel-slide" data-index="1"><img src="8ad91510-40b1-4d2a-bd4a-e75514ad40a6.jpeg"
+                                alt="GodAura 2"></div>
+                        <div class="carousel-slide" data-index="2"><img src="1d8d0ba1-3628-4f1e-b344-fbdaa891aef4.jpeg"
+                                alt="GodAura 3"></div>
+                        <div class="carousel-slide" data-index="3"><img src="Gemini_Generated_Image_dpba0vdpba0vdpba.png"
+                                alt="GodAura 4"></div>
+                        <div class="carousel-slide" data-index="4"><img src="123f0ecb-a22b-4bba-9f54-ca18633f0894.jpeg"
+                                alt="GodAura 5"></div>
+                        <div class="carousel-slide" data-index="5"><img src="3e990390-7cec-4f14-89da-4a3e132df792.jpeg"
+                                alt="GodAura 6"></div>
+                        <div class="carousel-slide" data-index="6"><img src="b3bbc92b-c09f-473a-96b7-ae1504bdd403.jpeg"
+                                alt="GodAura 7"></div>
+                        <div class="carousel-slide" data-index="7"><img src="7aac7218-cfd7-498c-860b-e5e0fbe988ad (1).jpeg"
+                                alt="GodAura 8"></div>
+                        <div class="carousel-slide" data-index="8"><img src="cafe5ee6-7a5b-4428-a9ae-b86fab9a3e29.jpeg"
+                                alt="GodAura 9"></div>
+                        <div class="carousel-slide" data-index="9"><img src="7adab05c-900d-4876-88ea-1ce9cbde5554.jpeg"
+                                alt="GodAura 10"></div>
+                    </div>
+                    <button class="carousel-arrow" onclick="moveCarousel(1)">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div id="carouselDots" class="carousel-dots"></div>
+            </div>
+        </section>
+
+        <!-- Research -->
+        <section id="research" class="relative py-16 md:py-20 section-hidden">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-12">
+                    <span
+                        class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-4">Research
+                        & Data</span>
+                    <h2 class="text-3xl md:text-5xl font-semibold leading-[1.1] tracking-tight mb-4"
+                        style="color: var(--text-primary);">
+                        Backed By <span class="accent-text-bright">Science</span>
+                    </h2>
+                    <p class="text-lg max-w-2xl mx-auto" style="color: var(--text-secondary);">
+                        Real data. Real results. Our research demonstrates the <span
+                            class="accent-text-subtle font-medium">measurable impact</span> of GodAura technology on
+                        mental wellness.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="themed-card rounded-2xl p-8 group">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                                style="background: var(--accent-bg);"><i data-lucide="trending-down"
+                                    class="w-5 h-5 accent-text"></i></div>
+                            <h3 class="text-xl font-semibold" style="color: var(--text-primary);">Stress Reduction</h3>
+                        </div>
+                        <p class="text-sm mb-4" style="color: var(--text-muted);">Average cortisol decrease over 8 weeks
+                        </p>
+                        <div class="flex items-end gap-3 mb-4"><span
+                                class="text-5xl font-bold accent-text-bright">42%</span><span class="text-sm pb-2"
+                                style="color: var(--text-muted);">decrease</span></div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" data-width="42"></div>
+                        </div>
+                    </div>
+                    <div class="themed-card rounded-2xl p-8 group">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                                style="background: var(--accent-bg);"><i data-lucide="moon"
+                                    class="w-5 h-5 accent-text"></i></div>
+                            <h3 class="text-xl font-semibold" style="color: var(--text-primary);">Sleep Improvement</h3>
+                        </div>
+                        <p class="text-sm mb-4" style="color: var(--text-muted);">Hours of quality sleep per night</p>
+                        <div class="flex items-end gap-3 mb-4"><span
+                                class="text-5xl font-bold accent-text-bright">+2.4</span><span class="text-sm pb-2"
+                                style="color: var(--text-muted);">hours</span></div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" data-width="68"></div>
+                        </div>
+                    </div>
+                    <div class="themed-card rounded-2xl p-8 group">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                                style="background: var(--accent-bg);"><i data-lucide="target"
+                                    class="w-5 h-5 accent-text"></i></div>
+                            <h3 class="text-xl font-semibold" style="color: var(--text-primary);">Focus Tracking</h3>
+                        </div>
+                        <p class="text-sm mb-4" style="color: var(--text-muted);">Cognitive focus score over time</p>
+                        <div class="flex items-end gap-3 mb-4"><span
+                                class="text-5xl font-bold accent-text-bright">+37%</span><span class="text-sm pb-2"
+                                style="color: var(--text-muted);">improvement</span></div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" data-width="55"></div>
+                        </div>
+                    </div>
+                    <div class="themed-card rounded-2xl p-8 group">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                                style="background: var(--accent-bg);"><i data-lucide="calendar-check"
+                                    class="w-5 h-5 accent-text"></i></div>
+                            <h3 class="text-xl font-semibold" style="color: var(--text-primary);">Meditation Consistency
+                            </h3>
+                        </div>
+                        <p class="text-sm mb-4" style="color: var(--text-muted);">Sessions completed per week</p>
+                        <div class="flex items-end gap-3 mb-4"><span
+                                class="text-5xl font-bold accent-text-bright">5.8</span><span class="text-sm pb-2"
+                                style="color: var(--text-muted);">sessions/wk</span></div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" data-width="83"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-10">
+                    <button onclick="showPage('allResearches')"
+                        class="inline-flex items-center gap-2 rounded-xl px-8 py-4 text-sm font-semibold transition-all duration-300 cursor-pointer"
+                        style="background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent-color);">
+                        View All Researches <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products - ONLY TWO products, with Buy Now opening purchase page -->
+        <section id="products" class="relative py-16 md:py-20 section-hidden">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-12">
+                    <span class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-4">Our
+                        Devices</span>
+                    <h2 class="text-3xl md:text-5xl font-semibold leading-[1.1] tracking-tight mb-4"
+                        style="color: var(--text-primary);">
+                        GodAura <span class="accent-text-bright">Products</span>
+                    </h2>
+                    <p class="text-lg max-w-2xl mx-auto" style="color: var(--text-secondary);">
+                        Meditation technology crafted with precision, designed for <span
+                            class="accent-text-subtle font-medium">everyday calm</span>.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <!-- Product 1: ZenBand Pro (placeholder image) -->
+                    <div class="product-card rounded-2xl overflow-hidden">
+                        <div class="relative aspect-[4/3] overflow-hidden">
+                            <img src="Exported Quality .jpg" alt="ZenBand Pro"
+                                class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent">
+                            </div>
+                            <span
+                                class="absolute top-4 left-4 text-[10px] font-bold uppercase tracking-wider accent-text rounded-full px-3 py-1"
+                                style="background: rgba(0,0,0,0.5); border: 1px solid var(--accent-border);">Popular</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2" style="color: var(--text-primary);">GodAura ZenBand
+                                Pro</h3>
+                            <p class="text-sm leading-relaxed mb-4" style="color: var(--text-secondary);">Advanced
+                                meditation headband with <span class="accent-text-subtle">real-time brainwave
+                                    tracking</span> and adaptive vibration therapy.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl font-bold accent-text-bright">$249</span>
+                                <button onclick="openPurchasePage('ZenBand Pro', 249)"
+                                    class="text-white rounded-xl px-5 py-2.5 text-sm font-medium transition-all"
+                                    style="background: var(--btn-bg); box-shadow: var(--btn-shadow);">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product 2: CalmLite (placeholder image) -->
+                    <div class="product-card rounded-2xl overflow-hidden">
+                        <div class="relative aspect-[4/3] overflow-hidden">
+                            <img src="Indian imported.jpeg" alt="CalmLite"
+                                class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent">
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2" style="color: var(--text-primary);">GodAura CalmLite
+                            </h3>
+                            <p class="text-sm leading-relaxed mb-4" style="color: var(--text-secondary);">Lightweight,
+                                travel-friendly band with <span class="accent-text-subtle">guided vibration
+                                    sessions</span> and sleep modes.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl font-bold accent-text-bright">$149</span>
+                                <button onclick="openPurchasePage('CalmLite', 149)"
+                                    class="text-white rounded-xl px-5 py-2.5 text-sm font-medium transition-all"
+                                    style="background: var(--btn-bg); box-shadow: var(--btn-shadow);">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer (email replaced with Instagram link) -->
+        <footer style="border-top: 1px solid var(--border-color); background: var(--footer-bg);">
+            <div class="max-w-7xl mx-auto px-6 py-12">
+                <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+                    <div>
+                        <h4 class="text-sm font-semibold mb-4" style="color: var(--text-primary);">Navigate</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#home" style="color: var(--text-secondary);"
+                                    class="hover:opacity-70 text-sm">Home</a></li>
+                            <li><a href="#about" style="color: var(--text-secondary);"
+                                    class="hover:opacity-70 text-sm">About Us</a></li>
+                            <li><a href="#research" style="color: var(--text-secondary);"
+                                    class="hover:opacity-70 text-sm">Research</a></li>
+                            <li><a href="#products" style="color: var(--text-secondary);"
+                                    class="hover:opacity-70 text-sm">Products</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold mb-4" style="color: var(--text-primary);">Discover</h4>
+                        <ul class="space-y-3">
+                            <li><button onclick="showPage('learnMore')" class="hover:opacity-70 text-sm"
+                                    style="color: var(--text-secondary); background:none; border:none; cursor:pointer;">Learn
+                                    More</button></li>
+                            <li><button onclick="showPage('achievements')" class="hover:opacity-70 text-sm"
+                                    style="color: var(--text-secondary); background:none; border:none; cursor:pointer;">Achievements</button>
+                            </li>
+                            <li><button onclick="showPage('allResearches')" class="hover:opacity-70 text-sm"
+                                    style="color: var(--text-secondary); background:none; border:none; cursor:pointer;">All
+                                    Researches</button></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold mb-4" style="color: var(--text-primary);">Account</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#" onclick="openSignIn(); return false;" style="color: var(--text-secondary);"
+                                    class="hover:opacity-70 text-sm">Login</a></li>
+                            <li><a href="#" onclick="openSignIn(); return false;" style="color: var(--text-secondary);"
+                                    class="hover:opacity-70 text-sm">Sign In</a></li>
+                            <li><a href="#" style="color: var(--text-secondary);"
+                                    class="hover:opacity-70 text-sm">Download App</a></li>
+                            <li><a href="#products" style="color: var(--text-secondary);"
+                                    class="hover:opacity-70 text-sm">Buy Products</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold mb-4" style="color: var(--text-primary);">Contact</h4>
+                        <div class="space-y-3">
+                            <!-- Removed support@godaura.com, added Instagram link -->
+                            <a href="https://instagram.com/godaura" target="_blank"
+                                class="flex items-center gap-2 text-sm hover:opacity-70"
+                                style="color: var(--text-secondary);"><i data-lucide="instagram" class="w-4 h-4"></i>
+                                @godaura (Instagram)</a>
+                            <a href="tel:+18005552872" class="flex items-center gap-2 text-sm hover:opacity-70"
+                                style="color: var(--text-secondary);"><i data-lucide="phone" class="w-4 h-4"></i> +1
+                                (800) 555-AURA</a>
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <a href="#" class="w-9 h-9 rounded-lg flex items-center justify-center"
+                                style="background: var(--social-bg); border: 1px solid var(--social-border); color: var(--text-muted);"><i
+                                    data-lucide="twitter" class="w-4 h-4"></i></a>
+                            <a href="#" class="w-9 h-9 rounded-lg flex items-center justify-center"
+                                style="background: var(--social-bg); border: 1px solid var(--social-border); color: var(--text-muted);"><i
+                                    data-lucide="instagram" class="w-4 h-4"></i></a>
+                            <a href="#" class="w-9 h-9 rounded-lg flex items-center justify-center"
+                                style="background: var(--social-bg); border: 1px solid var(--social-border); color: var(--text-muted);"><i
+                                    data-lucide="youtube" class="w-4 h-4"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-6 flex flex-col md:flex-row justify-between items-center gap-4"
+                    style="border-top: 1px solid var(--border-color);">
+                    <div class="flex items-center gap-3">
+                        <img src="https://t1.chatglm.cn/file/6a17f3287e51c32c5fa4a189.png?expired_at=1780386535&sign=f460238d531a8229d3523c04aee82fab&ext=png"
+                            alt="Logo" class="h-7 w-auto rounded">
+                        <span class="text-sm" style="color: var(--text-muted);">GodAura Devices © 2022 — All rights
+                            reserved. Trademark of GodAura Technologies Inc.</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div><!-- end mainSite -->
+
+    <!-- ==================== LEARN MORE PAGE ==================== -->
+    <div id="pageLearnMore" class="sub-page">
+        <div class="max-w-4xl mx-auto px-6 py-12">
+            <button onclick="hidePage()" class="back-btn mb-8"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to
+                Home</button>
+            <span class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-4">Our
+                Story</span>
+            <h1 class="text-4xl md:text-6xl font-semibold leading-[1.1] tracking-tight mb-8"
+                style="color: var(--text-primary);">
+                Learn More About <span class="accent-text-bright">GodAura</span>
+            </h1>
+            <div class="space-y-8 text-lg leading-relaxed" style="color: var(--text-secondary);">
+                <p>GodAura Devices was born from a deeply personal experience. Our founder spent years watching friends
+                    and family struggle with stress, anxiety, and sleepless nights — trying everything from meditation
+                    apps to breathing exercises, but never quite finding something that <span
+                        class="accent-text-subtle font-medium">truly quieted the mind</span>.</p>
+
+                <div class="section-card p-8 my-8">
+                    <h2 class="text-2xl font-semibold mb-4" style="color: var(--text-primary);">How It Works</h2>
+                    <p class="mb-4">GodAura devices use <span class="accent-text-subtle font-medium">rhythmic haptic
+                            vibrations</span> — precisely tuned frequencies that gently guide your brainwaves into
+                        calmer states. Think of it like a metronome for your mind.</p>
+                    <div class="grid md:grid-cols-3 gap-6 mt-6">
+                        <div class="text-center p-4">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
+                                style="background: var(--accent-bg);"><i data-lucide="radio"
+                                    class="w-6 h-6 accent-text"></i></div>
+                            <h4 class="font-semibold mb-1" style="color: var(--text-primary);">Vibration Patterns</h4>
+                            <p class="text-sm" style="color: var(--text-muted);">Calibrated frequencies target theta and
+                                alpha brainwave states associated with deep relaxation.</p>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
+                                style="background: var(--accent-bg);"><i data-lucide="brain"
+                                    class="w-6 h-6 accent-text"></i></div>
+                            <h4 class="font-semibold mb-1" style="color: var(--text-primary);">EEG Monitoring</h4>
+                            <p class="text-sm" style="color: var(--text-muted);">Real-time brainwave tracking adapts the
+                                vibration intensity to your current mental state.</p>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
+                                style="background: var(--accent-bg);"><i data-lucide="sparkles"
+                                    class="w-6 h-6 accent-text"></i></div>
+                            <h4 class="font-semibold mb-1" style="color: var(--text-primary);">AI Personalization</h4>
+                            <p class="text-sm" style="color: var(--text-muted);">Machine learning algorithms create
+                                custom meditation sessions that evolve with you.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-2xl font-semibold mt-12" style="color: var(--text-primary);">Our Vision</h2>
+                <p>We envision a world where <span class="accent-text-subtle font-medium">mental wellness is accessible
+                        to everyone</span> — not just those who can afford therapists or retreats. GodAura is building
+                    technology that fits into your life, not the other way around. Whether you have 5 minutes or 50, our
+                    devices adapt to your schedule and needs.</p>
+
+                <h2 class="text-2xl font-semibold mt-8" style="color: var(--text-primary);">The Team</h2>
+                <p>Our team combines expertise in <span class="accent-text-subtle font-medium">neuroscience, haptic
+                        engineering, industrial design, and clinical psychology</span>. Based in San Francisco, we're a
+                    diverse group of 32 people united by the belief that technology should serve our wellbeing — not
+                    drain it.</p>
+
+                <h2 class="text-2xl font-semibold mt-8" style="color: var(--text-primary);">What's Next</h2>
+                <p>In 2025, we're launching the <span class="accent-text-subtle font-medium">GodAura App 2.0</span> with
+                    social meditation features, the AuraMax VR integration for immersive experiences, and partnerships
+                    with 50+ wellness clinics across North America. We're also beginning clinical trials for GodAura's
+                    potential in supporting PTSD treatment.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ACHIEVEMENTS PAGE ==================== -->
+    <div id="pageAchievements" class="sub-page">
+        <div class="max-w-4xl mx-auto px-6 py-12">
+            <button onclick="hidePage()" class="back-btn mb-8"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to
+                About</button>
+            <span
+                class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-4">Milestones</span>
+            <h1 class="text-4xl md:text-6xl font-semibold leading-[1.1] tracking-tight mb-4"
+                style="color: var(--text-primary);">
+                Our Past <span class="accent-text-bright">Achievements</span>
+            </h1>
+            <p class="text-lg mb-12" style="color: var(--text-secondary);">From a bold idea to a movement in wearable
+                wellness — here's how far we've come.</p>
+
+            <div class="mb-16">
+                <div class="timeline-item">
+                    <div class="timeline-dot filled"></div>
+                    <div class="section-card p-6">
+                        <span class="text-sm font-bold accent-text">Q1 2022</span>
+                        <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">GodAura Founded</h3>
+                        <p class="mt-2" style="color: var(--text-secondary);">Three co-founders started GodAura in a
+                            small San Francisco apartment, driven by the belief that meditation technology could be
+                            reimagined for modern life.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot filled"></div>
+                    <div class="section-card p-6">
+                        <span class="text-sm font-bold accent-text">Q3 2022</span>
+                        <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">First Prototype —
+                            ZenBand v0.1</h3>
+                        <p class="mt-2" style="color: var(--text-secondary);">Our first working prototype demonstrated
+                            that haptic vibrations could measurably reduce heart rate and cortisol levels in a 30-person
+                            pilot study.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot filled"></div>
+                    <div class="section-card p-6">
+                        <span class="text-sm font-bold accent-text">Q1 2023</span>
+                        <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">$4.2M Seed Funding
+                        </h3>
+                        <p class="mt-2" style="color: var(--text-secondary);">Secured seed funding from leading
+                            wellness-tech investors, allowing us to expand our engineering team and begin clinical
+                            trials.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot filled"></div>
+                    <div class="section-card p-6">
+                        <span class="text-sm font-bold accent-text">Q3 2023</span>
+                        <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">Clinical Trial
+                            Results Published</h3>
+                        <p class="mt-2" style="color: var(--text-secondary);">Our 200-person clinical trial showed a
+                            <span class="accent-text-subtle font-medium">42% average reduction in cortisol</span> and
+                            2.4 additional hours of quality sleep per night. Results published in the Journal of
+                            Neurotherapy.
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot filled"></div>
+                    <div class="section-card p-6">
+                        <span class="text-sm font-bold accent-text">Q4 2023</span>
+                        <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">ZenBand Pro Launch
+                        </h3>
+                        <p class="mt-2" style="color: var(--text-secondary);">Launched our flagship product to the
+                            public. Sold out within 72 hours. Featured in Wired, TechCrunch, and The Verge.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="section-card p-6">
+                        <span class="text-sm font-bold accent-text">Q1 2024</span>
+                        <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">CES Innovation Award
+                        </h3>
+                        <p class="mt-2" style="color: var(--text-secondary);">Won the CES Innovation Award in the
+                            Wellness & Wearable category. GodAura was recognized for "pushing the boundaries of what
+                            wearable technology can do for mental health."</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="section-card p-6">
+                        <span class="text-sm font-bold accent-text">Q2 2024</span>
+                        <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">CalmLite & AuraMax
+                            Launch</h3>
+                        <p class="mt-2" style="color: var(--text-secondary);">Expanded our product line with the
+                            affordable CalmLite travel band and the premium AuraMax headset with EEG monitoring and
+                            AI-personalized meditation.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="section-card p-6">
+                        <span class="text-sm font-bold accent-text">Q4 2024</span>
+                        <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">50,000+ Users
+                            Worldwide</h3>
+                        <p class="mt-2" style="color: var(--text-secondary);">Reached a milestone of 50,000 active
+                            GodAura users across 28 countries, with an average satisfaction rating of 4.8/5.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card p-8 text-center">
+                <h2 class="text-2xl font-semibold mb-4" style="color: var(--text-primary);">Awards & Recognition</h2>
+                <div class="grid sm:grid-cols-3 gap-6">
+                    <div>
+                        <div class="text-3xl mb-2">🏆</div>
+                        <h4 class="font-semibold" style="color: var(--text-primary);">CES Innovation Award 2024</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Wellness & Wearables</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl mb-2">🎖️</div>
+                        <h4 class="font-semibold" style="color: var(--text-primary);">Fast Company World Changing Ideas
+                        </h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Honorable Mention 2024</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl mb-2">⭐</div>
+                        <h4 class="font-semibold" style="color: var(--text-primary);">Wired Editors' Pick</h4>
+                        <p class="text-sm" style="color: var(--text-muted);">Best Wellness Tech 2023</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ALL RESEARCHES PAGE ==================== -->
+    <div id="pageAllResearches" class="sub-page">
+        <div class="max-w-4xl mx-auto px-6 py-12">
+            <button onclick="hidePage()" class="back-btn mb-8"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to
+                Research</button>
+            <span class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-4">All
+                Researches</span>
+            <h1 class="text-4xl md:text-6xl font-semibold leading-[1.1] tracking-tight mb-4"
+                style="color: var(--text-primary);">
+                Our <span class="accent-text-bright">Research</span> Library
+            </h1>
+            <p class="text-lg mb-12" style="color: var(--text-secondary);">Peer-reviewed studies and real-user data that
+                validate the impact of GodAura technology.</p>
+
+            <div class="space-y-6">
+                <div class="research-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center mt-1"
+                            style="background: var(--accent-bg);"><i data-lucide="file-text"
+                                class="w-5 h-5 accent-text"></i></div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider accent-text">Published — Journal of
+                                Neurotherapy, 2023</span>
+                            <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">Haptic Vibration
+                                Therapy and Cortisol Reduction: A Randomized Controlled Trial</h3>
+                            <p class="mt-2" style="color: var(--text-secondary);">A 200-participant, 8-week randomized
+                                controlled trial demonstrating that GodAura's rhythmic vibration patterns produced a
+                                statistically significant 42% average reduction in salivary cortisol levels compared to
+                                the control group (p < 0.001).</p>
+                                    <div class="flex flex-wrap gap-3 mt-4">
+                                        <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                            style="background: var(--accent-bg); color: var(--accent-color);">200
+                                            Participants</span>
+                                        <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                            style="background: var(--accent-bg); color: var(--accent-color);">8
+                                            Weeks</span>
+                                        <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                            style="background: var(--accent-bg); color: var(--accent-color);">42%
+                                            Cortisol Decrease</span>
+                                    </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="research-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center mt-1"
+                            style="background: var(--accent-bg);"><i data-lucide="moon" class="w-5 h-5 accent-text"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider accent-text">Published — Sleep
+                                Medicine Reviews, 2024</span>
+                            <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">Wearable Haptic
+                                Stimulation for Insomnia: Efficacy and Sleep Architecture Changes</h3>
+                            <p class="mt-2" style="color: var(--text-secondary);">Polysomnography study showing that
+                                nightly use of GodAura devices increased deep sleep duration by an average of 38 minutes
+                                and reduced sleep onset latency by 22 minutes in participants with chronic insomnia.</p>
+                            <div class="flex flex-wrap gap-3 mt-4">
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style="background: var(--accent-bg); color: var(--accent-color);">120
+                                    Participants</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style="background: var(--accent-bg); color: var(--accent-color);">12 Weeks</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style="background: var(--accent-bg); color: var(--accent-color);">+38min Deep
+                                    Sleep</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="research-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center mt-1"
+                            style="background: var(--accent-bg);"><i data-lucide="target"
+                                class="w-5 h-5 accent-text"></i></div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider accent-text">Published — Cognitive
+                                Neuroscience, 2024</span>
+                            <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">Adaptive
+                                Vibration Feedback and Sustained Attention: An EEG-Based Analysis</h3>
+                            <p class="mt-2" style="color: var(--text-secondary);">EEG-monitored study demonstrating that
+                                GodAura's adaptive vibration feedback improved sustained attention scores by 37% during
+                                focused work tasks, with increased alpha-wave coherence in prefrontal regions.</p>
+                            <div class="flex flex-wrap gap-3 mt-4">
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style="background: var(--accent-bg); color: var(--accent-color);">80
+                                    Participants</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style="background: var(--accent-bg); color: var(--accent-color);">6 Weeks</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style="background: var(--accent-bg); color: var(--accent-color);">+37% Focus
+                                    Score</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="research-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center mt-1"
+                            style="background: var(--accent-bg);"><i data-lucide="heart-pulse"
+                                class="w-5 h-5 accent-text"></i></div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider accent-text">In Progress — Stanford
+                                Center for Mindfulness, 2025</span>
+                            <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">GodAura Vibration
+                                Therapy as Adjunctive Treatment for PTSD-Related Hyperarousal</h3>
+                            <p class="mt-2" style="color: var(--text-secondary);">Ongoing clinical trial investigating
+                                whether GodAura's haptic vibration patterns can reduce hyperarousal symptoms in
+                                individuals with PTSD, when used alongside traditional therapy. Expected completion: Q4
+                                2025.</p>
+                            <div class="flex flex-wrap gap-3 mt-4">
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style="background: var(--accent-bg); color: var(--accent-color);">150
+                                    Participants</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style="background: var(--accent-bg); color: var(--accent-color);">16 Weeks</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style="background: var(--accent-bg); color: var(--accent-color);">In Progress</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="research-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center mt-1"
+                            style="background: var(--accent-bg);"><i data-lucide="bar-chart-3"
+                                class="w-5 h-5 accent-text"></i></div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider accent-text">Internal Data — GodAura
+                                Analytics, 2024</span>
+                            <h3 class="text-xl font-semibold mt-1" style="color: var(--text-primary);">Real-World User
+                                Outcomes: 12-Month Retrospective Analysis</h3>
+                            <p class="mt-2" style="color: var(--text-secondary);">Analysis of anonymized data from
+                                10,000+ GodAura users showing 89% reported reduced anxiety, 76% improved sleep quality,
+                                and users averaged 5.8 meditation sessions per week after 3 months of use.</p>
+                            <div class="flex flex-wrap gap-3 mt-4">
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style="background: var(--accent-bg); color: var(--accent-color);">10,000+
+                                    Users</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style="background: var(--accent-bg); color: var(--accent-color);">12 Months</span>
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style="background: var(--accent-bg); color: var(--accent-color);">89% Reduced
+                                    Anxiety</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PURCHASE PAGE (NEW, only reachable via Buy Now) ==================== -->
+    <div id="pagePurchase" class="sub-page">
+        <div class="max-w-4xl mx-auto px-6 py-12">
+            <button onclick="hidePage()" class="back-btn mb-8"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to
+                Products</button>
+            <span class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-4">Customize &
+                Order</span>
+            <h1 id="purchaseProductTitle" class="text-4xl md:text-6xl font-semibold leading-[1.1] tracking-tight mb-4"
+                style="color: var(--text-primary);">
+                Configure Your <span id="productNamePurchase" class="accent-text-bright">GodAura Device</span>
+            </h1>
+            <p id="purchasePriceDisplay" class="text-xl mb-6" style="color: var(--text-secondary);">Price: <span
+                    class="font-bold accent-text-bright"></span></p>
+
+            <!-- Color selector slider -->
+            <div class="section-card p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4">Choose Color</h3>
+                <input type="range" id="colorSlider" min="0" max="100" value="50" class="w-full accent-violet-500">
+                <div class="flex justify-between text-sm mt-2" style="color: var(--text-muted);">
+                    <span>Midnight</span><span>Lavender</span><span>Dawn Gold</span>
+                </div>
+                <div id="colorPreview" class="color-preview mt-3" style="background: #6b21a5;"></div>
+                <p id="colorName" class="text-sm mt-2" style="color: var(--text-secondary);">Selected: Lavender</p>
+            </div>
+
+            <!-- Proceed to Checkout button -->
+            <button onclick="openCheckoutModal()"
+                class="w-full text-white rounded-xl py-4 text-lg font-semibold transition-all duration-300"
+                style="background: var(--btn-bg); box-shadow: var(--btn-shadow);">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Sign In Modal - Google only (no email/password form) -->
+    <div id="signInModal" class="modal-overlay" onclick="if(event.target===this) closeSignIn()">
+        <div class="rounded-[32px] p-8 md:p-10 w-full max-w-md mx-4 relative"
+            style="background: var(--bg-secondary); border: 1px solid var(--border-color); box-shadow: var(--shadow-lg); animation: slideInUp 0.4s ease-out;">
+            <button onclick="closeSignIn()" class="absolute top-6 right-6" style="color: var(--text-muted);"><i
+                    data-lucide="x" class="w-5 h-5"></i></button>
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                    style="background: var(--accent-bg);"><i data-lucide="user" class="w-8 h-8 accent-text"></i></div>
+                <h3 class="text-2xl font-semibold" style="color: var(--text-primary);">Welcome Back</h3>
+                <p class="text-sm mt-1" style="color: var(--text-secondary);">Sign in with Google to continue</p>
+            </div>
+            <!-- Google Sign-In button will be rendered here -->
+            <div id="googleSignInButton" class="flex justify-center"></div>
+            <div class="text-center text-xs mt-5 opacity-60" style="color: var(--text-muted);">
+                Secure Google authentication
+            </div>
+        </div>
+    </div>
+
+    <!-- Address Checkout Modal (final purchase popup) -->
+    <div id="checkoutModal" class="modal-overlay" onclick="if(event.target===this) closeCheckoutModal()">
+        <div class="rounded-[32px] p-8 md:p-10 w-full max-w-md mx-4 relative"
+            style="background: var(--bg-secondary); border: 1px solid var(--border-color); box-shadow: var(--shadow-lg); animation: slideInUp 0.4s ease-out;">
+            <button onclick="closeCheckoutModal()" class="absolute top-6 right-6" style="color: var(--text-muted);"><i
+                    data-lucide="x" class="w-5 h-5"></i></button>
+            <h3 class="text-2xl font-semibold mb-6" style="color: var(--text-primary);">Shipping Details</h3>
+            <form id="addressForm" onsubmit="event.preventDefault(); completePurchase();">
+                <div class="space-y-4">
+                    <div><input type="text" id="fullName" placeholder="Full Name" class="themed-input w-full" required>
+                    </div>
+                    <div><input type="text" id="addressLine" placeholder="Street Address" class="themed-input w-full"
+                            required></div>
+                    <div><input type="text" id="city" placeholder="City" class="themed-input w-full" required></div>
+                    <div><input type="text" id="zip" placeholder="ZIP Code" class="themed-input w-full" required></div>
+                </div>
+                <button type="submit" class="w-full mt-6 text-white rounded-xl py-3.5 font-semibold transition-all"
+                    style="background: var(--btn-bg); box-shadow: var(--btn-shadow);">Complete Purchase</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast"
+        class="fixed bottom-6 right-6 z-[200] rounded-xl px-5 py-3 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none"
+        style="background: var(--bg-secondary); border: 1px solid var(--accent-border); box-shadow: var(--shadow-md);">
+        <div class="flex items-center gap-3">
+            <i data-lucide="check-circle" class="w-5 h-5 accent-text"></i>
+            <span id="toastMessage" class="text-sm font-medium" style="color: var(--text-primary);"></span>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // ===== THEME =====
+        function toggleTheme() {
+            const html = document.documentElement;
+            const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('godaura-theme', next);
+            updateThemeIcon(next);
+        }
+        function updateThemeIcon(theme) {
+            document.getElementById('themeIconSun').style.display = theme === 'dark' ? 'none' : 'block';
+            document.getElementById('themeIconMoon').style.display = theme === 'dark' ? 'block' : 'none';
+        }
+        (function () {
+            const theme = localStorage.getItem('godaura-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeIcon(theme);
+        })();
+
+        // ===== CAROUSEL: 10 slides, 5 visible =====
+        let currentSlide = 0;
+        const totalSlides = 10;
+        const slides = document.querySelectorAll('.carousel-slide');
+        const dotsContainer = document.getElementById('carouselDots');
+        let autoPlayInterval;
+        const isMobile = () => window.innerWidth < 768;
+
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('button');
+            dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => { currentSlide = i; updateCarousel(); resetAutoPlay(); };
+            dotsContainer.appendChild(dot);
+        }
+
+        function getOffset(index) {
+            let offset = index - currentSlide;
+            if (offset > totalSlides / 2) offset -= totalSlides;
+            if (offset < -totalSlides / 2) offset += totalSlides;
+            return offset;
+        }
+
+        function updateCarousel() {
+            slides.forEach((slide, i) => {
+                const offset = getOffset(i);
+                slide.classList.remove('slide-pos-center', 'slide-pos-left1', 'slide-pos-right1', 'slide-pos-left2', 'slide-pos-right2', 'slide-pos-hidden');
+                if (offset === 0) {
+                    slide.classList.add('slide-pos-center');
+                } else if (offset === -1) {
+                    slide.classList.add(isMobile() ? 'slide-pos-hidden' : 'slide-pos-left1');
+                } else if (offset === 1) {
+                    slide.classList.add(isMobile() ? 'slide-pos-hidden' : 'slide-pos-right1');
+                } else if (offset === -2) {
+                    slide.classList.add(isMobile() ? 'slide-pos-hidden' : 'slide-pos-left2');
+                } else if (offset === 2) {
+                    slide.classList.add(isMobile() ? 'slide-pos-hidden' : 'slide-pos-right2');
+                } else {
+                    slide.classList.add('slide-pos-hidden');
+                }
+            });
+            document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        function moveCarousel(dir) {
+            currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
+            updateCarousel();
+            resetAutoPlay();
+        }
+
+        function startAutoPlay() {
+            autoPlayInterval = setInterval(() => {
+                currentSlide = (currentSlide + 1) % totalSlides;
+                updateCarousel();
+            }, 5000);
+        }
+        function resetAutoPlay() { clearInterval(autoPlayInterval); startAutoPlay(); }
+        startAutoPlay();
+        updateCarousel();
+
+        let touchStartX = 0;
+        const viewport = document.getElementById('carouselViewport');
+        if (viewport) {
+            viewport.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+            viewport.addEventListener('touchend', e => {
+                const diff = touchStartX - e.changedTouches[0].screenX;
+                if (Math.abs(diff) > 40) moveCarousel(diff > 0 ? 1 : -1);
+            });
+        }
+
+        // ===== SUB PAGES =====
+        function showPage(page) {
+            const mainSite = document.getElementById('mainSite');
+            mainSite.classList.add('hidden-page');
+            document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
+
+            const pageMap = { learnMore: 'pageLearnMore', achievements: 'pageAchievements', allResearches: 'pageAllResearches', purchase: 'pagePurchase' };
+            const target = document.getElementById(pageMap[page]);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'instant' });
+            }
+            setTimeout(() => lucide.createIcons(), 50);
+        }
+
+        function hidePage() {
+            document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
+            document.getElementById('mainSite').classList.remove('hidden-page');
+            setTimeout(() => lucide.createIcons(), 50);
+        }
+
+        // ===== SIGN IN MODAL & GOOGLE AUTH (Profile UI) =====
+        let currentUser = null;
+
+        function openSignIn() {
+            document.getElementById('signInModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => lucide.createIcons(), 50);
+        }
+        function closeSignIn() {
+            document.getElementById('signInModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function handleCredentialResponse(response) {
+            if (response.credential) {
+                const payload = JSON.parse(atob(response.credential.split('.')[1]));
+                const userName = payload.name;
+                const userEmail = payload.email;
+                const userPicture = payload.picture;
+                localStorage.setItem('godaura_user', JSON.stringify({ name: userName, picture: userPicture, email: userEmail }));
+                updateUIAfterLogin(userName, userPicture);
+                closeSignIn();
+                showToast(`Welcome, ${userName}!`);
+            } else {
+                showToast('Sign-in failed');
+            }
+        }
+
+        function updateUIAfterLogin(name, picture) {
+            // Desktop
+            const desktopSignInBtn = document.getElementById('desktopSignInBtn');
+            const desktopProfile = document.getElementById('desktopProfile');
+            if (desktopSignInBtn) desktopSignInBtn.style.display = 'none';
+            if (desktopProfile) {
+                desktopProfile.style.display = 'block';
+                document.getElementById('userAvatar').src = picture;
+                document.getElementById('userNameDisplay').innerText = name.split(' ')[0];
+            }
+            // Mobile
+            const mobileSignInBtn = document.getElementById('mobileSignInBtn');
+            const mobileProfile = document.getElementById('mobileProfile');
+            if (mobileSignInBtn) mobileSignInBtn.style.display = 'none';
+            if (mobileProfile) {
+                mobileProfile.style.display = 'flex';
+                document.getElementById('mobileUserAvatar').src = picture;
+                document.getElementById('mobileUserName').innerText = name.split(' ')[0];
+            }
+            lucide.createIcons();
+        }
+
+        function signOut() {
+            google.accounts.id.disableAutoSelect();
+            localStorage.removeItem('godaura_user');
+            location.reload();
+        }
+
+        function checkStoredSession() {
+            const user = localStorage.getItem('godaura_user');
+            if (user) {
+                const { name, picture } = JSON.parse(user);
+                updateUIAfterLogin(name, picture);
+            }
+        }
+
+        function initGoogleSignIn() {
+            if (typeof google !== 'undefined') {
+                google.accounts.id.initialize({
+                    client_id: '663611999509-qtl4nlv8i8qmvj4tspns8qlq8s6iluel.apps.googleusercontent.com',
+                    callback: handleCredentialResponse
+                });
+                google.accounts.id.renderButton(
+                    document.getElementById('googleSignInButton'),
+                    { theme: 'outline', size: 'large', width: '100%' }
+                );
+                google.accounts.id.prompt();
+            } else {
+                setTimeout(initGoogleSignIn, 500);
+            }
+        }
+
+        // ===== PURCHASE PAGE LOGIC =====
+        let selectedProduct = { name: '', price: 0 };
+
+        function openPurchasePage(productName, price) {
+            selectedProduct = { name: productName, price: price };
+            document.getElementById('productNamePurchase').innerText = productName;
+            const priceSpan = document.querySelector('#purchasePriceDisplay span');
+            if (priceSpan) priceSpan.innerText = `$${price}`;
+            // Reset color slider
+            const slider = document.getElementById('colorSlider');
+            if (slider) slider.value = 50;
+            updateColorPreview(50);
+            showPage('purchase');
+        }
+
+        function updateColorPreview(value) {
+            const preview = document.getElementById('colorPreview');
+            const colorNameSpan = document.getElementById('colorName');
+            let color, name;
+            if (value < 33) {
+                color = '#1e1b4b'; // midnight
+                name = 'Midnight Black';
+            } else if (value < 66) {
+                color = '#c084fc'; // lavender
+                name = 'Lavender Mist';
+            } else {
+                color = '#fbbf24'; // dawn gold
+                name = 'Dawn Gold';
+            }
+            if (preview) preview.style.background = color;
+            if (colorNameSpan) colorNameSpan.innerText = `Selected: ${name}`;
+        }
+
+        // Color slider event
+        const colorSlider = document.getElementById('colorSlider');
+        if (colorSlider) {
+            colorSlider.addEventListener('input', (e) => updateColorPreview(parseInt(e.target.value)));
+        }
+
+        // Checkout modal
+        function openCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        function completePurchase() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const address = document.getElementById('addressLine').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const zip = document.getElementById('zip').value.trim();
+            if (!fullName || !address || !city || !zip) {
+                showToast('Please fill in all shipping details.');
+                return;
+            }
+            // Simulate purchase
+            closeCheckoutModal();
+            hidePage(); // go back to main site
+            showToast(`Thank you ${fullName}! Your ${selectedProduct.name} order has been placed.`);
+            // Reset form
+            document.getElementById('addressForm').reset();
+        }
+
+        // ===== TOAST =====
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'; toast.style.pointerEvents = 'auto';
+            setTimeout(() => { toast.style.transform = 'translateY(20px)'; toast.style.opacity = '0'; toast.style.pointerEvents = 'none'; }, 3000);
+        }
+
+        // ===== MOBILE MENU =====
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileOverlay');
+            menu.classList.toggle('open');
+            overlay.classList.toggle('hidden');
+            document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+            setTimeout(() => lucide.createIcons(), 50);
+        }
+
+        // ===== SCROLL ANIMATIONS & PROGRESS BARS =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('section-visible');
+                    entry.target.querySelectorAll('.progress-fill').forEach(bar => {
+                        setTimeout(() => { bar.style.width = bar.getAttribute('data-width') + '%'; }, 300);
+                    });
+                }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.section-hidden').forEach(el => observer.observe(el));
+
+        // ===== NAV ACTIVE =====
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+            navLinks.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === '#' + current) l.classList.add('active'); });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function (e) {
+                e.preventDefault();
+                const t = document.querySelector(this.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // Escape key
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') { closeSignIn(); closeCheckoutModal(); if (document.getElementById('mobileMenu').classList.contains('open')) toggleMobileMenu(); }
+        });
+
+        document.querySelectorAll('.progress-fill').forEach(b => { b.style.width = '0%'; });
+        window.addEventListener('resize', () => updateCarousel());
+
+        // Initialize Google Sign-In and session check
+        window.addEventListener('load', () => {
+            initGoogleSignIn();
+            checkStoredSession();
+        });
+    </script>
+</body>
+
+</html>
