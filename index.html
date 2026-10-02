@@ -2544,30 +2544,6 @@
             initGoogleSignIn();
             checkStoredSession();
         });
-
-        // YAHA SE
-
-        async function testOrder() {
-    const { data, error } = await supabaseClient
-        .from("orders")
-        .insert({
-            customer_name: "Test User",
-            phone: "9876543210",
-            email: "test@example.com",
-            address: "Delhi",
-            product: "GodAura Device",
-            quantity: 1
-        })
-        .select();
-
-    if (error) {
-        console.error("ERROR:", error);
-    } else {
-        console.log("SUCCESS:", data);
-    }
-}
-
-testOrder();
     </script>
 </body>
 
