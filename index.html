@@ -2552,7 +2552,10 @@
         .select();
 
     if (error) {
-        console.error("❌ ERROR:", error);
+        console.error("❌ ERROR CODE:", error?.code);
+        console.error("❌ ERROR MESSAGE:", error?.message);
+        console.error("❌ ERROR DETAILS:", error?.details);
+        console.error("❌ ERROR HINT:", error?.hint);
     } else {
         console.log("✅ SUCCESS:", data);
     }
