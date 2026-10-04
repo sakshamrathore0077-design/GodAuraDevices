@@ -2538,7 +2538,7 @@
 
         // 
 
-        async function testOrder() {
+async function testOrder() {
     const { data, error } = await supabaseClient
         .from("orders")
         .insert({
@@ -2548,8 +2548,7 @@
             address: "Delhi",
             product: "GodAura Device",
             quantity: 1
-        })
-        .select();
+        });
 
     if (error) {
         console.error("❌ ERROR CODE:", error?.code);
@@ -2561,6 +2560,7 @@
     }
 }
 
+testOrder();
 testOrder();
     </script>
 </body>
