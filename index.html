@@ -16,15 +16,14 @@
         :root{
             --bg-primary:#faf8ff;--bg-secondary:#fff;--bg-card:#fff;--bg-input:#f3f0ff;
             --text-primary:#1e1b4b;--text-secondary:#4c4574;--text-muted:#8b83a8;
-            --border-color:rgba(139,92,246,.1);--border-hover:rgba(139,92,246,.2);
+            --border-color:rgba(139,92,246,.1);
             --nav-bg:rgba(250,248,255,.88);
             --shadow-sm:0 1px 3px rgba(139,92,246,.06);--shadow-md:0 4px 20px rgba(139,92,246,.08);--shadow-lg:0 10px 40px rgba(139,92,246,.1);
             --accent-color:#7C3AED;--accent-shadow:0 0 8px rgba(124,58,237,.2);
             --accent-bright:#8B5CF6;--accent-bright-shadow:0 0 12px rgba(139,92,246,.3),0 0 30px rgba(139,92,246,.1);
             --accent-subtle:#7C3AED;--accent-subtle-shadow:0 0 6px rgba(124,58,237,.15);
             --accent-bg:rgba(139,92,246,.08);--accent-border:rgba(139,92,246,.2);
-            --btn-bg:#7C3AED;--btn-hover:#6D28D9;
-            --btn-shadow:0 0 20px rgba(124,58,237,.2);--btn-hover-shadow:0 0 30px rgba(139,92,246,.3);
+            --btn-bg:#7C3AED;--btn-shadow:0 0 20px rgba(124,58,237,.2);--btn-hover-shadow:0 0 30px rgba(139,92,246,.3);
             --glow-opacity:.07;--progress-bg:rgba(139,92,246,.06);--grid-line:rgba(139,92,246,.03);
             --modal-overlay:rgba(30,27,75,.4);--dot-inactive:rgba(139,92,246,.15);--footer-bg:#f3f0ff;
             --page-bg:#faf8ff;--timeline-line:rgba(139,92,246,.15);--starburst-color:#f59e0b;
@@ -32,15 +31,14 @@
         [data-theme="dark"]{
             --bg-primary:#0c0a1a;--bg-secondary:#120e24;--bg-card:rgba(30,27,55,.5);--bg-input:rgba(139,92,246,.06);
             --text-primary:#e8e0ff;--text-secondary:#b4a8d8;--text-muted:#7c6fa0;
-            --border-color:rgba(139,92,246,.1);--border-hover:rgba(139,92,246,.2);
+            --border-color:rgba(139,92,246,.1);
             --nav-bg:rgba(12,10,26,.88);
             --shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 20px rgba(0,0,0,.4);--shadow-lg:0 10px 40px rgba(0,0,0,.5);
             --accent-color:#C4B5FD;--accent-shadow:0 0 10px rgba(196,181,253,.4),0 0 25px rgba(196,181,253,.15);
             --accent-bright:#DDD6FE;--accent-bright-shadow:0 0 15px rgba(221,214,254,.5),0 0 35px rgba(221,214,254,.2);
             --accent-subtle:#A78BFA;--accent-subtle-shadow:0 0 8px rgba(167,139,250,.3);
             --accent-bg:rgba(139,92,246,.12);--accent-border:rgba(167,139,250,.25);
-            --btn-bg:#8B5CF6;--btn-hover:#A78BFA;
-            --btn-shadow:0 0 20px rgba(139,92,246,.3);--btn-hover-shadow:0 0 30px rgba(167,139,250,.3);
+            --btn-bg:#8B5CF6;--btn-shadow:0 0 20px rgba(139,92,246,.3);--btn-hover-shadow:0 0 30px rgba(167,139,250,.3);
             --glow-opacity:.08;--progress-bg:rgba(139,92,246,.08);--grid-line:rgba(139,92,246,.04);
             --modal-overlay:rgba(0,0,0,.7);--dot-inactive:rgba(196,181,253,.2);--footer-bg:rgba(18,14,36,.6);
             --page-bg:#0c0a1a;--timeline-line:rgba(139,92,246,.2);--starburst-color:#fbbf24;
@@ -221,11 +219,6 @@
         .incomplete-email{font-family:'Inter',sans-serif;letter-spacing:.3px}
         .incomplete-email .ellipsis{opacity:.6;font-weight:300}
 
-        #mainSite{display:block}
-        #mainSite.hidden-page{display:none}
-        .sub-page{display:none}
-        .sub-page.active{display:block}
-
         .insta-icon-bw{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;background:#000;color:#fff;font-size:12px;font-weight:700;flex-shrink:0;line-height:1}
         [data-theme="dark"] .insta-icon-bw{background:#fff;color:#000}
         .insta-icon-bw svg{width:14px;height:14px;fill:currentColor}
@@ -233,7 +226,6 @@
         .po-status-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(16,185,129,.12);color:#059669;font-size:13px;font-weight:600;border:1px solid rgba(16,185,129,.3)}
         [data-theme="dark"] .po-status-badge{background:rgba(16,185,129,.15);color:#34d399}
 
-        /* ===== PRE-ORDER FORM ===== */
         .po-block{border:1px solid var(--border-color);border-radius:16px;padding:16px;margin-bottom:14px;background:var(--bg-card)}
         .po-block:last-child{margin-bottom:0}
         .po-block-title{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-color);margin-bottom:12px}
@@ -256,13 +248,6 @@
         .po-locate-btn:hover:not(:disabled){border-color:var(--accent-color)}
         .po-locate-btn:disabled{opacity:.65;cursor:wait}
         .po-spinner{width:14px;height:14px;border:2px solid var(--accent-border);border-top-color:var(--accent-color);border-radius:50%;display:inline-block;animation:poSpin .7s linear infinite}
-        .po-summary-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:8px 0;font-size:13px;border-bottom:1px dashed var(--border-color)}
-        .po-summary-row:last-child{border-bottom:none}
-        .po-summary-row>span{color:var(--text-muted);flex-shrink:0}
-        .po-summary-row>strong{color:var(--text-primary);font-weight:600;text-align:right;word-break:break-word}
-        .po-list{list-style:none;padding:0;margin:0}
-        .po-list li{position:relative;padding-left:18px;font-size:13px;line-height:1.7;color:var(--text-secondary)}
-        .po-list li::before{content:'';position:absolute;left:4px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--accent-color);opacity:.6}
     </style>
 </head>
 
@@ -277,7 +262,6 @@
     <!-- ==================== MAIN SITE ==================== -->
     <div id="mainSite">
 
-        <!-- Navigation -->
         <nav class="sticky top-0 z-50 backdrop-blur-md border-b transition-all duration-300" style="background:var(--nav-bg);border-color:var(--border-color)">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
                 <a href="#home" class="nav-brand group" onclick="event.preventDefault(); goHome();">
@@ -307,7 +291,6 @@
             </div>
         </nav>
 
-        <!-- Mobile Menu -->
         <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 bottom-0 w-72 z-[60] backdrop-blur-xl p-6" style="background:var(--bg-secondary);border-left:1px solid var(--border-color)">
             <div class="flex justify-between items-center mb-8">
                 <span class="accent-text-bright font-semibold text-lg">GodAura</span>
@@ -325,7 +308,6 @@
         </div>
         <div id="mobileOverlay" class="fixed inset-0 bg-black/50 z-[55] hidden" onclick="toggleMobileMenu()"></div>
 
-        <!-- Hero -->
         <section id="home" class="relative pt-10 pb-14 md:pt-16 md:pb-20">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
                 <div class="animate-in">
@@ -351,7 +333,6 @@
             </div>
         </section>
 
-        <!-- About -->
         <section id="about" class="relative py-14 md:py-20 section-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
                 <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -388,7 +369,6 @@
             </div>
         </section>
 
-        <!-- Science Meets Serenity -->
         <section class="relative py-14 md:py-20 section-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
                 <div class="section-card p-6 sm:p-8 md:p-12 relative overflow-hidden">
@@ -424,7 +404,6 @@
             </div>
         </section>
 
-        <!-- Carousel -->
         <section id="carousel" class="relative py-14 md:py-20 section-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
                 <div class="text-center mb-8 sm:mb-12">
@@ -456,7 +435,6 @@
             </div>
         </section>
 
-        <!-- Research -->
         <section id="research" class="relative py-14 md:py-20 section-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
                 <div class="text-center mb-8 sm:mb-12">
@@ -514,7 +492,6 @@
             </div>
         </section>
 
-        <!-- Products (SINGLE CENTERED) -->
         <section id="products" class="relative py-14 md:py-20 section-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
                 <div class="text-center mb-8 sm:mb-12">
@@ -557,7 +534,6 @@
             </div>
         </section>
 
-        <!-- Footer -->
         <footer style="border-top:1px solid var(--border-color);background:var(--footer-bg)">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
                 <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-10">
@@ -612,7 +588,6 @@
 
     <!-- ==================== SUBPAGES ==================== -->
 
-    <!-- LEARN MORE -->
     <div id="pageLearnMore" class="sub-page">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
             <div class="subpage-header">
@@ -651,7 +626,6 @@
         </div>
     </div>
 
-    <!-- ACHIEVEMENTS -->
     <div id="pageAchievements" class="sub-page">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
             <div class="subpage-header">
@@ -671,7 +645,6 @@
         </div>
     </div>
 
-    <!-- ALL RESEARCHES -->
     <div id="pageAllResearches" class="sub-page">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
             <div class="subpage-header">
@@ -717,9 +690,9 @@
         </div>
     </div>
 
-    <!-- ==================== PRE-ORDER MODAL (FULL FORM) ==================== -->
+    <!-- ==================== PRE-ORDER MODAL ==================== -->
     <div id="preOrderModal" class="modal-overlay" onclick="if(event.target===this) closePreOrder()">
-        <div class="rounded-[32px] p-5 sm:p-7 md:p-8 w-full max-w-lg mx-4 relative"
+        <div id="poShell" class="rounded-[32px] p-5 sm:p-7 md:p-8 w-full max-w-lg mx-4 relative"
             style="background:var(--bg-secondary);border:1px solid var(--border-color);box-shadow:var(--shadow-lg);animation:slideInUp .4s ease-out;max-height:95vh;overflow-y:auto;">
             <button onclick="closePreOrder()" class="absolute top-4 right-4 sm:top-6 sm:right-6" style="color:var(--text-muted)" aria-label="Close">
                 <i data-lucide="x" class="w-5 h-5"></i>
@@ -732,15 +705,13 @@
 
             <form id="preOrderForm" onsubmit="event.preventDefault(); submitPreOrder(event);">
 
-                <!-- ===== STEP 1: GOOGLE ACCOUNT ===== -->
+                <!-- Google account -->
                 <div class="po-block">
                     <div class="po-block-title"><i data-lucide="user-check"></i> Customer Account</div>
-
                     <div id="poAccountSignedOut">
                         <p class="text-xs mb-3" style="color:var(--text-secondary)">Sign in with Google to auto-fill your name and email.</p>
                         <div id="poGoogleButton" class="flex justify-center"></div>
                     </div>
-
                     <div id="poAccountSignedIn" class="hidden">
                         <div class="flex items-center gap-3">
                             <img id="poAccountAvatar" src="" alt="" class="w-11 h-11 rounded-full flex-shrink-0" style="border:1px solid var(--accent-border);background:var(--bg-input)">
@@ -752,14 +723,12 @@
                         </div>
                         <p class="po-hint success mt-2">Signed in with Google.</p>
                     </div>
-
                     <p class="po-error" id="err_account"></p>
                 </div>
 
-                <!-- ===== STEP 2: CONTACT ===== -->
+                <!-- Phone -->
                 <div class="po-block">
                     <div class="po-block-title"><i data-lucide="phone"></i> Contact Information</div>
-
                     <label class="po-label" for="poPhone">Phone number <span class="po-req">*</span></label>
                     <div class="po-phone-row">
                         <select id="poCountryCode" class="themed-input po-cc" aria-label="Country calling code"></select>
@@ -768,15 +737,13 @@
                     <p class="po-error" id="err_phone"></p>
                 </div>
 
-                <!-- ===== STEP 3: ADDRESS ===== -->
+                <!-- Address -->
                 <div class="po-block">
                     <div class="po-block-title"><i data-lucide="map-pin"></i> Delivery Address</div>
-
                     <button type="button" id="poLocationBtn" onclick="poUseMyLocation()" class="po-locate-btn mb-3">
                         <i data-lucide="locate-fixed" class="w-4 h-4"></i> Use my current location
                     </button>
                     <p class="po-hint mb-2" id="poLocationStatus"></p>
-
                     <div class="po-grid po-grid-2">
                         <div>
                             <label class="po-label" for="poCountry">Country <span class="po-req">*</span></label>
@@ -799,7 +766,6 @@
                             <p class="po-error" id="err_postal"></p>
                         </div>
                     </div>
-
                     <div class="mt-3">
                         <label class="po-label" for="poAddress">Full address <span class="po-req">*</span></label>
                         <textarea id="poAddress" rows="2" class="themed-input" placeholder="House / flat no., building, street, area"></textarea>
@@ -807,7 +773,7 @@
                     </div>
                 </div>
 
-                <!-- ===== STEP 4: AGREEMENT ===== -->
+                <!-- Agreement -->
                 <div class="po-block">
                     <div class="po-block-title"><i data-lucide="shield-check"></i> Agreement</div>
                     <label class="preorder-checkbox">
@@ -870,7 +836,6 @@
         </div>
     </div>
 
-    <!-- Toast -->
     <div id="toast" class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[200] rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none" style="background:var(--bg-secondary);border:1px solid var(--accent-border);box-shadow:var(--shadow-md);max-width:90vw">
         <div class="flex items-center gap-2 sm:gap-3">
             <i data-lucide="check-circle" class="w-4 h-4 sm:w-5 sm:h-5 accent-text"></i>
@@ -879,7 +844,7 @@
     </div>
 
     <script>
-        // ===== LUCIDE ICONS =====
+        // ===== LUCIDE =====
         lucide.createIcons();
 
         // ===== THEME =====
@@ -900,11 +865,52 @@
             updateThemeIcon(theme);
         })();
 
-        // ===== SUPABASE =====
+        // ===== SUPABASE (single client) =====
         const SUPABASE_URL='https://cmhiaokbdkhirdlmngqx.supabase.co';
         const SUPABASE_PUBLISHABLE_KEY='sb_publishable_VPdUuF_EGVhPxPEOP38_uA_CSLrRBTR';
-        const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+        const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{
+            auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true,
+                storageKey:'godaura-auth-token'
+            }
+        });
         console.log('✅ Supabase initialized');
+
+        // ===== AUTH STATE =====
+        const AUTH_STATE={ready:false,user:null,session:null};
+
+        supabaseClient.auth.onAuthStateChange((event,session)=>{
+            console.log('[auth]',event,session?'session':'no session');
+            AUTH_STATE.ready=true;
+            AUTH_STATE.session=session||null;
+            AUTH_STATE.user=session&&session.user?session.user:null;
+            if(AUTH_STATE.user){
+                const meta=AUTH_STATE.user.user_metadata||{};
+                localStorage.setItem('godaura_user',JSON.stringify({
+                    name:meta.full_name||meta.name||'',
+                    email:AUTH_STATE.user.email||'',
+                    picture:meta.avatar_url||meta.picture||''
+                }));
+                updateUIAfterLogin(meta.full_name||meta.name||'',meta.avatar_url||meta.picture||'');
+            }
+        });
+
+        const authReadyPromise=(async()=>{
+            try{
+                const {data,error}=await supabaseClient.auth.getSession();
+                if(error)console.warn('[auth] getSession error:',error.message);
+                AUTH_STATE.ready=true;
+                AUTH_STATE.session=data&&data.session?data.session:null;
+                AUTH_STATE.user=AUTH_STATE.session?AUTH_STATE.session.user:null;
+                console.log('[auth] initial:',AUTH_STATE.user?'user':'no user');
+            }catch(e){
+                console.warn('[auth] exception:',e);
+                AUTH_STATE.ready=true;
+            }
+            return AUTH_STATE.user;
+        })();
 
         // ===== GOOGLE SIGN-IN =====
         const GOOGLE_CLIENT_ID='564821545024-ssa6pn544flmglsv0jofrrd131ja1k49.apps.googleusercontent.com';
@@ -938,7 +944,6 @@
             poGoogleInitialized=true;
         }
 
-        // ===== HANDLE GOOGLE CREDENTIAL (shared callback) =====
         async function handleGoogleCredentialResponse(response){
             if(!response||!response.credential){showToast('Google sign-in failed.');return;}
             let payload;
@@ -953,14 +958,22 @@
                     provider:'google',
                     token:response.credential
                 });
-                if(error){
-                    console.warn('Supabase signInWithIdToken error:',error.message);
-                }else if(data&&data.user){
+                if(error){console.error('[auth] signIn error:',error);showToast('Sign-in failed: '+error.message);return;}
+                if(data&&data.user&&data.session){
                     sbUser=data.user;
-                    console.log('✅ Supabase session established for',sbUser.email);
+                    AUTH_STATE.ready=true;
+                    AUTH_STATE.user=data.user;
+                    AUTH_STATE.session=data.session;
+                    console.log('✅ Supabase session:',sbUser.email);
+                }else{
+                    console.error('[auth] no session returned');
+                    showToast('Sign-in failed: no session.');
+                    return;
                 }
             }catch(e){
-                console.warn('Supabase signInWithIdToken exception:',e);
+                console.error('[auth] exception:',e);
+                showToast('Sign-in failed: '+e.message);
+                return;
             }
 
             localStorage.setItem('godaura_user',JSON.stringify(user));
@@ -992,20 +1005,18 @@
         }
 
         function handleSignInClick(){
-            const stored=localStorage.getItem('godaura_user');
-            if(stored){
-                try{
-                    const parsed=JSON.parse(stored);
-                    document.getElementById('userModalName').textContent=parsed.name||'';
-                    document.getElementById('userModalEmail').textContent=parsed.email||'';
-                    const avatar=document.getElementById('userModalAvatar');
-                    if(parsed.picture){avatar.src=parsed.picture;avatar.style.display='block';}
-                    else{avatar.style.display='none';}
-                    document.getElementById('userModal').classList.add('active');
-                    document.body.style.overflow='hidden';
-                    setTimeout(()=>lucide.createIcons(),50);
-                    return;
-                }catch(e){}
+            if(AUTH_STATE.user){
+                const meta=AUTH_STATE.user.user_metadata||{};
+                document.getElementById('userModalName').textContent=meta.full_name||meta.name||'';
+                document.getElementById('userModalEmail').textContent=AUTH_STATE.user.email||'';
+                const avatar=document.getElementById('userModalAvatar');
+                const pic=meta.avatar_url||meta.picture||'';
+                if(pic){avatar.src=pic;avatar.style.display='block';}
+                else{avatar.style.display='none';}
+                document.getElementById('userModal').classList.add('active');
+                document.body.style.overflow='hidden';
+                setTimeout(()=>lucide.createIcons(),50);
+                return;
             }
             openSignIn();
         }
@@ -1018,6 +1029,7 @@
         async function logoutUser(){
             try{await supabaseClient.auth.signOut();}catch(e){}
             localStorage.removeItem('godaura_user');
+            AUTH_STATE.user=null;AUTH_STATE.session=null;
             closeUserModal();
             showToast('Signed out');
             const pill=document.getElementById('mainSignInBtn');
@@ -1034,12 +1046,14 @@
         }
 
         function checkStoredSession(){
+            if(AUTH_STATE.user){
+                const meta=AUTH_STATE.user.user_metadata||{};
+                updateUIAfterLogin(meta.full_name||meta.name||'',meta.avatar_url||meta.picture||'');
+                return;
+            }
             const user=localStorage.getItem('godaura_user');
             if(user){
-                try{
-                    const {name,picture}=JSON.parse(user);
-                    updateUIAfterLogin(name,picture);
-                }catch(e){}
+                try{const {name,picture}=JSON.parse(user);updateUIAfterLogin(name,picture);}catch(e){}
             }
         }
 
@@ -1124,7 +1138,7 @@
             });
         }
 
-        // ===== SUB PAGES (with scroll preservation) =====
+        // ===== SUBPAGES =====
         let scrollPositions={};
 
         function goHome(){
@@ -1193,7 +1207,7 @@
             setTimeout(()=>lucide.createIcons(),50);
         });
 
-        // ===== PRE-ORDER FORM (FULL) =====
+        // ===== PRE-ORDER FORM =====
         const PO_COUNTRIES=[
             {code:'IN',name:'India',dial:'+91'},{code:'US',name:'United States',dial:'+1'},
             {code:'GB',name:'United Kingdom',dial:'+44'},{code:'CA',name:'Canada',dial:'+1'},
@@ -1302,7 +1316,6 @@
             return valid;
         }
 
-        // ===== PO STATE =====
         const PO_STATE={user:null,location:null};
 
         function poApplyUserToPreOrder(user){
@@ -1332,7 +1345,6 @@
             $po('poAccountSignedOut').classList.remove('hidden');
         }
 
-        // ===== LOCATION =====
         function poSetLocationStatus(text,type){
             const el=$po('poLocationStatus');
             if(!el)return;
@@ -1399,8 +1411,7 @@
             );
         }
 
-        // ===== OPEN/CLOSE PRE-ORDER =====
-        function openPreOrder(deviceName){
+        async function openPreOrder(deviceName){
             document.getElementById('preOrderProductName').innerText=deviceName||'GodAura Pro';
             $po('termsCheckbox').checked=false;
             $po('updatesCheckbox').checked=false;
@@ -1412,15 +1423,23 @@
             poSetLocationStatus('','');
             hidePoErrorBox();
 
-            const stored=localStorage.getItem('godaura_user');
-            if(stored){
-                try{
-                    const parsed=JSON.parse(stored);
-                    poApplyUserToPreOrder(parsed);
-                }catch(e){poResetSignedInState();}
+            await authReadyPromise;
+
+            let uiUser=null;
+            if(AUTH_STATE.user){
+                const meta=AUTH_STATE.user.user_metadata||{};
+                uiUser={
+                    name:meta.full_name||meta.name||'',
+                    email:AUTH_STATE.user.email||'',
+                    picture:meta.avatar_url||meta.picture||''
+                };
             }else{
-                poResetSignedInState();
+                const stored=localStorage.getItem('godaura_user');
+                if(stored){try{uiUser=JSON.parse(stored);}catch(e){uiUser=null;}}
             }
+
+            if(uiUser){poApplyUserToPreOrder(uiUser);}
+            else{poResetSignedInState();}
 
             document.getElementById('preOrderModal').classList.add('active');
             document.body.style.overflow='hidden';
@@ -1447,32 +1466,34 @@
             box.textContent='';
         }
 
-        // ===== SUBMIT PRE-ORDER (SAVES TO SUPABASE) =====
         async function submitPreOrder(event){
             if(event)event.preventDefault();
             hidePoErrorBox();
 
-            // Validate
             if(!poValidateAll()){
                 showToast('Please fix the highlighted fields.');
                 return;
             }
 
-            // Check Supabase auth
+            await authReadyPromise;
+
             let sbUser=null;
             try{
                 const {data,error}=await supabaseClient.auth.getUser();
-                if(error)console.warn('getUser error:',error.message);
+                if(error)console.warn('[submit] getUser error:',error.message);
                 else if(data&&data.user)sbUser=data.user;
-            }catch(e){console.warn('getUser exception:',e);}
+            }catch(e){console.warn('[submit] getUser exception:',e);}
+
+            if(!sbUser&&AUTH_STATE.session&&AUTH_STATE.session.user){
+                sbUser=AUTH_STATE.session.user;
+            }
 
             if(!sbUser){
-                showPoErrorBox('Your sign-in session has expired. Please sign out and sign in with Google again.');
-                showToast('Please sign in again.');
+                console.error('[submit] No authenticated user.');
+                showPoErrorBox('Please sign in with Google before submitting your pre-order.');
                 return;
             }
 
-            // Prevent double submission
             if(preOrderBusy)return;
             preOrderBusy=true;
 
@@ -1486,17 +1507,12 @@
             const phone=($po('poPhone').value||'').trim();
             const fullPhone=dial?(dial+' '+phone).trim():phone;
             const address=($po('poAddress').value||'').trim();
-            const country=$po('poCountry').value||'';
-            const state=($po('poStateInput').value||'').trim();
-            const city=($po('poCity').value||'').trim();
-            const postal=($po('poPostal').value||'').trim();
-            const updates=$po('updatesCheckbox').checked;
 
             try{
-                // 1. Save/update profile
+                const meta=sbUser.user_metadata||{};
                 const profilePayload={
                     id:sbUser.id,
-                    name:(sbUser.user_metadata&&(sbUser.user_metadata.full_name||sbUser.user_metadata.name))||PO_STATE.user?.name||'',
+                    name:meta.full_name||meta.name||PO_STATE.user?.name||'',
                     email:sbUser.email||'',
                     phone:fullPhone,
                     address:address
@@ -1504,17 +1520,14 @@
                 const {error:profileError}=await supabaseClient
                     .from('profiles')
                     .upsert(profilePayload,{onConflict:'id'});
-                if(profileError){
-                    console.warn('Profile upsert error:',profileError);
-                }
+                if(profileError)console.warn('[submit] profile upsert error:',profileError);
 
-                // 2. Check for existing pre-order
                 const {data:existing,error:selectError}=await supabaseClient
                     .from('preorders')
                     .select('id')
                     .eq('user_id',sbUser.id)
                     .maybeSingle();
-                if(selectError)console.warn('Pre-order select error:',selectError);
+                if(selectError)console.warn('[submit] select error:',selectError);
 
                 let saveError=null;
                 if(existing&&existing.id){
@@ -1531,7 +1544,7 @@
                 }
 
                 if(saveError){
-                    console.error('Pre-order save error:',saveError);
+                    console.error('[submit] save error:',saveError);
                     showPoErrorBox('Could not save your pre-order: '+saveError.message);
                     submitBtn.disabled=false;
                     submitBtn.innerHTML=originalText;
@@ -1540,12 +1553,11 @@
                     return;
                 }
 
-                // 3. Success
                 showToast('✅ Pre-order confirmed! We will contact you at '+(sbUser.email||fullPhone));
 
                 const deviceName=$po('preOrderProductName').textContent.trim();
-                const modal=document.querySelector('#preOrderModal > div');
-                modal.innerHTML=`
+                const shell=document.getElementById('poShell');
+                shell.innerHTML=`
                     <button onclick="closePreOrder()" class="absolute top-4 right-4" style="color:var(--text-muted)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
@@ -1569,7 +1581,7 @@
                 preOrderBusy=false;
 
             }catch(err){
-                console.error('Submit pre-order exception:',err);
+                console.error('[submit] exception:',err);
                 showPoErrorBox('Unexpected error: '+err.message);
                 submitBtn.disabled=false;
                 submitBtn.innerHTML=originalText;
@@ -1602,7 +1614,7 @@
             setTimeout(()=>lucide.createIcons(),50);
         }
 
-        // ===== SCROLL ANIMATIONS =====
+        // ===== SCROLL ANIM =====
         const observer=new IntersectionObserver(entries=>{
             entries.forEach(entry=>{
                 if(entry.isIntersecting){
@@ -1649,28 +1661,21 @@
         // ===== INIT =====
         poPopulateSelects();
 
-        // Clear errors when user types
         ['poPhone','poCountry','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
             const el=document.getElementById(id);
             if(el){
-                el.addEventListener('input',function(){
-                    const map={poPhone:'phone',poCountry:'country',poStateInput:'state',poCity:'city',poPostal:'postal',poAddress:'address'};
-                    poSetError(map[id]||'', '');
-                });
-                el.addEventListener('change',function(){
-                    const map={poPhone:'phone',poCountry:'country',poStateInput:'state',poCity:'city',poPostal:'postal',poAddress:'address'};
-                    poSetError(map[id]||'', '');
-                });
+                const map={poPhone:'phone',poCountry:'country',poStateInput:'state',poCity:'city',poPostal:'postal',poAddress:'address'};
+                el.addEventListener('input',()=>poSetError(map[id]||'',''));
+                el.addEventListener('change',()=>poSetError(map[id]||'',''));
             }
         });
 
-        document.getElementById('termsCheckbox').addEventListener('change',function(){
-            poSetError('agreement','');
-        });
+        document.getElementById('termsCheckbox').addEventListener('change',()=>poSetError('agreement',''));
 
         if(!history.state){history.replaceState({page:'home'},'','#home');}
 
-        window.addEventListener('load',function(){
+        window.addEventListener('load',async function(){
+            await authReadyPromise;
             initGoogleSignIn();
             checkStoredSession();
         });
