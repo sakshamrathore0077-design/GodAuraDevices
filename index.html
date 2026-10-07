@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>GodAura - Wearable Meditation Technology</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;transition:background .4s,color .4s;overflow-x:hidden;width:100%}
+:root{
+--bg-primary:#faf8ff;--bg-secondary:#fff;--bg-card:#fff;--bg-input:#f3f0ff;
+--text-primary:#1e1b4b;--text-secondary:#4c4574;--text-muted:#8b83a8;
+--border-color:rgba(139,92,246,.1);--nav-bg:rgba(250,248,255,.88);
+--shadow-sm:0 1px 3px rgba(139,92,246,.06);--shadow-md:0 4px 20px rgba(139,92,246,.08);--shadow-lg:0 10px 40px rgba(139,92,246,.1);
+--accent-color:#7C3AED;--accent-bright:#8B5CF6;--accent-subtle:#7C3AED;
+--accent-bg:rgba(139,92,246,.08);--accent-border:rgba(139,92,246,.2);
+--btn-bg:#7C3AED;--btn-shadow:0 0 20px rgba(124,58,237,.2);--btn-hover-shadow:0 0 30px rgba(139,92,246,.3);
+--glow-opacity:.07;--progress-bg:rgba(139,92,246,.06);--grid-line:rgba(139,92,246,.03);
+--modal-overlay:rgba(30,27,75,.4);--dot-inactive:rgba(139,92,246,.15);--footer-bg:#f3f0ff;
+--page-bg:#faf8ff;--starburst-color:#f59e0b;
+}
+[data-theme="dark"]{
+--bg-primary:#0c0a1a;--bg-secondary:#120e24;--bg-card:rgba(30,27,55,.5);--bg-input:rgba(139,92,246,.06);
+--text-primary:#e8e0ff;--text-secondary:#b4a8d8;--text-muted:#7c6fa0;--nav-bg:rgba(12,10,26,.88);
+--accent-color:#C4B5FD;--accent-bright:#DDD6FE;--accent-subtle:#A78BFA;
+--accent-bg:rgba(139,92,246,.12);--accent-border:rgba(167,139,250,.25);
+--btn-bg:#8B5CF6;--footer-bg:rgba(18,14,36,.6);--page-bg:#0c0a1a;--starburst-color:#fbbf24;
+}
+body{background:var(--bg-primary);color:var(--text-primary)}
+.accent-text{color:var(--accent-color)}
+.accent-text-bright{color:var(--accent-bright);text-shadow:0 0 12px rgba(139,92,246,.3)}
+.accent-text-subtle{color:var(--accent-subtle)}
+
+@keyframes slideInUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulse-slow{0%,100%{opacity:var(--glow-opacity);transform:scale(1)}50%{opacity:calc(var(--glow-opacity) + .04);transform:scale(1.05)}}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes starburstPulse{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.05) rotate(3deg)}}
+@keyframes poSpin{to{transform:rotate(360deg)}}
+
+.animate-in{animation:slideInUp .6s ease-out forwards;opacity:0}
+.delay-1{animation-delay:.1s}.delay-2{animation-delay:.2s}.delay-3{animation-delay:.3s}
+.float{animation:float 5s ease-in-out infinite}
+.grid-bg{background-image:linear-gradient(to right,var(--grid-line) 1px,transparent 1px),linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);background-size:24px 24px}
+.section-hidden{opacity:0;transform:translateY(30px);transition:all .7s ease-out}
+.section-visible{opacity:1;transform:translateY(0)}
+
+.starburst{display:inline-block;background:var(--starburst-color);color:#1e1b4b;font-weight:800;font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;padding:6px 14px 6px 12px;border-radius:30px 30px 30px 4px;box-shadow:0 4px 12px rgba(245,158,11,.35);animation:starburstPulse 2.5s ease-in-out infinite;position:relative;white-space:nowrap}
+.starburst::after{content:'';position:absolute;top:-4px;right:-4px;width:12px;height:12px;background:var(--starburst-color);border-radius:50% 50% 50% 0;opacity:.5;transform:rotate(45deg)}
+.starburst-sm{font-size:.55rem;padding:4px 10px 4px 8px}
+
+.progress-bar{height:8px;border-radius:4px;background:var(--progress-bg);overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(to right,#7C3AED,#A78BFA);box-shadow:0 0 10px rgba(124,58,237,.2);transition:width 1.5s ease-out}
+
+.modal-overlay{position:fixed;inset:0;z-index:100;background:var(--modal-overlay);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.active{display:flex}
+
+.product-card{transition:all .3s;background:var(--bg-card);border:1px solid var(--border-color)}
+.product-card:hover{border-color:var(--accent-border);box-shadow:0 0 30px rgba(139,92,246,.08);transform:translateY(-4px)}
+
+.nav-link{position:relative;transition:color .3s;color:var(--text-secondary)}
+.nav-link::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent-color);transition:width .3s}
+.nav-link:hover::after,.nav-link.active::after{width:100%}
+.nav-link:hover,.nav-link.active{color:var(--accent-color)}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg-secondary)}
+::-webkit-scrollbar-thumb{background:#7C3AED;border-radius:3px}
+
+.btn-shine{position:relative;overflow:hidden}
+.btn-shine::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.12) 50%,transparent 60%);animation:shimmer 3s infinite}
+
+.mobile-menu{transform:translateX(100%);transition:transform .3s ease}
+.mobile-menu.open{transform:translateX(0)}
+
+.theme-toggle{width:52px;height:28px;border-radius:14px;cursor:pointer;background:#e2e8f0;border:1px solid rgba(0,0,0,.08);position:relative;transition:background .3s;flex-shrink:0}
+[data-theme="dark"] .theme-toggle{background:#1e1b4b;border-color:rgba(139,92,246,.2)}
+.theme-toggle-knob{width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .3s,background .3s;box-shadow:0 1px 4px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center}
+[data-theme="dark"] .theme-toggle-knob{transform:translateX(24px);background:#2e1065}
+
+.themed-card{background:var(--bg-card);border:1px solid var(--border-color);transition:all .3s}
+.themed-card:hover{border-color:var(--accent-border)}
+.section-card{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:32px;transition:all .3s}
+.themed-input{width:100%;background:var(--bg-input);border:1px solid var(--border-color);border-radius:12px;padding:12px 16px;color:var(--text-primary);transition:all .3s}
+.themed-input::placeholder{color:var(--text-muted)}
+.themed-input:focus{outline:none;border-color:var(--accent-border);box-shadow:0 0 15px rgba(139,92,246,.1)}
+
+.sub-page{display:none;min-height:100vh;background:var(--page-bg)}
+.sub-page.active{display:block;animation:fadeIn .4s ease-out}
+#mainSite.hidden-page{display:none}
+
+.timeline-item{position:relative;padding-left:40px;padding-bottom:40px}
+.timeline-item::before{content:'';position:absolute;left:15px;top:28px;bottom:0;width:2px;background:rgba(139,92,246,.15)}
+.timeline-item:last-child::before{display:none}
+.timeline-dot{position:absolute;left:6px;top:6px;width:20px;height:20px;border-radius:50%;background:var(--accent-bg);border:2px solid var(--accent-border);z-index:1}
+.timeline-dot.filled{background:var(--accent-color)}
+
+.research-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:32px;transition:all .3s}
+.research-card:hover{border-color:var(--accent-border);box-shadow:var(--shadow-md);transform:translateY(-2px)}
+
+.back-btn{display:inline-flex;align-items:center;gap:8px;color:var(--accent-color);font-weight:500;cursor:pointer;transition:all .3s;border:none;background:none;font-size:15px;padding:0;white-space:nowrap}
+.back-btn:hover{gap:12px;color:var(--accent-bright)}
+
+.nav-brand{display:flex;align-items:center;gap:8px}
+.nav-brand img{border-radius:10px;flex-shrink:0;transition:transform .3s}
+.nav-brand:hover img{transform:scale(1.08)}
+
+@media (max-width:480px){
+.nav-brand img{height:30px!important;border-radius:8px}
+.nav-brand span{font-size:16px}
+.theme-toggle{width:44px;height:24px}
+.theme-toggle-knob{width:18px;height:18px;top:2px;left:2px}
+[data-theme="dark"] .theme-toggle-knob{transform:translateX(20px)}
+}
+
+.subpage-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 16px;margin-bottom:8px}
+.subpage-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.2em;color:var(--accent-color);white-space:nowrap}
+@media (max-width:480px){
+.subpage-header{flex-direction:column;align-items:flex-start;gap:4px}
+.subpage-label{font-size:9px}
+.back-btn{font-size:13px}
+}
+
+.subpage-title{font-weight:800!important;letter-spacing:-.025em}
+.subpage-title .accent-text-bright{font-weight:800!important}
+@media (max-width:640px){.subpage-title{font-size:2rem!important;line-height:1.15!important}}
+@media (min-width:641px) and (max-width:1024px){.subpage-title{font-size:3.25rem!important;line-height:1.1!important}}
+@media (min-width:1025px){.subpage-title{font-size:4.25rem!important;line-height:1.05!important}}
+
+@media (max-width:640px){
+.themed-card{border-radius:16px;padding:16px!important}
+.section-card{border-radius:20px;padding:16px!important}
+.product-card{border-radius:16px}
+.product-card .p-6{padding:16px!important}
+.research-card{padding:16px!important;border-radius:16px}
+.timeline-item{padding-left:28px;padding-bottom:28px}
+.timeline-dot{width:16px;height:16px;left:4px;top:4px}
+.timeline-item::before{left:11px;top:22px}
+.modal-overlay .rounded-\[32px\]{border-radius:24px!important;padding:20px!important;margin:8px!important}
+.starburst{font-size:.5rem;padding:4px 10px 4px 8px}
+.starburst-sm{font-size:.45rem;padding:3px 8px 3px 6px}
+}
+
+.patented-badge{display:inline-block;position:relative}
+.patented-badge img{display:block;max-width:100%;height:auto;transform:rotate(-30deg)}
+
+.preorder-checkbox{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.preorder-checkbox input[type="checkbox"]{margin-top:3px;width:18px;height:18px;accent-color:var(--accent-color);flex-shrink:0;cursor:pointer}
+
+.meditation-quote{font-family:'Playfair Display',serif;font-style:italic;font-size:1.15rem;text-align:center;color:var(--text-secondary);padding:20px 0 8px;border-top:1px solid var(--border-color);margin-top:20px}
+.meditation-quote .quote-mark{font-size:2rem;color:var(--accent-color);opacity:.4;line-height:0.6}
+@media (max-width:480px){.meditation-quote{font-size:.95rem;padding:16px 8px 4px}}
+
+.sign-in-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;font-size:.875rem;font-weight:500;color:#fff;background:var(--btn-bg);box-shadow:var(--btn-shadow);transition:all .3s;cursor:pointer;border:none}
+.sign-in-btn:hover{transform:scale(1.02);box-shadow:var(--btn-hover-shadow)}
+.sign-in-btn i{width:18px;height:18px}
+@media (max-width:480px){.sign-in-btn{padding:6px 12px;font-size:.75rem}.sign-in-btn i{width:14px;height:14px}}
+
+.insta-icon-bw{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;background:#000;color:#fff;font-size:12px;font-weight:700;flex-shrink:0;line-height:1}
+[data-theme="dark"] .insta-icon-bw{background:#fff;color:#000}
+.insta-icon-bw svg{width:14px;height:14px;fill:currentColor}
+
+/* ===== PRE-ORDER MODAL ===== */
+#preOrderModal{padding:12px}
+#preOrderModal .po-shell{position:relative;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+#preOrderModal .po-head{position:sticky;top:0;z-index:6}
+
+.po-stepper{display:flex;gap:6px;margin-top:14px}
+.po-step-chip{flex:1 1 0;min-width:0;padding:7px 4px;border-radius:10px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-muted);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:default;transition:all .25s}
+.po-step-chip.done{color:var(--accent-color);border-color:var(--accent-border);cursor:pointer}
+.po-step-chip.active{color:#fff;background:var(--btn-bg);border-color:transparent;box-shadow:var(--btn-shadow)}
+
+#preOrderModal .preorder-step{display:none}
+#preOrderModal .preorder-step.active{display:block;animation:fadeIn .3s ease-out}
+
+.po-block{border:1px solid var(--border-color);border-radius:18px;padding:16px;margin-bottom:14px;background:var(--bg-card)}
+.po-block:last-child{margin-bottom:0}
+@media (min-width:640px){.po-block{padding:20px;border-radius:20px;margin-bottom:16px}}
+.po-block-title{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-color);margin-bottom:14px}
+.po-block-title i{width:15px;height:15px}
+
+.po-label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:6px}
+.po-req{color:#ef4444}
+.po-grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:640px){.po-grid-2{grid-template-columns:1fr 1fr}}
+.po-phone-row{display:flex;gap:10px}
+.po-phone-row .po-cc{width:118px;flex:0 0 auto}
+@media (max-width:420px){.po-phone-row .po-cc{width:100px;font-size:13px;padding-left:10px;padding-right:6px}}
+
+.po-hint{font-size:11.5px;line-height:1.5;color:var(--text-muted);margin-top:6px}
+.po-hint.error{color:#ef4444}
+.po-hint.success{color:#10b981}
+.po-error{display:none;font-size:12px;line-height:1.4;color:#ef4444;margin-top:6px}
+.po-error.show{display:block}
+.po-invalid{border-color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.08)!important}
+
+.po-locate-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;color:var(--accent-color);background:var(--accent-bg);border:1px solid var(--accent-border);cursor:pointer;transition:all .25s;width:100%;justify-content:center}
+@media (min-width:640px){.po-locate-btn{width:auto}}
+.po-locate-btn:hover:not(:disabled){border-color:var(--accent-color)}
+.po-locate-btn:disabled{opacity:.65;cursor:wait}
+
+.po-spinner{width:14px;height:14px;border:2px solid var(--accent-border);border-top-color:var(--accent-color);border-radius:50%;display:inline-block;animation:poSpin .7s linear infinite}
+
+.po-qty{display:inline-flex;align-items:center;border:1px solid var(--border-color);border-radius:12px;background:var(--bg-input);overflow:hidden}
+.po-qty button{width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;cursor:pointer;color:var(--accent-color);font-size:20px;line-height:1;transition:background .2s}
+.po-qty button:hover{background:var(--accent-bg)}
+.po-qty input{width:58px;height:42px;text-align:center;background:transparent;border:none;color:var(--text-primary);font-weight:700;font-size:15px;-moz-appearance:textfield}
+.po-qty input::-webkit-outer-spin-button,.po-qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.po-qty input:focus{outline:none}
+
+.po-pay-grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:640px){.po-pay-grid{grid-template-columns:1fr 1fr}}
+.po-pay-option{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--border-color);border-radius:14px;background:var(--bg-input);cursor:pointer;transition:all .22s}
+.po-pay-option:hover{border-color:var(--accent-border)}
+.po-pay-option.selected{border-color:var(--accent-color);box-shadow:0 0 0 3px var(--accent-bg)}
+.po-pay-option input[type="radio"]{width:18px;height:18px;accent-color:var(--accent-color);flex-shrink:0;cursor:pointer}
+.po-pay-option i{width:18px;height:18px;color:var(--accent-color);flex-shrink:0}
+.po-pay-copy{display:flex;flex-direction:column;min-width:0}
+.po-pay-label{font-size:13.5px;font-weight:600;color:var(--text-primary)}
+.po-pay-hint{font-size:11px;color:var(--text-muted)}
+
+#preOrderModal .preorder-checkbox span{font-size:13px;line-height:1.5;color:var(--text-secondary)}
+#preOrderModal .preorder-checkbox span a{color:var(--accent-color);text-decoration:underline}
+
+.po-summary-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:10px 0;font-size:13.5px;border-bottom:1px dashed var(--border-color)}
+.po-summary-row:last-child{border-bottom:none}
+.po-summary-row>span{color:var(--text-muted);flex-shrink:0}
+.po-summary-row>strong{color:var(--text-primary);font-weight:600;text-align:right;word-break:break-word}
+
+.po-list{list-style:none;padding:0;margin:0}
+.po-list li{position:relative;padding-left:18px;font-size:13px;line-height:1.7;color:var(--text-secondary)}
+.po-list li::before{content:'';position:absolute;left:4px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--accent-color);opacity:.6}
+
+.po-edit-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.po-edit-btn{padding:7px 14px;border-radius:10px;font-size:12px;font-weight:600;color:var(--accent-color);background:var(--accent-bg);border:1px solid var(--accent-border);cursor:pointer;transition:all .22s}
+.po-edit-btn:hover{border-color:var(--accent-color)}
+.po-link-btn{background:none;border:none;cursor:pointer;font-size:12px;font-weight:600;color:var(--accent-color);text-decoration:underline;flex-shrink:0}
+
+.po-footer{position:sticky;bottom:0;z-index:6;display:flex;gap:10px;padding:14px 20px;background:var(--bg-secondary);border-top:1px solid var(--border-color)}
+@media (min-width:640px){.po-footer{padding:16px 32px}}
+
+.po-btn-primary,.po-btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;transition:all .25s;border:1px solid transparent}
+.po-btn-primary{color:#fff;background:var(--btn-bg);box-shadow:var(--btn-shadow)}
+.po-btn-primary:hover:not(:disabled){box-shadow:var(--btn-hover-shadow);transform:translateY(-1px)}
+.po-btn-primary:disabled,.po-btn-primary.po-disabled{opacity:.45;cursor:not-allowed;box-shadow:none;transform:none}
+.po-btn-ghost{background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent-color);flex-shrink:0}
+.po-btn-ghost:hover{border-color:var(--accent-color)}
+
+#poSuccessPanel{animation:fadeIn .35s ease-out}
+
+/* ===== DASHBOARD ===== */
+.dash-block{background:var(--bg-card);border:1px solid var(--border-color);border-radius:18px;padding:18px}
+.dash-stat{background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:14px;padding:14px;text-align:center}
+.dash-stat-value{font-size:1.5rem;font-weight:800;color:var(--accent-bright);line-height:1.2}
+.dash-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-top:4px}
+.dash-session-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed var(--border-color);font-size:13px}
+.dash-session-row:last-child{border-bottom:none}
+.dash-badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:var(--accent-bg);color:var(--accent-color);border:1px solid var(--accent-border)}
+.dash-badge.pending{background:rgba(245,158,11,.12);color:#d97706;border-color:rgba(245,158,11,.3)}
+.dash-badge.confirmed{background:rgba(16,185,129,.12);color:#059669;border-color:rgba(16,185,129,.3)}
+.dash-empty{text-align:center;padding:24px 12px;color:var(--text-muted);font-size:13px}
+</style>
+</head>
+<body class="grid-bg">
+
+<!-- Background Glow Orbs -->
+<div class="fixed inset-0 pointer-events-none z-0">
+<div class="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] bg-violet-400 rounded-full blur-[120px]" style="animation:pulse-slow 6s ease-in-out infinite;opacity:var(--glow-opacity)"></div>
+<div class="absolute top-[40%] right-[-150px] w-[500px] h-[500px] bg-purple-500 rounded-full blur-[120px]" style="animation:pulse-slow 8s ease-in-out infinite 2s;opacity:var(--glow-opacity)"></div>
+<div class="absolute bottom-[-100px] left-[30%] w-[700px] h-[500px] bg-fuchsia-400 rounded-full blur-[120px]" style="animation:pulse-slow 7s ease-in-out infinite 1s;opacity:var(--glow-opacity)"></div>
+</div>
+
+<!-- ==================== MAIN SITE ==================== -->
+<div id="mainSite">
+
+<!-- Navigation -->
+<nav class="sticky top-0 z-50 backdrop-blur-md border-b transition-all duration-300" style="background:var(--nav-bg);border-color:var(--border-color)">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+<a href="#home" class="nav-brand group" onclick="event.preventDefault();goHome();">
+<img src="GodAura Logo.png" alt="GodAura Logo" class="h-8 w-auto sm:h-10 rounded-lg">
+<span class="text-lg sm:text-xl font-semibold accent-text-bright tracking-tight">GodAura</span>
+</a>
+<div class="hidden md:flex items-center gap-6 lg:gap-8">
+<a href="#home" class="nav-link text-sm font-medium active" onclick="event.preventDefault();goHome();">Home</a>
+<a href="#about" class="nav-link text-sm font-medium" onclick="event.preventDefault();goHome();">About Us</a>
+<a href="#research" class="nav-link text-sm font-medium" onclick="event.preventDefault();goHome();">Research</a>
+<a href="#products" class="nav-link text-sm font-medium" onclick="event.preventDefault();goHome();">Product</a>
+<a href="#" class="nav-link text-sm font-medium" onclick="event.preventDefault();openDashboard();">Dashboard</a>
+</div>
+<div class="flex items-center gap-2 sm:gap-4">
+<button onclick="toggleTheme()" class="theme-toggle" aria-label="Toggle theme">
+<div class="theme-toggle-knob">
+<i data-lucide="sun" class="w-3.5 h-3.5" id="themeIconSun" style="color:#f59e0b"></i>
+<i data-lucide="moon" class="w-3.5 h-3.5" id="themeIconMoon" style="color:#a78bfa;display:none"></i>
+</div>
+</button>
+<button onclick="openSignIn()" class="sign-in-btn hidden md:flex"><i data-lucide="log-in"></i> Sign In</button>
+<button onclick="toggleMobileMenu()" class="md:hidden" style="color:var(--text-secondary)"><i data-lucide="menu" class="w-6 h-6"></i></button>
+</div>
+</div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="mobile-menu fixed top-0 right-0 bottom-0 w-72 z-[60] backdrop-blur-xl p-6" style="background:var(--bg-secondary);border-left:1px solid var(--border-color)">
+<div class="flex justify-between items-center mb-8">
+<span class="accent-text-bright font-semibold text-lg">GodAura</span>
+<button onclick="toggleMobileMenu()" style="color:var(--text-muted)"><i data-lucide="x" class="w-6 h-6"></i></button>
+</div>
+<div class="flex flex-col gap-4">
+<a href="#home" onclick="toggleMobileMenu();goHome();" style="color:var(--text-secondary)" class="py-2 border-b">Home</a>
+<a href="#about" onclick="toggleMobileMenu();goHome();" style="color:var(--text-secondary)" class="py-2 border-b">About Us</a>
+<a href="#research" onclick="toggleMobileMenu();goHome();" style="color:var(--text-secondary)" class="py-2 border-b">Research</a>
+<a href="#products" onclick="toggleMobileMenu();goHome();" style="color:var(--text-secondary)" class="py-2 border-b">Product</a>
+<a href="#" onclick="event.preventDefault();toggleMobileMenu();openDashboard();" style="color:var(--text-secondary)" class="py-2 border-b">Dashboard</a>
+<button onclick="openSignIn();toggleMobileMenu();" class="mt-4 text-white rounded-xl px-5 py-3 text-sm font-medium flex items-center justify-center gap-2" style="background:var(--btn-bg);box-shadow:var(--btn-shadow)">
+<i data-lucide="log-in" class="w-4 h-4"></i> Sign In
+</button>
+</div>
+</div>
+<div id="mobileOverlay" class="fixed inset-0 bg-black/50 z-[55] hidden" onclick="toggleMobileMenu()"></div>
+
+<!-- Hero -->
+<section id="home" class="relative pt-10 pb-14 md:pt-16 md:pb-20">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+<div class="animate-in">
+<span class="inline-flex items-center gap-2 rounded-full px-3 py-1 sm:px-4 sm:py-1.5 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] accent-text mb-4 sm:mb-6" style="background:var(--accent-bg);border:1px solid var(--accent-border)">
+<span class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-violet-500 rounded-full"></span>
+Wearable Meditation Technology
+</span>
+</div>
+<h1 class="animate-in delay-1 text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.1] tracking-tight mb-4 sm:mb-6">
+<span style="color:var(--text-primary)">Calm Your Mind.</span><br>
+<span class="accent-text-bright">Feel The Aura.</span>
+</h1>
+<p class="animate-in delay-2 text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2" style="color:var(--text-secondary)">
+GodAura Devices creates <span class="accent-text-subtle font-medium">wearable meditation technology</span> that blends neuroscience, calming vibrations, and modern design.
+</p>
+<div class="animate-in delay-3 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
+<a href="#products" class="btn-shine text-white rounded-xl px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold transition-all duration-300" style="background:var(--btn-bg);box-shadow:var(--btn-shadow)" onclick="event.preventDefault();goHome();">Pre-Order Now</a>
+<button onclick="showPage('learnMore')" class="rounded-xl px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium transition-all duration-300 cursor-pointer" style="background:var(--accent-bg);border:1px solid var(--accent-border);color:var(--accent-color)">Learn More</button>
+</div>
+<div class="mt-8 flex justify-center patented-badge">
+<img src="https://godaura.org/Patented%20Tech.png" alt="Patented Technology" class="w-48 sm:w-64 md:w-80 lg:w-96 h-auto object-contain">
+</div>
+</div>
+</section>
+
+<!-- About -->
+<section id="about" class="relative py-14 md:py-20 section-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6">
+<div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+<div>
+<span class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-3 sm:mb-4">Our Mission</span>
+<h2 class="text-2xl sm:text-4xl md:text-5xl font-semibold leading-[1.1] tracking-tight mb-4 sm:mb-6" style="color:var(--text-primary)">
+Meditation should be <span class="accent-text-bright italic" style="font-family:'Playfair Display',serif">easier</span> for everyone
+</h2>
+<p class="text-base sm:text-lg leading-relaxed mb-4 sm:mb-6" style="color:var(--text-secondary)">
+GodAura Devices was founded in 2022 with one idea — <span class="accent-text-subtle font-medium">meditation should be easier for everyone</span>.
+</p>
+<p class="text-base sm:text-lg leading-relaxed mb-4 sm:mb-6" style="color:var(--text-secondary)">
+After seeing how many people struggled with stress, anxiety, insomnia, and constant overthinking, we wanted to create something that could genuinely help.
+</p>
+<p class="text-base sm:text-lg leading-relaxed" style="color:var(--text-secondary)">
+That inspired the idea behind GodAura: a <span class="accent-text-subtle font-medium">wearable device that uses carefully tuned rhythmic vibrations</span> to help guide the brain into a calmer, more focused state.
+</p>
+<div class="mt-6 sm:mt-8">
+<button onclick="showPage('achievements')" class="inline-flex items-center gap-2 rounded-xl px-5 sm:px-6 py-2.5 sm:py-3 text-sm font-semibold transition-all duration-300 cursor-pointer" style="background:var(--accent-bg);border:1px solid var(--accent-border);color:var(--accent-color)">
+View Our Past Achievements <i data-lucide="arrow-right" class="w-4 h-4"></i>
+</button>
+</div>
+</div>
+<div class="relative mt-6 md:mt-0">
+<div class="rounded-2xl overflow-hidden" style="border:1px solid var(--border-color);box-shadow:var(--shadow-lg)">
+<img src="123f0ecb-a22b-4bba-9f54-ca18633f0894.jpeg" alt="Meditation" class="w-full h-[260px] sm:h-[380px] md:h-[460px] object-cover">
+</div>
+<div class="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 rounded-2xl p-3 sm:p-5" style="background:var(--bg-secondary);border:1px solid var(--accent-border);box-shadow:var(--shadow-md)">
+<div class="text-2xl sm:text-3xl font-bold accent-text-bright">2022</div>
+<div class="text-[10px] sm:text-xs mt-0.5 sm:mt-1" style="color:var(--text-muted)">Founded</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Science Meets Serenity -->
+<section class="relative py-14 md:py-20 section-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6">
+<div class="section-card p-6 sm:p-8 md:p-12 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-[400px] h-[400px] bg-violet-400 rounded-full blur-[150px]" style="opacity:.05"></div>
+<div class="relative z-10 grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+<div>
+<span class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-3 sm:mb-4">Science Meets Serenity</span>
+<h2 class="text-2xl sm:text-4xl md:text-5xl font-semibold leading-[1.1] tracking-tight mb-4 sm:mb-6" style="color:var(--text-primary)">
+Every device is <span class="accent-text-bright">carefully designed</span>
+</h2>
+<p class="text-base sm:text-lg leading-relaxed mb-4 sm:mb-6" style="color:var(--text-secondary)">
+Every GodAura device is carefully designed to help people feel relief from <span class="accent-text-subtle font-medium">stress, anxiety, insomnia, overthinking, and mental fatigue</span> through guided vibration-based meditation.
+</p>
+<p class="text-base sm:text-lg leading-relaxed" style="color:var(--text-secondary)">
+Before launching any new model, our devices go through testing and real-user trials to study <span class="accent-text-subtle font-medium">relaxation levels, sleep improvement, focus, and overall mental wellness</span> progress.
+</p>
+</div>
+<div class="flex justify-center">
+<div class="relative">
+<div class="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 rounded-full flex items-center justify-center float" style="border:1px solid var(--accent-border)">
+<div class="w-36 h-36 sm:w-48 sm:h-48 md:w-60 md:h-60 rounded-full flex items-center justify-center" style="border:1px solid rgba(139,92,246,.1)">
+<div class="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full flex items-center justify-center" style="background:var(--accent-bg);box-shadow:0 0 40px rgba(139,92,246,.08)">
+<i data-lucide="brain" class="w-12 h-12 sm:w-16 sm:h-16 accent-text-bright"></i>
+</div>
+</div>
+</div>
+<div class="absolute top-0 sm:top-2 right-0 sm:right-2 rounded-full px-2 sm:px-3 py-1 sm:py-1.5 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider accent-text" style="background:var(--bg-primary);border:1px solid var(--accent-border)">EEG</div>
+<div class="absolute bottom-2 sm:bottom-6 left-0 sm:left-0 rounded-full px-2 sm:px-3 py-1 sm:py-1.5 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider accent-text" style="background:var(--bg-primary);border:1px solid var(--accent-border)">Haptic</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Research -->
+<section id="research" class="relative py-14 md:py-20 section-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6">
+<div class="text-center mb-8 sm:mb-12">
+<span class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-3 sm:mb-4">Research & Data</span>
+<h2 class="text-2xl sm:text-4xl md:text-5xl font-semibold leading-[1.1] tracking-tight mb-3 sm:mb-4" style="color:var(--text-primary)">
+Backed By <span class="accent-text-bright">Science</span>
+</h2>
+<p class="text-base sm:text-lg max-w-2xl mx-auto px-2" style="color:var(--text-secondary)">
+<span class="accent-text-subtle font-medium">Estimated results</span> — our research demonstrates the measurable impact of GodAura technology on mental wellness.
+</p>
+</div>
+<div class="grid md:grid-cols-2 gap-4 sm:gap-6">
+<div class="themed-card rounded-2xl p-6 sm:p-8 group">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background:var(--accent-bg)"><i data-lucide="trending-down" class="w-5 h-5 accent-text"></i></div>
+<h3 class="text-lg sm:text-xl font-semibold" style="color:var(--text-primary)">Stress Reduction</h3>
+</div>
+<p class="text-xs sm:text-sm mb-4" style="color:var(--text-muted)">Average cortisol decrease over 8 weeks</p>
+<div class="flex items-end gap-3 mb-4"><span class="text-3xl sm:text-5xl font-bold accent-text-bright">72%</span><span class="text-xs sm:text-sm pb-2" style="color:var(--text-muted)">decrease</span></div>
+<div class="progress-bar"><div class="progress-fill" data-width="72"></div></div>
+</div>
+<div class="themed-card rounded-2xl p-6 sm:p-8 group">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background:var(--accent-bg)"><i data-lucide="moon" class="w-5 h-5 accent-text"></i></div>
+<h3 class="text-lg sm:text-xl font-semibold" style="color:var(--text-primary)">Deep Sleep Time</h3>
+</div>
+<p class="text-xs sm:text-sm mb-4" style="color:var(--text-muted)">Increase in deep sleep duration</p>
+<div class="flex items-end gap-3 mb-4"><span class="text-3xl sm:text-5xl font-bold accent-text-bright">+2.4</span><span class="text-xs sm:text-sm pb-2" style="color:var(--text-muted)">hours</span></div>
+<div class="progress-bar"><div class="progress-fill" data-width="68"></div></div>
+</div>
+<div class="themed-card rounded-2xl p-6 sm:p-8 group">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background:var(--accent-bg)"><i data-lucide="target" class="w-5 h-5 accent-text"></i></div>
+<h3 class="text-lg sm:text-xl font-semibold" style="color:var(--text-primary)">Focus Tracking</h3>
+</div>
+<p class="text-xs sm:text-sm mb-4" style="color:var(--text-muted)">Cognitive focus score improvement</p>
+<div class="flex items-end gap-3 mb-4"><span class="text-3xl sm:text-5xl font-bold accent-text-bright">+70%</span><span class="text-xs sm:text-sm pb-2" style="color:var(--text-muted)">improvement</span></div>
+<div class="progress-bar"><div class="progress-fill" data-width="70"></div></div>
+</div>
+<div class="themed-card rounded-2xl p-6 sm:p-8 group">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background:var(--accent-bg)"><i data-lucide="heart" class="w-5 h-5 accent-text"></i></div>
+<h3 class="text-lg sm:text-xl font-semibold" style="color:var(--text-primary)">Emotional Balance</h3>
+</div>
+<p class="text-xs sm:text-sm mb-4" style="color:var(--text-muted)">Reported emotional stability & calmness</p>
+<div class="flex items-end gap-3 mb-4"><span class="text-3xl sm:text-5xl font-bold accent-text-bright">+61%</span><span class="text-xs sm:text-sm pb-2" style="color:var(--text-muted)">improvement</span></div>
+<div class="progress-bar"><div class="progress-fill" data-width="61"></div></div>
+</div>
+</div>
+<div class="text-center mt-8 sm:mt-10">
+<button onclick="showPage('allResearches')" class="inline-flex items-center gap-2 rounded-xl px-6 sm:px-8 py-3 sm:py-4 text-sm font-semibold transition-all duration-300 cursor-pointer" style="background:var(--accent-bg);border:1px solid var(--accent-border);color:var(--accent-color)">
+View All Researches <i data-lucide="arrow-right" class="w-4 h-4"></i>
+</button>
+</div>
+</div>
+</section>
+
+<!-- Product - SINGLE CENTERED -->
+<section id="products" class="relative py-14 md:py-20 section-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6">
+<div class="text-center mb-8 sm:mb-12">
+<span class="inline-block text-[10px] font-bold uppercase tracking-[0.2em] accent-text mb-3 sm:mb-4">Our Device</span>
+<h2 class="text-2xl sm:text-4xl md:text-5xl font-semibold leading-[1.1] tracking-tight mb-3 sm:mb-4" style="color:var(--text-primary)">
+GodAura <span class="accent-text-bright">Product</span>
+</h2>
+<p class="text-base sm:text-lg max-w-2xl mx-auto px-2" style="color:var(--text-secondary)">
+Meditation technology crafted with precision, designed for <span class="accent-text-subtle font-medium">everyday calm</span>.
+</p>
+<div class="mt-4 flex justify-center patented-badge">
+<img src="https://godaura.org/Patented%20Tech.png" alt="Patented Technology" class="w-40 sm:w-56 md:w-72 lg:w-80 h-auto object-contain">
+</div>
+</div>
+
+<div class="max-w-lg mx-auto">
+<div class="product-card rounded-2xl overflow-hidden relative">
+<div class="absolute top-4 right-4 z-10"><span class="starburst starburst-sm">Pre‑Order</span></div>
+<div class="relative aspect-[4/3] overflow-hidden">
+<img src="Exported Quality .jpg" alt="GodAura Pro" class="w-full h-full object-cover">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+</div>
+<div class="p-4 sm:p-6">
+<h3 class="text-lg sm:text-xl font-semibold mb-2" style="color:var(--text-primary)">GodAura Pro</h3>
+<p class="text-xs sm:text-sm leading-relaxed mb-4" style="color:var(--text-secondary)">
+Advanced meditation headband with <span class="accent-text-subtle">real-time brainwave tracking</span> and adaptive vibration therapy.
+</p>
+<div class="flex items-center justify-between flex-wrap gap-2">
+<span class="text-xl sm:text-2xl font-bold accent-text-bright">Coming Soon!</span>
+<button onclick="openPreOrder()" class="text-white rounded-xl px-4 sm:px-5 py-2 sm:py-2.5 text-sm font-medium transition-all" style="background:var(--btn-bg);box-shadow:var(--btn-shadow)">Pre-Order</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="meditation-quote max-w-2xl mx-auto">
+<span class="quote-mark">"</span>
+Peace comes from within. Do not seek it without.
+<span class="quote-mark">"</span>
+<span class="block text-xs font-normal not-italic mt-1 opacity-60" style="color:var(--text-muted)">— Buddha</span>
+</div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer style="border-top:1px solid var(--border-color);background:var(--footer-bg)">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
+<div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-10">
+<div>
+<h4 class="text-sm font-semibold mb-3 sm:mb-4" style="color:var(--text-primary)">Navigate</h4>
+<ul class="space-y-2 sm:space-y-3">
+<li><a href="#home" style="color:var(--text-secondary)" class="hover:opacity-70 text-sm" onclick="event.preventDefault();goHome();">Home</a></li>
+<li><a href="#about" style="color:var(--text-secondary)" class="hover:opacity-70 text-sm" onclick="event.preventDefault();goHome();">About Us</a></li>
+<li><a href="#research" style="color:var(--text-secondary)" class="hover:opacity-70 text-sm" onclick="event.preventDefault();goHome();">Research</a></li>
+<li><a href="#products" style="color:var(--text-secondary)" class="hover:opacity-70 text-sm" onclick="event.preventDefault();goHome();">Product</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-sm font-semibold mb-3 sm:mb-4" style="color:var(--text-primary)">Discover</h4>
+<ul class="space-y-2 sm:space-y-3">
+<li><button onclick="showPage('learnMore')" class="hover:opacity-70 text-sm" style="color:var(--text-secondary);background:none;border:none;cursor:pointer">Learn More</button></li>
+<li><button onclick="showPage('achievements')" class="hover:opacity-70 text-sm" style="color:var(--text-secondary);background:none;border:none;cursor:pointer">Achievements</button></li>
+<li><button onclick="showPage('allResearches')" class="hover:opacity-70 text-sm" style="color:var(--text-secondary);background:none;border:none;cursor:pointer">All Researches</button></li>
+</ul>
+</div>
+<div>
+<h4 class="text-sm font-semibold mb-3 sm:mb-4" style="color:var(--text-primary)">Account</h4>
+<ul class="space-y-2 sm:space-y-3">
+<li><a href="#products" style="color:var(--text-secondary)" class="hover:opacity-70 text-sm" onclick="event.preventDefault();goHome();">Pre-Order</a></li>
+<li><button onclick="openDashboard()" class="hover:opacity-70 text-sm" style="color:var(--text-secondary);background:none;border:none;cursor:pointer">Dashboard</button></li>
+</ul>
+</div>
+<div>
+<h4 class="text-sm font-semibold mb-3 sm:mb-4" style="color:var(--text-primary)">Contact</h4>
+<div class="space-y-2 sm:space-y-3">
+<a href="https://www.instagram.com/godauradevices" target="_blank" class="flex items-center gap-2 text-sm hover:opacity-70" style="color:var(--text-secondary)">
+<span class="insta-icon-bw"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" fill="currentColor"/><circle cx="12" cy="12" r="5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="#fff"/></svg></span>
+@godauradevices
+</a>
+<a href="tel:+919424848555" class="flex items-center gap-2 text-sm hover:opacity-70" style="color:var(--text-secondary)"><i data-lucide="phone" class="w-4 h-4"></i> +91 94250 22443</a>
+<div class="flex items-center gap-2 text-sm" style="color:var(--text-secondary)">
+<i data-lucide="mail" class="w-4 h-4"></i>
+<span>godaura.devices@gmail.com</span>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-5 sm:pt-6 flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4" style="border-top:1px solid var(--border-color)">
+<div class="flex items-center gap-3">
+<img src="GodAura Logo.png" alt="GodAura Logo" class="h-7 w-auto sm:h-8 rounded-lg">
+<span class="text-xs sm:text-sm" style="color:var(--text-muted)">GodAura Devices © 2022 — All rights reserved.</span>
+</div>
+</div>
+</div>
+</footer>
+
+</div><!-- end mainSite -->
+
+<!-- ==================== SUBPAGES ==================== -->
+
+<!-- LEARN MORE -->
+<div id="pageLearnMore" class="sub-page">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+<div class="subpage-header">
+<button onclick="hidePage('learnMore')" class="back-btn"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home</button>
+<span class="subpage-label">Our Story</span>
+</div>
+<h1 class="subpage-title text-3xl sm:text-5xl md:text-6xl font-extrabold leading-[1.05] tracking-tight mt-6 sm:mt-8 mb-6 sm:mb-8" style="color:var(--text-primary)">
+Learn More About <span class="accent-text-bright">GodAura</span>
+</h1>
+<div class="space-y-6 sm:space-y-8 text-base sm:text-lg leading-relaxed" style="color:var(--text-secondary)">
+<p>GodAura Devices was born from a deeply personal experience. Our founder spent years watching friends and family struggle with stress, anxiety, and sleepless nights — trying everything from meditation apps to breathing exercises, but never quite finding something that <span class="accent-text-subtle font-medium">truly quieted the mind</span>.</p>
+<div class="section-card p-6 sm:p-8 my-6 sm:my-8">
+<h2 class="text-xl sm:text-2xl font-semibold mb-4" style="color:var(--text-primary)">How It Works</h2>
+<p class="mb-4">GodAura devices use <span class="accent-text-subtle font-medium">rhythmic haptic vibrations</span> — precisely tuned frequencies that gently guide your brainwaves into calmer states.</p>
+<div class="grid sm:grid-cols-3 gap-4 sm:gap-6 mt-4 sm:mt-6">
+<div class="text-center p-3 sm:p-4">
+<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3" style="background:var(--accent-bg)"><i data-lucide="radio" class="w-5 h-5 sm:w-6 sm:h-6 accent-text"></i></div>
+<h4 class="font-semibold mb-1 text-sm sm:text-base" style="color:var(--text-primary)">Vibration Patterns</h4>
+<p class="text-xs sm:text-sm" style="color:var(--text-muted)">Calibrated frequencies target theta and alpha brainwave states.</p>
+</div>
+<div class="text-center p-3 sm:p-4">
+<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3" style="background:var(--accent-bg)"><i data-lucide="brain" class="w-5 h-5 sm:w-6 sm:h-6 accent-text"></i></div>
+<h4 class="font-semibold mb-1 text-sm sm:text-base" style="color:var(--text-primary)">EEG Monitoring</h4>
+<p class="text-xs sm:text-sm" style="color:var(--text-muted)">Real-time brainwave tracking adapts vibration intensity.</p>
+</div>
+<div class="text-center p-3 sm:p-4">
+<div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3" style="background:var(--accent-bg)"><i data-lucide="sparkles" class="w-5 h-5 sm:w-6 sm:h-6 accent-text"></i></div>
+<h4 class="font-semibold mb-1 text-sm sm:text-base" style="color:var(--text-primary)">AI Personalization</h4>
+<p class="text-xs sm:text-sm" style="color:var(--text-muted)">Machine learning creates custom sessions that evolve with you.</p>
+</div>
+</div>
+</div>
+<h2 class="text-xl sm:text-2xl font-semibold mt-8 sm:mt-12" style="color:var(--text-primary)">Our Vision</h2>
+<p>We envision a world where <span class="accent-text-subtle font-medium">mental wellness is accessible to everyone</span> — not just those who can afford therapists or retreats.</p>
+<h2 class="text-xl sm:text-2xl font-semibold mt-6 sm:mt-8" style="color:var(--text-primary)">The Team</h2>
+<p>Our team combines expertise in <span class="accent-text-subtle font-medium">neuroscience, haptic engineering, industrial design, and clinical psychology</span>.</p>
+</div>
+</div>
+</div>
+
+<!-- ACHIEVEMENTS -->
+<div id="pageAchievements" class="sub-page">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+<div class="subpage-header">
+<button onclick="hidePage('achievements')" class="back-btn"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to About</button>
+<span class="subpage-label">Milestones</span>
+</div>
+<h1 class="subpage-title text-3xl sm:text-5xl md:text-6xl font-extrabold leading-[1.05] tracking-tight mt-6 sm:mt-8 mb-3 sm:mb-4" style="color:var(--text-primary)">
+Our Past <span class="accent-text-bright">Achievements</span>
+</h1>
+<p class="text-base sm:text-lg mb-8 sm:mb-12" style="color:var(--text-secondary)">From a bold idea to a movement in wearable wellness.</p>
+<div class="mb-12 sm:mb-16">
+<div class="timeline-item"><div class="timeline-dot filled"></div><div class="section-card p-5 sm:p-6"><span class="text-xs sm:text-sm font-bold accent-text">Q1 2022</span><h3 class="text-lg sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">GodAura Founded</h3><p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">Three co-founders started GodAura in a small San Francisco apartment.</p></div></div>
+<div class="timeline-item"><div class="timeline-dot filled"></div><div class="section-card p-5 sm:p-6"><span class="text-xs sm:text-sm font-bold accent-text">Q3 2022</span><h3 class="text-lg sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">First Prototype — ZenBand v0.1</h3><p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">Our first working prototype demonstrated that haptic vibrations could measurably reduce heart rate and cortisol levels.</p></div></div>
+<div class="timeline-item"><div class="timeline-dot filled"></div><div class="section-card p-5 sm:p-6"><span class="text-xs sm:text-sm font-bold accent-text">Q1 2023</span><h3 class="text-lg sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">$4.2M Seed Funding</h3><p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">Secured seed funding from leading wellness-tech investors.</p></div></div>
+<div class="timeline-item"><div class="timeline-dot"></div><div class="section-card p-5 sm:p-6"><span class="text-xs sm:text-sm font-bold accent-text">Q1 2024</span><h3 class="text-lg sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">CES Innovation Award</h3><p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">Won the CES Innovation Award in the Wellness & Wearable category.</p></div></div>
+<div class="timeline-item"><div class="timeline-dot"></div><div class="section-card p-5 sm:p-6"><span class="text-xs sm:text-sm font-bold accent-text">Q4 2024</span><h3 class="text-lg sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">50,000+ Users Worldwide</h3><p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">Reached a milestone of 50,000 active GodAura users across 28 countries.</p></div></div>
+</div>
+</div>
+</div>
+
+<!-- ALL RESEARCHES -->
+<div id="pageAllResearches" class="sub-page">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+<div class="subpage-header">
+<button onclick="hidePage('allResearches')" class="back-btn"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Research</button>
+<span class="subpage-label">All Researches</span>
+</div>
+<h1 class="subpage-title text-3xl sm:text-5xl md:text-6xl font-extrabold leading-[1.05] tracking-tight mt-6 sm:mt-8 mb-3 sm:mb-4" style="color:var(--text-primary)">
+Our <span class="accent-text-bright">Research</span> Library
+</h1>
+<p class="text-base sm:text-lg mb-8 sm:mb-12" style="color:var(--text-secondary)">Peer-reviewed studies and real-user data that validate the impact of GodAura technology.</p>
+<div class="space-y-5 sm:space-y-6">
+<div class="research-card">
+<div class="flex items-start gap-3 sm:gap-4">
+<div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex-shrink-0 flex items-center justify-center mt-0.5 sm:mt-1" style="background:var(--accent-bg)"><i data-lucide="file-text" class="w-4 h-4 sm:w-5 sm:h-5 accent-text"></i></div>
+<div>
+<span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider accent-text">Published — Journal of Neurotherapy, 2023</span>
+<h3 class="text-base sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">Haptic Vibration Therapy and Cortisol Reduction</h3>
+<p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">A 200-participant, 8-week randomized controlled trial demonstrating 42% average reduction in salivary cortisol levels.</p>
+</div>
+</div>
+</div>
+<div class="research-card">
+<div class="flex items-start gap-3 sm:gap-4">
+<div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex-shrink-0 flex items-center justify-center mt-0.5 sm:mt-1" style="background:var(--accent-bg)"><i data-lucide="moon" class="w-4 h-4 sm:w-5 sm:h-5 accent-text"></i></div>
+<div>
+<span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider accent-text">Published — Sleep Medicine Reviews, 2024</span>
+<h3 class="text-base sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">Wearable Haptic Stimulation for Insomnia</h3>
+<p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">Polysomnography study showing increased deep sleep duration by 38 minutes and reduced sleep onset latency by 22 minutes.</p>
+</div>
+</div>
+</div>
+<div class="research-card">
+<div class="flex items-start gap-3 sm:gap-4">
+<div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex-shrink-0 flex items-center justify-center mt-0.5 sm:mt-1" style="background:var(--accent-bg)"><i data-lucide="target" class="w-4 h-4 sm:w-5 sm:h-5 accent-text"></i></div>
+<div>
+<span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider accent-text">Published — Cognitive Neuroscience, 2024</span>
+<h3 class="text-base sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">Adaptive Vibration Feedback and Sustained Attention</h3>
+<p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">EEG-monitored study demonstrating 37% improvement in sustained attention scores.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== USER DASHBOARD ==================== -->
+<div id="pageDashboard" class="sub-page">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+<div class="subpage-header">
+<button onclick="hidePage('dashboard')" class="back-btn"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home</button>
+<span class="subpage-label">My Account</span>
+</div>
+<h1 class="subpage-title text-3xl sm:text-5xl md:text-6xl font-extrabold leading-[1.05] tracking-tight mt-6 sm:mt-8 mb-6 sm:mb-8" style="color:var(--text-primary)">
+Your <span class="accent-text-bright">Dashboard</span>
+</h1>
+
+<div id="dashLoading" class="dash-block text-center py-10">
+<div class="po-spinner mx-auto" style="width:24px;height:24px;border-width:3px"></div>
+<p class="text-sm mt-3" style="color:var(--text-muted)">Loading your dashboard…</p>
+</div>
+
+<div id="dashSignedOut" class="dash-block text-center py-10" style="display:none">
+<div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:var(--accent-bg)">
+<i data-lucide="lock" class="w-7 h-7 accent-text"></i>
+</div>
+<h3 class="text-lg font-semibold mb-2" style="color:var(--text-primary)">Please sign in</h3>
+<p class="text-sm mb-5" style="color:var(--text-secondary)">Sign in with Google to see your profile, pre-order status and meditation activity.</p>
+<button onclick="openSignIn()" class="po-btn-primary mx-auto"><i data-lucide="log-in" class="w-4 h-4"></i> Sign In with Google</button>
+</div>
+
+<div id="dashContent" style="display:none">
+<div class="dash-block mb-5">
+<div class="flex items-center gap-3 mb-4">
+<img id="dashAvatar" src="" alt="" class="w-12 h-12 rounded-full flex-shrink-0" style="border:1px solid var(--accent-border);background:var(--bg-input)">
+<div class="min-w-0 flex-1">
+<div id="dashName" class="text-base font-semibold truncate" style="color:var(--text-primary)"></div>
+<div id="dashEmail" class="text-xs truncate" style="color:var(--text-muted)"></div>
+</div>
+<button onclick="logout()" class="po-link-btn">Log out</button>
+</div>
+<div class="po-grid po-grid-2">
+<div>
+<label class="po-label" for="dashPhone">Phone</label>
+<input id="dashPhone" type="tel" class="themed-input" placeholder="Add your phone">
+</div>
+<div>
+<label class="po-label" for="dashAddress">Address</label>
+<input id="dashAddress" type="text" class="themed-input" placeholder="Add your address">
+</div>
+</div>
+<div class="flex items-center gap-3 mt-3">
+<button onclick="saveProfileFromDashboard()" class="po-btn-primary" style="padding:10px 18px;font-size:13px"><i data-lucide="save" class="w-4 h-4"></i> Save Profile</button>
+<span id="dashProfileSaved" class="text-xs" style="color:#10b981;display:none">Saved ✓</span>
+</div>
+</div>
+
+<div class="dash-block mb-5">
+<div class="po-block-title"><i data-lucide="package"></i> Pre-Order</div>
+<div id="dashPreorder"></div>
+</div>
+
+<div class="dash-block mb-5">
+<div class="po-block-title"><i data-lucide="activity"></i> Meditation Activity</div>
+<div id="dashStats" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4"></div>
+<div id="dashSessions"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== PRE-ORDER MODAL ==================== -->
+<div id="preOrderModal" class="modal-overlay" onclick="if(event.target===this)closePreOrder()">
+<div class="po-shell rounded-[24px] sm:rounded-[32px]" style="background:var(--bg-secondary);border:1px solid var(--border-color);box-shadow:var(--shadow-lg);animation:slideInUp .4s ease-out">
+
+<div class="po-head px-5 sm:px-8 pt-5 sm:pt-7 pb-4" style="background:var(--bg-secondary);border-bottom:1px solid var(--border-color)">
+<button onclick="closePreOrder()" class="absolute top-4 right-4 sm:top-6 sm:right-6" style="color:var(--text-muted)" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+<h3 class="text-lg sm:text-2xl font-semibold pr-10" style="color:var(--text-primary)">Pre-Order <span class="accent-text-bright">GodAura Pro</span></h3>
+<p class="text-xs sm:text-sm mt-1" style="color:var(--text-secondary)">Reserve your device today — you will not be charged now.</p>
+<div class="po-stepper" id="poStepper">
+<button type="button" class="po-step-chip" data-step="1">1 · Account</button>
+<button type="button" class="po-step-chip" data-step="2">2 · Address</button>
+<button type="button" class="po-step-chip" data-step="3">3 · Review</button>
+</div>
+</div>
+
+<form id="preOrderForm" novalidate onsubmit="event.preventDefault();submitPreOrder();">
+<div class="px-5 sm:px-8 py-5 sm:py-6">
+
+<!-- Step 1 -->
+<section class="preorder-step active" data-step="1">
+<div class="po-block">
+<div class="po-block-title"><i data-lucide="user-check"></i> Customer Account</div>
+<div id="poAccountSignedOut">
+<p class="text-sm mb-3" style="color:var(--text-secondary)">Sign in with Google to continue. Your Google name and email are used for this pre-order.</p>
+<div id="poGoogleButton" class="flex justify-center"></div>
+</div>
+<div id="poAccountSignedIn" class="hidden">
+<div class="flex items-center gap-3">
+<img id="poAccountAvatar" src="" alt="" class="w-11 h-11 rounded-full flex-shrink-0" style="border:1px solid var(--accent-border);background:var(--bg-input)">
+<div class="min-w-0 flex-1">
+<div id="poAccountName" class="text-sm font-semibold truncate" style="color:var(--text-primary)"></div>
+<div id="poAccountEmail" class="text-xs truncate" style="color:var(--text-muted)"></div>
+</div>
+<button type="button" onclick="poSwitchAccount()" class="po-link-btn">Switch</button>
+</div>
+<p class="po-hint success mt-3">Signed in with Google — name and email filled in automatically.</p>
+</div>
+<p class="po-error" id="err_account"></p>
+</div>
+<div class="po-block">
+<div class="po-block-title"><i data-lucide="phone"></i> Contact Information</div>
+<label class="po-label" for="poPhone">Phone number <span class="po-req">*</span></label>
+<div class="po-phone-row">
+<select id="poCountryCode" class="themed-input po-cc" aria-label="Country calling code"></select>
+<input id="poPhone" type="tel" class="themed-input" placeholder="98765 43210" inputmode="tel" autocomplete="tel-national">
+</div>
+<p class="po-hint">Pick your country calling code and enter your number.</p>
+<p class="po-error" id="err_phone"></p>
+</div>
+</section>
+
+<!-- Step 2 -->
+<section class="preorder-step" data-step="2">
+<div class="po-block">
+<div class="po-block-title"><i data-lucide="map-pin"></i> Delivery Address</div>
+<button type="button" id="poLocationBtn" onclick="poUseMyLocation()" class="po-locate-btn"><i data-lucide="locate-fixed" class="w-4 h-4"></i> Use my current location</button>
+<p class="po-hint" id="poLocationStatus"></p>
+<div class="po-grid po-grid-2 mt-4">
+<div><label class="po-label" for="poCountry">Country <span class="po-req">*</span></label><select id="poCountry" class="themed-input"></select><p class="po-error" id="err_country"></p></div>
+<div><label class="po-label" for="poStateInput">State / Province <span class="po-req">*</span></label><input id="poStateInput" type="text" class="themed-input" placeholder="e.g. Maharashtra"><p class="po-error" id="err_state"></p></div>
+<div><label class="po-label" for="poCity">City <span class="po-req">*</span></label><input id="poCity" type="text" class="themed-input" placeholder="e.g. Pune"><p class="po-error" id="err_city"></p></div>
+<div><label class="po-label" for="poPostal">PIN / ZIP / Postal code <span class="po-req">*</span></label><input id="poPostal" type="text" class="themed-input" placeholder="e.g. 411001"><p class="po-error" id="err_postal"></p></div>
+</div>
+<div class="mt-4">
+<label class="po-label" for="poAddress">Full street / locality address <span class="po-req">*</span></label>
+<textarea id="poAddress" rows="3" class="themed-input" placeholder="House / flat no., building, street, area, landmark"></textarea>
+<p class="po-error" id="err_address"></p>
+</div>
+</div>
+</section>
+
+<!-- Step 3 -->
+<section class="preorder-step" data-step="3">
+<div class="po-block">
+<div class="po-block-title"><i data-lucide="clipboard-list"></i> Order Summary</div>
+<div id="poSummary"></div>
+</div>
+<div class="po-block">
+<div class="po-block-title"><i data-lucide="shield-check"></i> Agreement</div>
+<label class="preorder-checkbox">
+<input type="checkbox" id="poAgreement">
+<span>I agree to the <a href="#" onclick="showToast('The GodAura user agreement would open here.');return false;">GodAura user agreement</a>, <a href="#" onclick="showToast('The pre-order terms would open here.');return false;">pre-order terms</a>, and applicable <a href="#" onclick="showToast('The policies would open here.');return false;">policies</a>. <span class="po-req">*</span></span>
+</label>
+<p class="po-error" id="err_agreement"></p>
+<label class="preorder-checkbox mt-3">
+<input type="checkbox" id="poUpdates">
+<span>Send me email updates about GodAura news and offers.</span>
+</label>
+</div>
+<div class="po-block">
+<div class="po-block-title"><i data-lucide="info"></i> Before You Submit</div>
+<ul class="po-list">
+<li>No payment is taken today.</li>
+<li>We will email you when your device is ready to ship.</li>
+<li>You can cancel your pre-order at any time before shipping.</li>
+</ul>
+<div class="po-edit-row">
+<button type="button" class="po-edit-btn" onclick="poSetStep(1)">Edit account</button>
+<button type="button" class="po-edit-btn" onclick="poSetStep(2)">Edit address</button>
+</div>
+</div>
+</section>
+
+</div>
+
+<div class="po-footer" id="poFooter">
+<button type="button" id="poBackBtn" class="po-btn-ghost" onclick="poPrevStep()" style="display:none"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
+<button type="button" id="poNextBtn" class="po-btn-primary flex-1" onclick="poNextStep()">Continue <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+<button type="submit" id="poSubmitBtn" class="po-btn-primary flex-1" style="display:none" disabled><i data-lucide="check" class="w-4 h-4"></i> Submit Pre-Order</button>
+</div>
+</form>
+
+<div id="poSuccessPanel" class="hidden px-5 sm:px-8 py-8 text-center">
+<div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background:var(--accent-bg)"><i data-lucide="check-circle-2" class="w-8 h-8 accent-text"></i></div>
+<h3 class="text-xl sm:text-2xl font-semibold mb-2" style="color:var(--text-primary)">Pre-Order Received</h3>
+<p class="text-sm mb-5" style="color:var(--text-secondary)">Thank you! Your pre-order has been recorded. We will email you at <strong id="poSuccessEmail" style="color:var(--text-primary)"></strong> as soon as your device is ready.</p>
+<div class="po-block text-left mx-auto" style="max-width:420px">
+<div class="po-summary-row"><span>Order reference</span><strong id="poSuccessRef"></strong></div>
+<div class="po-summary-row"><span>Status</span><strong>Pending</strong></div>
+<div class="po-summary-row"><span>Payment</span><strong>Not charged yet</strong></div>
+</div>
+<button type="button" onclick="closePreOrder()" class="po-btn-primary w-full rounded-xl py-3 font-semibold mt-6 mx-auto" style="max-width:420px">Done</button>
+</div>
+
+</div>
+</div>
+
+<!-- ==================== SIGN-IN MODAL ==================== -->
+<div id="signInModal" class="modal-overlay" onclick="if(event.target===this)closeSignIn()">
+<div class="rounded-[32px] p-6 sm:p-8 md:p-10 w-full max-w-md mx-4 relative" style="background:var(--bg-secondary);border:1px solid var(--border-color);box-shadow:var(--shadow-lg);animation:slideInUp .4s ease-out">
+<button onclick="closeSignIn()" class="absolute top-4 right-4 sm:top-6 sm:right-6" style="color:var(--text-muted)"><i data-lucide="x" class="w-5 h-5"></i></button>
+<div class="text-center mb-6">
+<div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4" style="background:var(--accent-bg)"><i data-lucide="user" class="w-7 h-7 sm:w-8 sm:h-8 accent-text"></i></div>
+<h3 class="text-xl sm:text-2xl font-semibold" style="color:var(--text-primary)">Welcome Back</h3>
+<p class="text-xs sm:text-sm mt-1" style="color:var(--text-secondary)">Sign in with Google</p>
+</div>
+<div id="googleSignInButton" class="flex justify-center"></div>
+<div class="text-center text-[10px] sm:text-xs mt-4 opacity-60" style="color:var(--text-muted)">Secure Google authentication</div>
+</div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[200] rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none" style="background:var(--bg-secondary);border:1px solid var(--accent-border);box-shadow:var(--shadow-md);max-width:90vw">
+<div class="flex items-center gap-2 sm:gap-3">
+<i data-lucide="check-circle" class="w-4 h-4 sm:w-5 sm:h-5 accent-text"></i>
+<span id="toastMessage" class="text-xs sm:text-sm font-medium" style="color:var(--text-primary)"></span>
+</div>
+</div>
+
+<script>
+// ===== LUCIDE ICONS =====
+lucide.createIcons();
+
+// ===== THEME =====
+function toggleTheme(){
+    const html=document.documentElement;
+    const next=html.getAttribute('data-theme')==='dark'?'light':'dark';
+    html.setAttribute('data-theme',next);
+    localStorage.setItem('godaura-theme',next);
+    updateThemeIcon(next);
+}
+function updateThemeIcon(theme){
+    document.getElementById('themeIconSun').style.display=theme==='dark'?'none':'block';
+    document.getElementById('themeIconMoon').style.display=theme==='dark'?'block':'none';
+}
+(function(){
+    const theme=localStorage.getItem('godaura-theme')||'light';
+    document.documentElement.setAttribute('data-theme',theme);
+    updateThemeIcon(theme);
+})();
+
+// ===== SUPABASE =====
+const SUPABASE_URL='https://cmhiaokbdkhirdlmngqx.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_VPdUuF_EGVhPxPEOP38_uA_CSLrRBTR';
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+console.log('Supabase initialized');
+
+// ===== AUTH HELPERS =====
+async function getCurrentUser(){
+    try{
+        const {data,error}=await supabaseClient.auth.getUser();
+        if(error)return null;
+        return data?data.user:null;
+    }catch(e){return null;}
+}
+async function signInToSupabaseWithGoogle(credential){
+    try{
+        const {data,error}=await supabaseClient.auth.signInWithIdToken({provider:'google',token:credential});
+        if(error){console.warn('Supabase Google sign-in error:',error.message);return null;}
+        return data?data.user:null;
+    }catch(e){console.warn('Supabase Google sign-in exception:',e);return null;}
+}
+async function logout(){
+    try{await supabaseClient.auth.signOut();}catch(e){}
+    localStorage.removeItem('godaura_user');
+    const btn=document.querySelector('.sign-in-btn');
+    if(btn){btn.innerHTML='<i data-lucide="log-in"></i> Sign In';lucide.createIcons();}
+    showToast('Signed out');
+    if(document.getElementById('pageDashboard').classList.contains('active'))renderDashboardSignedOut();
+    if(document.getElementById('preOrderModal').classList.contains('active'))poSwitchAccount();
+}
+
+// ===== PROFILE =====
+async function loadProfile(){
+    const user=await getCurrentUser();
+    if(!user)return null;
+    try{
+        const {data,error}=await supabaseClient.from('profiles').select('*').eq('id',user.id).maybeSingle();
+        if(error){console.warn('loadProfile error:',error.message);return null;}
+        return data||{id:user.id,name:'',email:user.email||'',phone:'',address:''};
+    }catch(e){console.warn('loadProfile exception:',e);return null;}
+}
+async function saveProfile(updates){
+    const user=await getCurrentUser();
+    if(!user)return null;
+    const payload=Object.assign({id:user.id},updates);
+    try{
+        const {data,error}=await supabaseClient.from('profiles').upsert(payload,{onConflict:'id'}).select().maybeSingle();
+        if(error){console.warn('saveProfile error:',error.message);return null;}
+        return data;
+    }catch(e){console.warn('saveProfile exception:',e);return null;}
+}
+
+// ===== PRE-ORDER DATA =====
+async function loadPreorder(){
+    const user=await getCurrentUser();
+    if(!user)return null;
+    try{
+        const {data,error}=await supabaseClient.from('preorders').select('*').eq('user_id',user.id).maybeSingle();
+        if(error){console.warn('loadPreorder error:',error.message);return null;}
+        return data;
+    }catch(e){console.warn('loadPreorder exception:',e);return null;}
+}
+
+// ===== ACTIVITY SESSIONS =====
+async function loadActivitySessions(){
+    const user=await getCurrentUser();
+    if(!user)return[];
+    try{
+        const {data,error}=await supabaseClient.from('activity_sessions').select('*').eq('user_id',user.id).order('started_at',{ascending:false}).limit(50);
+        if(error){console.warn('loadActivitySessions error:',error.message);return[];}
+        return data||[];
+    }catch(e){console.warn('loadActivitySessions exception:',e);return[];}
+}
+
+// ===== GOOGLE SIGN-IN =====
+const GOOGLE_CLIENT_ID='564821545024-ssa6pn544flmglsv0jofrrd131ja1k49.apps.googleusercontent.com';
+let googleRetries=0;
+
+function initGoogleSignIn(){
+    if(typeof google!=='undefined'&&google.accounts){
+        google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:handleGoogleCredentialResponse});
+        const btn=document.getElementById('googleSignInButton');
+        if(btn)google.accounts.id.renderButton(btn,{theme:'outline',size:'large',width:'100%'});
+        google.accounts.id.prompt();
+    }else{
+        setTimeout(initGoogleSignIn,500);
+    }
+}
+
+function initPoGoogle(){
+    const container=document.getElementById('poGoogleButton');
+    if(!container)return;
+    if(typeof google==='undefined'||!google.accounts||!google.accounts.id){
+        if(googleRetries++<20)setTimeout(initPoGoogle,400);
+        return;
+    }
+    googleRetries=0;
+    google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:handleGoogleCredentialResponse});
+    container.innerHTML='';
+    const width=Math.max(200,Math.min(320,container.clientWidth||280));
+    google.accounts.id.renderButton(container,{theme:'outline',size:'large',text:'continue_with',shape:'pill',width:width});
+}
+
+function handleGoogleCredentialResponse(response){
+    if(!response||!response.credential){showToast('Google sign-in failed. Please try again.');return;}
+    let payload;
+    try{payload=JSON.parse(atob(response.credential.split('.')[1]));}
+    catch(e){showToast('Could not read your Google account details.');return;}
+    
+    const user={name:payload.name||'',email:payload.email||'',picture:payload.picture||''};
+    localStorage.setItem('godaura_user',JSON.stringify(user));
+    updateUIAfterLogin(user.name,user.picture);
+    
+    signInToSupabaseWithGoogle(response.credential).then(async function(sbUser){
+        const preOrderOpen=document.getElementById('preOrderModal')&&document.getElementById('preOrderModal').classList.contains('active');
+        if(preOrderOpen){
+            await poApplySignedInUser(user,sbUser);
+            showToast('Signed in as '+user.email);
+        }else{
+            closeSignIn();
+            showToast('Welcome, '+(user.name||user.email)+'!');
+            if(document.getElementById('pageDashboard').classList.contains('active')){
+                loadDashboardData();
+            }
+        }
+    });
+}
+
+function updateUIAfterLogin(name,picture){
+    const btn=document.querySelector('.sign-in-btn');
+    if(btn){
+        btn.innerHTML='<i data-lucide="user"></i> '+name.split(' ')[0];
+        lucide.createIcons();
+    }
+}
+
+function checkStoredSession(){
+    const user=localStorage.getItem('godaura_user');
+    if(user){
+        try{
+            const {name}=JSON.parse(user);
+            const btn=document.querySelector('.sign-in-btn');
+            if(btn){btn.innerHTML='<i data-lucide="user"></i> '+name.split(' ')[0];lucide.createIcons();}
+        }catch(e){}
+    }
+}
+
+// ===== SIGN-IN MODAL =====
+function openSignIn(){
+    document.getElementById('signInModal').classList.add('active');
+    document.body.style.overflow='hidden';
+    setTimeout(()=>{initGoogleSignIn();},100);
+}
+function closeSignIn(){
+    document.getElementById('signInModal').classList.remove('active');
+    document.body.style.overflow='';
+}
+
+// ===== SUB PAGES =====
+let scrollPositions={};
+let pageHistory=[];
+
+function goHome(){
+    if(document.querySelector('.sub-page.active')){hidePage(null);}
+    else{window.scrollTo({top:0,behavior:'smooth'});}
+}
+
+function showPage(page){
+    const mainSite=document.getElementById('mainSite');
+    scrollPositions['main']=window.scrollY;
+    mainSite.classList.add('hidden-page');
+    document.querySelectorAll('.sub-page').forEach(p=>p.classList.remove('active'));
+    
+    const pageMap={learnMore:'pageLearnMore',achievements:'pageAchievements',allResearches:'pageAllResearches',dashboard:'pageDashboard'};
+    const target=document.getElementById(pageMap[page]);
+    if(target){
+        target.classList.add('active');
+        pageHistory.push(page);
+        history.pushState({page:page},'','#');
+        window.scrollTo({top:scrollPositions[page]!==undefined?scrollPositions[page]:0,behavior:'instant'});
+    }
+    setTimeout(()=>lucide.createIcons(),50);
+}
+
+function hidePage(page){
+    if(page)scrollPositions[page]=window.scrollY;
+    document.querySelectorAll('.sub-page').forEach(p=>p.classList.remove('active'));
+    const mainSite=document.getElementById('mainSite');
+    mainSite.classList.remove('hidden-page');
+    if(pageHistory.length>0)pageHistory.pop();
+    if(scrollPositions['main']!==undefined)window.scrollTo({top:scrollPositions['main'],behavior:'instant'});
+    setTimeout(()=>lucide.createIcons(),50);
+}
+
+window.addEventListener('popstate',function(event){
+    if(pageHistory.length>0){
+        const lastPage=pageHistory[pageHistory.length-1];
+        const mainSite=document.getElementById('mainSite');
+        mainSite.classList.add('hidden-page');
+        document.querySelectorAll('.sub-page').forEach(p=>p.classList.remove('active'));
+        const pageMap={learnMore:'pageLearnMore',achievements:'pageAchievements',allResearches:'pageAllResearches',dashboard:'pageDashboard'};
+        const target=document.getElementById(pageMap[lastPage]);
+        if(target){
+            target.classList.add('active');
+            window.scrollTo({top:scrollPositions[lastPage]!==undefined?scrollPositions[lastPage]:0,behavior:'instant'});
+        }
+    }else{
+        document.querySelectorAll('.sub-page').forEach(p=>p.classList.remove('active'));
+        document.getElementById('mainSite').classList.remove('hidden-page');
+        if(scrollPositions['main']!==undefined)window.scrollTo({top:scrollPositions['main'],behavior:'instant'});
+    }
+    setTimeout(()=>lucide.createIcons(),50);
+});
+
+// ===== PRE-ORDER FORM =====
+const PO_COUNTRIES=[
+{code:'IN',name:'India',dial:'+91'},{code:'US',name:'United States',dial:'+1'},
+{code:'GB',name:'United Kingdom',dial:'+44'},{code:'CA',name:'Canada',dial:'+1'},
+{code:'AU',name:'Australia',dial:'+61'},{code:'AE',name:'United Arab Emirates',dial:'+971'},
+{code:'SG',name:'Singapore',dial:'+65'},{code:'DE',name:'Germany',dial:'+49'},
+{code:'FR',name:'France',dial:'+33'},{code:'ES',name:'Spain',dial:'+34'},
+{code:'IT',name:'Italy',dial:'+39'},{code:'NL',name:'Netherlands',dial:'+31'},
+{code:'IE',name:'Ireland',dial:'+353'},{code:'NZ',name:'New Zealand',dial:'+64'},
+{code:'ZA',name:'South Africa',dial:'+27'},{code:'BR',name:'Brazil',dial:'+55'},
+{code:'JP',name:'Japan',dial:'+81'},{code:'KR',name:'South Korea',dial:'+82'},
+{code:'MY',name:'Malaysia',dial:'+60'},{code:'SG',name:'Singapore',dial:'+65'},
+{code:'NP',name:'Nepal',dial:'+977'},{code:'LK',name:'Sri Lanka',dial:'+94'},
+{code:'BD',name:'Bangladesh',dial:'+880'},{code:'PK',name:'Pakistan',dial:'+92'}
+];
+
+const PO_STATE={step:1,user:null,paymentMethod:'',location:null};
+
+function $po(id){return document.getElementById(id);}
+
+function poEsc(value){
+    return String(value==null?'':value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+const PO_ERROR_TARGETS={
+    account:[],phone:['poCountryCode','poPhone'],country:['poCountry'],state:['poStateInput'],
+    city:['poCity'],postal:['poPostal'],address:['poAddress'],agreement:[]
+};
+
+async function poApplySignedInUser(user,sbUser){
+    PO_STATE.user=user;
+    PO_STATE.sbUser=sbUser||null;
+    
+    $po('poAccountSignedOut').classList.add('hidden');
+    $po('poAccountSignedIn').classList.remove('hidden');
+    $po('poAccountName').textContent=user.name||'—';
+    $po('poAccountEmail').textContent=user.email||'—';
+    
+    const avatar=$po('poAccountAvatar');
+    if(user.picture){avatar.src=user.picture;avatar.style.display='block';}
+    else{avatar.removeAttribute('src');avatar.style.display='none';}
+    
+    poSetError('account','');
+    
+    const profile=await loadProfile();
+    if(profile){
+        if(profile.phone&&!$po('poPhone').value){
+            const raw=String(profile.phone).replace(/^\+\d+\s*/,'');
+            $po('poPhone').value=raw;
+            const dialMatch=String(profile.phone).match(/^(\+\d+)/);
+            if(dialMatch){
+                const opt=Array.from($po('poCountryCode').options).find(o=>o.value===dialMatch[1]);
+                if(opt)$po('poCountryCode').value=dialMatch[1];
+            }
+        }
+        if(profile.address&&!$po('poAddress').value){$po('poAddress').value=profile.address;}
+    }
+    
+    poRefreshSubmitState();
+    lucide.createIcons();
+}
+
+function poSwitchAccount(){
+    PO_STATE.user=null;
+    $po('poAccountSignedIn').classList.add('hidden');
+    $po('poAccountSignedOut').classList.remove('hidden');
+    poSetError('account','');
+    poRefreshSubmitState();
+    initPoGoogle();
+}
+
+function poSetError(key,message){
+    const box=$po('err_'+key);
+    if(box){box.textContent=message||'';box.classList.toggle('show',!!message);}
+    (PO_ERROR_TARGETS[key]||[]).forEach(function(id){
+        const el=$po(id);
+        if(el)el.classList.toggle('po-invalid',!!message);
+    });
+}
+
+function poClearAllErrors(){Object.keys(PO_ERROR_TARGETS).forEach(key=>poSetError(key,''));}
+
+function poValidateAccount(){return(PO_STATE.user&&PO_STATE.user.email)?'':'Please sign in with Google to continue.';}
+
+function poValidatePhone(){
+    const raw=($po('poPhone').value||'').trim();
+    const digits=raw.replace(/[^\d]/g,'');
+    if(!raw)return'Phone number is required.';
+    if(!/^[\d\s()+-]+$/.test(raw))return'Use digits, spaces, +, - and ( ) only.';
+    if(digits.length<6)return'Phone number looks too short.';
+    if(digits.length>15)return'Phone number looks too long.';
+    return'';
+}
+
+function poValidateCountry(){return $po('poCountry').value?'':'Please select your country.';}
+
+function poValidateState(){
+    const v=($po('poStateInput').value||'').trim();
+    if(!v)return'State / Province is required.';
+    if(v.length<2)return'State / Province looks too short.';
+    return'';
+}
+
+function poValidateCity(){
+    const v=($po('poCity').value||'').trim();
+    if(!v)return'City is required.';
+    if(v.length<2)return'City looks too short.';
+    return'';
+}
+
+function poValidatePostal(){
+    const v=($po('poPostal').value||'').trim();
+    const country=$po('poCountry').value;
+    if(!v)return'PIN / ZIP / Postal code is required.';
+    if(country==='India'&&!/^\d{6}$/.test(v))return'Indian PIN codes must be exactly 6 digits.';
+    if(country==='United States'&&!/^\d{5}(-\d{4})?$/.test(v))return'US ZIP codes must be 5 digits (or ZIP+4).';
+    if(!/^[A-Za-z0-9][A-Za-z0-9\s-]{2,9}$/.test(v))return'Please enter a valid postal code.';
+    return'';
+}
+
+function poValidateAddress(){
+    const v=($po('poAddress').value||'').trim();
+    if(!v)return'Full street / locality address is required.';
+    if(v.length<8)return'Please enter a more complete address.';
+    return'';
+}
+
+function poValidateAgreement(){return $po('poAgreement').checked?'':'You must accept the GodAura user agreement to continue.';}
+
+function poValidateStep(step){
+    let valid=true;
+    const apply=function(key,message){poSetError(key,message);if(message)valid=false;};
+    if(step===1){apply('account',poValidateAccount());apply('phone',poValidatePhone());}
+    else if(step===2){
+        apply('country',poValidateCountry());apply('state',poValidateState());
+        apply('city',poValidateCity());apply('postal',poValidatePostal());apply('address',poValidateAddress());
+    }
+    else if(step===3){apply('agreement',poValidateAgreement());}
+    return valid;
+}
+
+function poIsFormValid(){
+    return!poValidateAccount()&&!poValidatePhone()&&!poValidateCountry()&&!poValidateState()&&!poValidateCity()&&!poValidatePostal()&&!poValidateAddress()&&!poValidateAgreement();
+}
+
+function poRefreshSubmitState(){
+    const btn=$po('poSubmitBtn');
+    if(!btn)return;
+    const ready=poIsFormValid();
+    btn.disabled=!ready;
+    btn.classList.toggle('po-disabled',!ready);
+}
+
+function poSetLocationStatus(text,type){
+    const el=$po('poLocationStatus');
+    if(!el)return;
+    el.textContent=text||'';
+    el.className='po-hint'+(type?' '+type:'');
+}
+
+function poReverseGeocode(lat,lon){
+    const url='https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&zoom=18&lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lon);
+    return fetch(url,{headers:{'Accept':'application/json'}})
+        .then(res=>{if(!res.ok)throw new Error('Reverse geocoding failed');return res.json();})
+        .then(data=>data.address||{});
+}
+
+function poFillAddressFromGeo(address){
+    if(!address)return;
+    const countryName=address.country||'';
+    const match=PO_COUNTRIES.find(c=>c.name.toLowerCase()===countryName.toLowerCase());
+    if(match){$po('poCountry').value=match.name;$po('poCountryCode').value=match.dial;}
+    
+    const state=address.state||address.state_district||address.region||address.province||'';
+    const city=address.city||address.town||address.village||address.municipality||address.county||address.suburb||'';
+    const postal=address.postcode||'';
+    
+    if(state&&!$po('poStateInput').value.trim())$po('poStateInput').value=state;
+    if(city&&!$po('poCity').value.trim())$po('poCity').value=city;
+    if(postal&&!$po('poPostal').value.trim())$po('poPostal').value=postal;
+    
+    if(!$po('poAddress').value.trim()){
+        const parts=[address.house_number,address.house_name,address.road||address.pedestrian||address.footway,address.neighbourhood||address.suburb,address.city_district].filter(Boolean);
+        if(parts.length)$po('poAddress').value=parts.join(', ');
+        else if(address.display_name)$po('poAddress').value=address.display_name;
+    }
+}
+
+function poUseMyLocation(){
+    const btn=$po('poLocationBtn');
+    if(!navigator.geolocation){
+        poSetLocationStatus('Location is not supported by this browser. Please enter your address manually.','error');
+        return;
+    }
+    const originalHTML=btn.innerHTML;
+    btn.disabled=true;
+    btn.innerHTML='<span class="po-spinner"></span> Detecting…';
+    poSetLocationStatus('Requesting location permission…','');
+    
+    navigator.geolocation.getCurrentPosition(
+        function(position){
+            const lat=position.coords.latitude;
+            const lon=position.coords.longitude;
+            PO_STATE.location={lat,lon};
+            poSetLocationStatus('Location found. Looking up your address…','');
+            poReverseGeocode(lat,lon)
+                .then(address=>{poFillAddressFromGeo(address);poSetLocationStatus('Address filled in from your location. Please check and edit anything that is not correct.','success');})
+                .catch(()=>{poSetLocationStatus('We found your coordinates but could not look up the address. Please enter it manually.','error');})
+                .then(()=>{btn.disabled=false;btn.innerHTML=originalHTML;lucide.createIcons();});
+        },
+        function(error){
+            let message='Location permission denied. Please enter your address manually.';
+            if(error.code===3)message='Location request timed out. Please enter your address manually.';
+            else if(error.code===2)message='Your location could not be determined. Please enter your address manually.';
+            poSetLocationStatus(message,'error');
+            btn.disabled=false;
+            btn.innerHTML=originalHTML;
+            lucide.createIcons();
+        },
+        {enableHighAccuracy:true,timeout:10000,maximumAge:60000}
+    );
+}
+
+function poRenderSummary(){
+    const dial=$po('poCountryCode').value||'';
+    const phone=($po('poPhone').value||'').trim();
+    const rows=[
+        ['Customer name',PO_STATE.user?PO_STATE.user.name:'—'],
+        ['Email',PO_STATE.user?PO_STATE.user.email:'—'],
+        ['Phone',dial?(dial+' '+phone).trim():phone],
+        ['Country',$po('poCountry').value||'—'],
+        ['State / Province',($po('poStateInput').value||'').trim()||'—'],
+        ['City',($po('poCity').value||'').trim()||'—'],
+        ['PIN / ZIP / Postal code',($po('poPostal').value||'').trim()||'—'],
+        ['Delivery address',($po('poAddress').value||'').trim()||'—'],
+        ['Product','GodAura Pro'],
+        ['Estimated total','$249.00  (no payment taken today)']
+    ];
+    $po('poSummary').innerHTML=rows.map(row=>'<div class="po-summary-row"><span>'+poEsc(row[0])+'</span><strong>'+poEsc(row[1])+'</strong></div>').join('');
+}
+
+async function submitPreOrder(){
+    const step1Ok=poValidateStep(1);
+    const step2Ok=poValidateStep(2);
+    const step3Ok=poValidateStep(3);
+    
+    if(!step1Ok||!step2Ok||!step3Ok){
+        poSetStep(!step1Ok?1:(!step2Ok?2:3));
+        showToast('Please fix the highlighted fields before submitting.');
+        return;
+    }
+    
+    const user=await getCurrentUser();
+    if(!user){
+        poSetStep(1);
+        poSetError('account','Your session has expired. Please sign in again.');
+        showToast('Please sign in again to submit your pre-order.');
+        return;
+    }
+    
+    const submitBtn=$po('poSubmitBtn');
+    const originalHTML=submitBtn.innerHTML;
+    submitBtn.disabled=true;
+    submitBtn.innerHTML='<span class="po-spinner"></span> Saving…';
+    
+    // Save profile
+    const dial=$po('poCountryCode').value||'';
+    const phone=($po('poPhone').value||'').trim();
+    const fullPhone=dial?(dial+' '+phone).trim():phone;
+    const address=($po('poAddress').value||'').trim();
+    if(fullPhone||address)await saveProfile({phone:fullPhone,address:address});
+    
+    // Check for existing pre-order
+    const existing=await loadPreorder();
+    const payload={user_id:user.id,status:'pending'};
+    
+    let result;
+    if(existing&&existing.id){
+        result=await supabaseClient.from('preorders').update(payload).eq('id',existing.id);
+    }else{
+        result=await supabaseClient.from('preorders').insert(payload);
+    }
+    
+    submitBtn.disabled=false;
+    submitBtn.innerHTML=originalHTML;
+    lucide.createIcons();
+    
+    if(result&&result.error){
+        console.warn('Pre-order save error:',result.error.message);
+        showToast('Could not save your pre-order. Please try again.');
+        return;
+    }
+    
+    poShowSuccess({email:user.email||''});
+}
+
+function poShowSuccess(order){
+    const reference='GA-'+Date.now().toString(36).toUpperCase().slice(-6);
+    $po('poSuccessRef').textContent=reference;
+    $po('poSuccessEmail').textContent=order.email||'';
+    $po('preOrderForm').style.display='none';
+    $po('poStepper').style.display='none';
+    $po('poFooter').style.display='none';
+    $po('poSuccessPanel').classList.remove('hidden');
+    setTimeout(()=>lucide.createIcons(),50);
+    showToast('Pre-order recorded — we will be in touch!');
+}
+
+function poSetStep(step){
+    const n=Math.min(3,Math.max(1,Number(step)||1));
+    PO_STATE.step=n;
+    document.querySelectorAll('#preOrderModal .preorder-step').forEach(section=>{
+        section.classList.toggle('active',Number(section.dataset.step)===n);
+    });
+    document.querySelectorAll('#poStepper .po-step-chip').forEach(chip=>{
+        const chipStep=Number(chip.dataset.step);
+        chip.classList.toggle('active',chipStep===n);
+        chip.classList.toggle('done',chipStep<n);
+    });
+    $po('poBackBtn').style.display=n>1?'flex':'none';
+    $po('poNextBtn').style.display=n<3?'flex':'none';
+    $po('poSubmitBtn').style.display=n===3?'flex':'none';
+    if(n===3)poRenderSummary();
+    poRefreshSubmitState();
+    setTimeout(()=>lucide.createIcons(),30);
+}
+
+function poNextStep(){
+    if(!poValidateStep(PO_STATE.step)){showToast('Please complete the highlighted fields.');return;}
+    poSetStep(Math.min(3,PO_STATE.step+1));
+}
+
+function poPrevStep(){poSetStep(Math.max(1,PO_STATE.step-1));}
+
+function poPopulateSelects(){
+    const dialSelect=$po('poCountryCode');
+    const countrySelect=$po('poCountry');
+    if(!dialSelect||!countrySelect)return;
+    
+    dialSelect.innerHTML=PO_COUNTRIES.map(c=>'<option value="'+poEsc(c.dial)+'">'+poEsc(c.dial)+' ('+poEsc(c.code)+')</option>').join('');
+    countrySelect.innerHTML='<option value="">Select country</option>'+PO_COUNTRIES.map(c=>'<option value="'+poEsc(c.name)+'">'+poEsc(c.name)+'</option>').join('');
+    
+    const india=PO_COUNTRIES.find(c=>c.code==='IN');
+    dialSelect.value=india?india.dial:PO_COUNTRIES[0].dial;
+    countrySelect.value=india?india.name:'';
+}
+
+async function openPreOrder(){
+    poResetForm();
+    
+    const sbUser=await getCurrentUser();
+    const stored=localStorage.getItem('godaura_user');
+    if(stored&&sbUser){
+        try{
+            const user=JSON.parse(stored);
+            await poApplySignedInUser(user,sbUser);
+        }catch(e){}
+    }
+    
+    poSetStep(1);
+    $po('preOrderModal').classList.add('active');
+    document.body.style.overflow='hidden';
+    
+    if(!PO_STATE.user)initPoGoogle();
+    setTimeout(()=>lucide.createIcons(),50);
+}
+
+function closePreOrder(){
+    $po('preOrderModal').classList.remove('active');
+    document.body.style.overflow='';
+}
+
+function poResetForm(){
+    PO_STATE.step=1;
+    PO_STATE.paymentMethod='';
+    PO_STATE.location=null;
+    PO_STATE.user=null;
+    
+    ['poPhone','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
+        const el=$po(id);
+        if(el)el.value='';
+    });
+    
+    $po('poAgreement').checked=false;
+    $po('poUpdates').checked=false;
+    
+    poClearAllErrors();
+    poSetLocationStatus('','');
+    
+    $po('poAccountSignedIn').classList.add('hidden');
+    $po('poAccountSignedOut').classList.remove('hidden');
+    
+    $po('poSuccessPanel').classList.add('hidden');
+    $po('preOrderForm').style.display='';
+    $po('poStepper').style.display='';
+    $po('poFooter').style.display='';
+    
+    poPopulateSelects();
+}
+
+// ===== DASHBOARD =====
+function formatDuration(seconds){
+    if(!seconds&&seconds!==0)return'—';
+    const s=Math.max(0,Math.floor(seconds));
+    const h=Math.floor(s/3600);
+    const m=Math.floor((s%3600)/60);
+    const sec=s%60;
+    if(h>0)return h+'h '+m+'m';
+    if(m>0)return m+'m '+sec+'s';
+    return sec+'s';
+}
+
+function formatDate(iso){
+    if(!iso)return'—';
+    try{const d=new Date(iso);return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});}
+    catch(e){return'—';}
+}
+
+function renderDashboardSignedOut(){
+    document.getElementById('dashLoading').style.display='none';
+    document.getElementById('dashContent').style.display='none';
+    document.getElementById('dashSignedOut').style.display='block';
+    lucide.createIcons();
+}
+
+function renderDashboardLoading(){
+    document.getElementById('dashLoading').style.display='block';
+    document.getElementById('dashContent').style.display='none';
+    document.getElementById('dashSignedOut').style.display='none';
+}
+
+async function loadDashboardData(){
+    renderDashboardLoading();
+    const user=await getCurrentUser();
+    if(!user){renderDashboardSignedOut();return;}
+    
+    const stored=localStorage.getItem('godaura_user');
+    let displayUser={name:'',email:user.email||'',picture:''};
+    if(stored){try{displayUser=Object.assign(displayUser,JSON.parse(stored));}catch(e){}}
+    
+    const [profile,preorder,sessions]=await Promise.all([loadProfile(),loadPreorder(),loadActivitySessions()]);
+    
+    document.getElementById('dashLoading').style.display='none';
+    document.getElementById('dashSignedOut').style.display='none';
+    document.getElementById('dashContent').style.display='block';
+    
+    document.getElementById('dashName').textContent=(profile&&profile.name)||displayUser.name||'GodAura Member';
+    document.getElementById('dashEmail').textContent=user.email||displayUser.email||'';
+    const avatar=document.getElementById('dashAvatar');
+    if(displayUser.picture){avatar.src=displayUser.picture;avatar.style.display='block';}
+    else{avatar.style.display='none';}
+    document.getElementById('dashPhone').value=(profile&&profile.phone)||'';
+    document.getElementById('dashAddress').value=(profile&&profile.address)||'';
+    
+    const preorderBox=document.getElementById('dashPreorder');
+    if(!preorder){
+        preorderBox.innerHTML='<div class="dash-empty">No pre-order yet. <button class="po-link-btn" onclick="closeDashboardAndOpenPreOrder()">Start a pre-order →</button></div>';
+    }else{
+        const status=(preorder.status||'pending').toLowerCase();
+        const badgeClass=status==='confirmed'?'confirmed':'pending';
+        preorderBox.innerHTML=
+            '<div class="dash-session-row"><span>Status</span><span class="dash-badge '+badgeClass+'">'+poEsc(status)+'</span></div>'+
+            '<div class="dash-session-row"><span>Requested on</span><strong>'+poEsc(formatDate(preorder.created_at))+'</strong></div>'+
+            '<div class="dash-session-row"><span>Last updated</span><strong>'+poEsc(formatDate(preorder.updated_at))+'</strong></div>';
+    }
+    
+    const sessionsList=sessions||[];
+    const totalSessions=sessionsList.length;
+    let totalSeconds=0;
+    sessionsList.forEach(s=>{
+        if(typeof s.duration==='number'&&s.duration>0)totalSeconds+=s.duration;
+        else if(s.started_at&&s.ended_at){
+            const start=new Date(s.started_at).getTime();
+            const end=new Date(s.ended_at).getTime();
+            if(!isNaN(start)&&!isNaN(end)&&end>start)totalSeconds+=Math.round((end-start)/1000);
+        }
+    });
+    const avgSeconds=totalSessions?Math.round(totalSeconds/totalSessions):0;
+    
+    const modeCounts={};
+    sessionsList.forEach(s=>{const mode=s.mode||'Unknown';modeCounts[mode]=(modeCounts[mode]||0)+1;});
+    const topMode=Object.keys(modeCounts).sort((a,b)=>modeCounts[b]-modeCounts[a])[0]||'—';
+    
+    document.getElementById('dashStats').innerHTML=
+        '<div class="dash-stat"><div class="dash-stat-value">'+totalSessions+'</div><div class="dash-stat-label">Total Sessions</div></div>'+
+        '<div class="dash-stat"><div class="dash-stat-value">'+formatDuration(totalSeconds)+'</div><div class="dash-stat-label">Total Time</div></div>'+
+        '<div class="dash-stat"><div class="dash-stat-value">'+formatDuration(avgSeconds)+'</div><div class="dash-stat-label">Avg Session</div></div>'+
+        '<div class="dash-stat"><div class="dash-stat-value">'+poEsc(topMode)+'</div><div class="dash-stat-label">Top Mode</div></div>';
+    
+    const sessionsBox=document.getElementById('dashSessions');
+    if(!sessionsList.length){
+        sessionsBox.innerHTML='<div class="dash-empty">No activity sessions yet. Your meditation sessions from the GodAura app will appear here.</div>';
+    }else{
+        sessionsBox.innerHTML=sessionsList.slice(0,8).map(s=>{
+            let duration=s.duration;
+            if((!duration||duration<=0)&&s.started_at&&s.ended_at){
+                const start=new Date(s.started_at).getTime();
+                const end=new Date(s.ended_at).getTime();
+                if(!isNaN(start)&&!isNaN(end)&&end>start)duration=Math.round((end-start)/1000);
+            }
+            return '<div class="dash-session-row"><span>'+poEsc(formatDate(s.started_at))+'</span><span class="dash-badge">'+poEsc(s.mode||'Session')+'</span><strong>'+poEsc(formatDuration(duration))+'</strong></div>';
+        }).join('');
+    }
+    
+    lucide.createIcons();
+}
+
+async function saveProfileFromDashboard(){
+    const phone=document.getElementById('dashPhone').value.trim();
+    const address=document.getElementById('dashAddress').value.trim();
+    const result=await saveProfile({phone,address});
+    const saved=document.getElementById('dashProfileSaved');
+    if(result){
+        saved.style.display='inline';
+        setTimeout(()=>saved.style.display='none',2000);
+        showToast('Profile saved');
+    }else{
+        showToast('Could not save profile. Please try again.');
+    }
+}
+
+function closeDashboardAndOpenPreOrder(){
+    hidePage('dashboard');
+    setTimeout(()=>openPreOrder(),200);
+}
+
+function openDashboard(){
+    showPage('dashboard');
+    loadDashboardData();
+}
+
+// ===== TOAST =====
+function showToast(message){
+    const toast=document.getElementById('toast');
+    document.getElementById('toastMessage').textContent=message;
+    toast.style.transform='translateY(0)';
+    toast.style.opacity='1';
+    toast.style.pointerEvents='auto';
+    setTimeout(()=>{
+        toast.style.transform='translateY(20px)';
+        toast.style.opacity='0';
+        toast.style.pointerEvents='none';
+    },3500);
+}
+
+// ===== MOBILE MENU =====
+function toggleMobileMenu(){
+    const menu=document.getElementById('mobileMenu');
+    const overlay=document.getElementById('mobileOverlay');
+    menu.classList.toggle('open');
+    overlay.classList.toggle('hidden');
+    document.body.style.overflow=menu.classList.contains('open')?'hidden':'';
+    setTimeout(()=>lucide.createIcons(),50);
+}
+
+// ===== SCROLL ANIMATIONS =====
+const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+        if(entry.isIntersecting){
+            entry.target.classList.add('section-visible');
+            entry.target.querySelectorAll('.progress-fill').forEach(bar=>{
+                setTimeout(()=>{bar.style.width=bar.getAttribute('data-width')+'%';},300);
+            });
+        }
+    });
+},{threshold:.15});
+document.querySelectorAll('.section-hidden').forEach(el=>observer.observe(el));
+
+// ===== NAV ACTIVE =====
+const sections=document.querySelectorAll('section[id]');
+const navLinks=document.querySelectorAll('.nav-link');
+window.addEventListener('scroll',()=>{
+    let current='';
+    sections.forEach(s=>{if(window.scrollY>=s.offsetTop-100)current=s.id;});
+    navLinks.forEach(l=>{l.classList.remove('active');if(l.getAttribute('href')==='#'+current)l.classList.add('active');});
+});
+
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',function(e){
+        if(!document.getElementById('mainSite').classList.contains('hidden-page')){
+            e.preventDefault();
+            const t=document.querySelector(this.getAttribute('href'));
+            if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+        }
+    });
+});
+
+document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+        closePreOrder();
+        closeSignIn();
+        if(document.getElementById('mobileMenu').classList.contains('open'))toggleMobileMenu();
+    }
+});
+
+document.querySelectorAll('.progress-fill').forEach(b=>{b.style.width='0%';});
+
+// ===== INIT =====
+document.getElementById('poQtyMinus').addEventListener('click',function(){
+    let n=parseInt(document.getElementById('poQuantity').value,10)||1;
+    if(n>1)document.getElementById('poQuantity').value=n-1;
+    poRefreshSubmitState();
+});
+document.getElementById('poQtyPlus').addEventListener('click',function(){
+    let n=parseInt(document.getElementById('poQuantity').value,10)||1;
+    if(n<10)document.getElementById('poQuantity').value=n+1;
+    poRefreshSubmitState();
+});
+document.getElementById('poQuantity').addEventListener('input',poRefreshSubmitState);
+
+document.getElementById('poAgreement').addEventListener('change',function(){
+    poSetError('agreement','');
+    poRefreshSubmitState();
+});
+
+['poPhone','poCountry','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){
+        el.addEventListener('input',function(){
+            const key=id.replace('po','').toLowerCase();
+            const keyMap={phone:'phone',country:'country',stateinput:'state',city:'city',postal:'postal',address:'address'};
+            poSetError(keyMap[key]||key,'');
+            poRefreshSubmitState();
+        });
+    }
+});
+
+document.getElementById('preOrderForm').addEventListener('input',poRefreshSubmitState);
+
+// Google button in modal
+document.getElementById('poGoogleButton')&&initPoGoogle();
+
+// Session restore
+(async function restoreSession(){
+    const sbUser=await getCurrentUser();
+    if(sbUser){
+        const stored=localStorage.getItem('godaura_user');
+        let name=sbUser.email||'User';
+        let picture='';
+        if(stored){try{const parsed=JSON.parse(stored);name=parsed.name||name;picture=parsed.picture||'';}catch(e){}}
+        updateUIAfterLogin(name,picture);
+    }
+})();
+
+window.addEventListener('load',function(){
+    initGoogleSignIn();
+    checkStoredSession();
+    if(document.getElementById('pageDashboard').classList.contains('active')){
+        loadDashboardData();
+    }
+});
+</script>
+</body>
+</html>
