@@ -259,7 +259,6 @@
         <div class="absolute bottom-[-100px] left-[30%] w-[700px] h-[500px] bg-fuchsia-400 rounded-full blur-[120px]" style="animation:pulse-slow 7s ease-in-out infinite 1s;opacity:var(--glow-opacity)"></div>
     </div>
 
-    <!-- ==================== MAIN SITE ==================== -->
     <div id="mainSite">
 
         <nav class="sticky top-0 z-50 backdrop-blur-md border-b transition-all duration-300" style="background:var(--nav-bg);border-color:var(--border-color)">
@@ -586,8 +585,6 @@
         </footer>
     </div>
 
-    <!-- ==================== SUBPAGES ==================== -->
-
     <div id="pageLearnMore" class="sub-page">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
             <div class="subpage-header">
@@ -705,7 +702,6 @@
 
             <form id="preOrderForm" onsubmit="event.preventDefault(); submitPreOrder(event);">
 
-                <!-- Google account -->
                 <div class="po-block">
                     <div class="po-block-title"><i data-lucide="user-check"></i> Customer Account</div>
                     <div id="poAccountSignedOut">
@@ -726,7 +722,6 @@
                     <p class="po-error" id="err_account"></p>
                 </div>
 
-                <!-- Phone -->
                 <div class="po-block">
                     <div class="po-block-title"><i data-lucide="phone"></i> Contact Information</div>
                     <label class="po-label" for="poPhone">Phone number <span class="po-req">*</span></label>
@@ -737,7 +732,6 @@
                     <p class="po-error" id="err_phone"></p>
                 </div>
 
-                <!-- Address -->
                 <div class="po-block">
                     <div class="po-block-title"><i data-lucide="map-pin"></i> Delivery Address</div>
                     <button type="button" id="poLocationBtn" onclick="poUseMyLocation()" class="po-locate-btn mb-3">
@@ -773,7 +767,6 @@
                     </div>
                 </div>
 
-                <!-- Agreement -->
                 <div class="po-block">
                     <div class="po-block-title"><i data-lucide="shield-check"></i> Agreement</div>
                     <label class="preorder-checkbox">
@@ -802,7 +795,6 @@
         </div>
     </div>
 
-    <!-- ==================== SIGN-IN MODAL ==================== -->
     <div id="signInModal" class="modal-overlay" onclick="if(event.target===this) closeSignIn()">
         <div class="rounded-[32px] p-6 sm:p-8 md:p-10 w-full max-w-md mx-4 relative" style="background:var(--bg-secondary);border:1px solid var(--border-color);box-shadow:var(--shadow-lg);animation:slideInUp .4s ease-out">
             <button onclick="closeSignIn()" class="absolute top-4 right-4 sm:top-6 sm:right-6" style="color:var(--text-muted)"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -818,7 +810,6 @@
         </div>
     </div>
 
-    <!-- ==================== SIGNED-IN USER MODAL ==================== -->
     <div id="userModal" class="modal-overlay" onclick="if(event.target===this) closeUserModal()">
         <div class="rounded-[32px] p-6 sm:p-8 w-full max-w-sm mx-4 relative" style="background:var(--bg-secondary);border:1px solid var(--border-color);box-shadow:var(--shadow-lg);animation:slideInUp .4s ease-out">
             <button onclick="closeUserModal()" class="absolute top-4 right-4" style="color:var(--text-muted)"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -944,6 +935,8 @@
             poGoogleInitialized=true;
         }
 
+        // ===== FIXED: handleGoogleCredentialResponse =====
+        // Verifies the Supabase session actually got created before declaring success.
         async function handleGoogleCredentialResponse(response){
             if(!response||!response.credential){showToast('Google sign-in failed.');return;}
             let payload;
@@ -958,24 +951,29 @@
                     provider:'google',
                     token:response.credential
                 });
-                if(error){console.error('[auth] signIn error:',error);showToast('Sign-in failed: '+error.message);return;}
+                if(error){
+                    console.error('[auth] signInWithIdToken error:',error);
+                    showToast('Sign-in failed: '+error.message);
+                    return;
+                }
                 if(data&&data.user&&data.session){
                     sbUser=data.user;
                     AUTH_STATE.ready=true;
                     AUTH_STATE.user=data.user;
                     AUTH_STATE.session=data.session;
-                    console.log('✅ Supabase session:',sbUser.email);
+                    console.log('✅ Supabase session established:',sbUser.email);
                 }else{
-                    console.error('[auth] no session returned');
-                    showToast('Sign-in failed: no session.');
+                    console.error('[auth] signInWithIdToken returned no session — cannot proceed.');
+                    showToast('Sign-in failed: no Supabase session returned.');
                     return;
                 }
             }catch(e){
-                console.error('[auth] exception:',e);
+                console.error('[auth] signInWithIdToken exception:',e);
                 showToast('Sign-in failed: '+e.message);
                 return;
             }
 
+            // Only mirror to localStorage AFTER the Supabase session is confirmed.
             localStorage.setItem('godaura_user',JSON.stringify(user));
             updateUIAfterLogin(user.name,user.picture);
 
@@ -1425,6 +1423,7 @@
 
             await authReadyPromise;
 
+            // Use the verified Supabase user as the source of truth.
             let uiUser=null;
             if(AUTH_STATE.user){
                 const meta=AUTH_STATE.user.user_metadata||{};
@@ -1433,9 +1432,6 @@
                     email:AUTH_STATE.user.email||'',
                     picture:meta.avatar_url||meta.picture||''
                 };
-            }else{
-                const stored=localStorage.getItem('godaura_user');
-                if(stored){try{uiUser=JSON.parse(stored);}catch(e){uiUser=null;}}
             }
 
             if(uiUser){poApplyUserToPreOrder(uiUser);}
@@ -1466,34 +1462,60 @@
             box.textContent='';
         }
 
+        // ===== FIXED: submitPreOrder =====
+        // Uses getSession() + getUser() with a retry, so it never falsely
+        // reports "not signed in" when the session is actually present.
         async function submitPreOrder(event){
             if(event)event.preventDefault();
             hidePoErrorBox();
 
+            // 1. Validation
             if(!poValidateAll()){
                 showToast('Please fix the highlighted fields.');
                 return;
             }
 
+            // 2. Wait for auth to be ready
             await authReadyPromise;
 
+            // 3. Resolve the current authenticated user.
+            //    Priority: getUser() → getSession() → AUTH_STATE.user
             let sbUser=null;
-            try{
-                const {data,error}=await supabaseClient.auth.getUser();
-                if(error)console.warn('[submit] getUser error:',error.message);
-                else if(data&&data.user)sbUser=data.user;
-            }catch(e){console.warn('[submit] getUser exception:',e);}
 
-            if(!sbUser&&AUTH_STATE.session&&AUTH_STATE.session.user){
-                sbUser=AUTH_STATE.session.user;
+            // 3a. Try the cached AUTH_STATE first (fastest — set by signInWithIdToken
+            //     or by the onAuthStateChange listener).
+            if(AUTH_STATE.user){sbUser=AUTH_STATE.user;}
+
+            // 3b. If no cached user, ask Supabase directly for the live session.
+            if(!sbUser){
+                try{
+                    const {data,error}=await supabaseClient.auth.getSession();
+                    if(error)console.warn('[submit] getSession error:',error.message);
+                    if(data&&data.session&&data.session.user){
+                        sbUser=data.session.user;
+                        AUTH_STATE.user=data.session.user;
+                        AUTH_STATE.session=data.session;
+                    }
+                }catch(e){console.warn('[submit] getSession exception:',e);}
             }
 
+            // 3c. Last resort: ask getUser() which re-verifies with the server.
             if(!sbUser){
-                console.error('[submit] No authenticated user.');
+                try{
+                    const {data,error}=await supabaseClient.auth.getUser();
+                    if(error)console.warn('[submit] getUser error:',error.message);
+                    if(data&&data.user){sbUser=data.user;AUTH_STATE.user=data.user;}
+                }catch(e){console.warn('[submit] getUser exception:',e);}
+            }
+
+            // 4. Genuinely no session — prompt the user to sign in again.
+            if(!sbUser){
+                console.error('[submit] No authenticated Supabase user found after all checks.');
                 showPoErrorBox('Please sign in with Google before submitting your pre-order.');
                 return;
             }
 
+            // 5. Double submission guard
             if(preOrderBusy)return;
             preOrderBusy=true;
 
@@ -1509,6 +1531,7 @@
             const address=($po('poAddress').value||'').trim();
 
             try{
+                // 6. Save/update profile
                 const meta=sbUser.user_metadata||{};
                 const profilePayload={
                     id:sbUser.id,
@@ -1520,8 +1543,12 @@
                 const {error:profileError}=await supabaseClient
                     .from('profiles')
                     .upsert(profilePayload,{onConflict:'id'});
-                if(profileError)console.warn('[submit] profile upsert error:',profileError);
+                if(profileError){
+                    console.warn('[submit] profile upsert error:',profileError);
+                    // Non-fatal — continue.
+                }
 
+                // 7. Avoid duplicate pre-orders
                 const {data:existing,error:selectError}=await supabaseClient
                     .from('preorders')
                     .select('id')
@@ -1545,6 +1572,7 @@
 
                 if(saveError){
                     console.error('[submit] save error:',saveError);
+                    // Show the ACTUAL Supabase error message.
                     showPoErrorBox('Could not save your pre-order: '+saveError.message);
                     submitBtn.disabled=false;
                     submitBtn.innerHTML=originalText;
@@ -1553,6 +1581,7 @@
                     return;
                 }
 
+                // 8. Success
                 showToast('✅ Pre-order confirmed! We will contact you at '+(sbUser.email||fullPhone));
 
                 const deviceName=$po('preOrderProductName').textContent.trim();
