@@ -226,6 +226,10 @@
         .po-status-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(16,185,129,.12);color:#059669;font-size:13px;font-weight:600;border:1px solid rgba(16,185,129,.3)}
         [data-theme="dark"] .po-status-badge{background:rgba(16,185,129,.15);color:#34d399}
 
+        /* === NEW: small "Preorder Saved" status label === */
+        .po-saved-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:rgba(16,185,129,.12);color:#059669;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border:1px solid rgba(16,185,129,.3)}
+        [data-theme="dark"] .po-saved-badge{background:rgba(16,185,129,.15);color:#34d399}
+
         .po-block{border:1px solid var(--border-color);border-radius:16px;padding:16px;margin-bottom:14px;background:var(--bg-card)}
         .po-block:last-child{margin-bottom:0}
         .po-block-title{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-color);margin-bottom:12px}
@@ -695,10 +699,18 @@
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
-            <h3 class="text-xl sm:text-2xl font-semibold mb-2" style="color:var(--text-primary)">Pre-Order
+            <!-- Heading block — id added so JS can swap text between states -->
+            <h3 id="poHeading" class="text-xl sm:text-2xl font-semibold mb-2" style="color:var(--text-primary)">Pre-Order
                 <span id="preOrderProductName" class="accent-text-bright">GodAura Pro</span>
             </h3>
-            <p class="text-sm mb-4" style="color:var(--text-secondary)">Reserve your device. You won't be charged now.</p>
+            <p id="poIntroText" class="text-sm mb-4" style="color:var(--text-secondary)">Reserve your device. You won't be charged now.</p>
+
+            <!-- Preorder Saved badge (hidden by default, shown when PO_EXISTING) -->
+            <div id="poSavedBadge" class="hidden mb-4">
+                <span class="po-saved-badge">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Preorder Saved
+                </span>
+            </div>
 
             <form id="preOrderForm" onsubmit="event.preventDefault(); submitPreOrder(event);">
 
@@ -785,7 +797,7 @@
                 <button type="submit" id="poSubmitBtn"
                     class="w-full text-white rounded-xl py-3 font-semibold transition-all"
                     style="background:var(--btn-bg);box-shadow:var(--btn-shadow)">
-                    <i data-lucide="check" class="w-4 h-4 inline mr-1"></i> Complete Pre-Order
+                    <i data-lucide="check" class="w-4 h-4 inline mr-1"></i> Submit Preorder
                 </button>
 
                 <div class="text-center text-[10px] mt-3 opacity-60" style="color:var(--text-muted)">
@@ -935,8 +947,6 @@
             poGoogleInitialized=true;
         }
 
-        // ===== FIXED: handleGoogleCredentialResponse =====
-        // Verifies the Supabase session actually got created before declaring success.
         async function handleGoogleCredentialResponse(response){
             if(!response||!response.credential){showToast('Google sign-in failed.');return;}
             let payload;
@@ -973,7 +983,6 @@
                 return;
             }
 
-            // Only mirror to localStorage AFTER the Supabase session is confirmed.
             localStorage.setItem('godaura_user',JSON.stringify(user));
             updateUIAfterLogin(user.name,user.picture);
 
@@ -981,6 +990,8 @@
             if(poOpen){
                 poApplyUserToPreOrder(user);
                 showToast('Signed in as '+user.email);
+                // Re-run the existing-preorder check now that we have a session
+                try{ await poPrefillFromExisting(); }catch(e){ console.warn(e); }
             }else{
                 closeSignIn();
                 showToast('Welcome, '+(user.name||user.email)+'!');
@@ -1227,6 +1238,9 @@
         };
 
         let preOrderBusy=false;
+        const PO_STATE={user:null,location:null};
+        let PO_EXISTING=null;
+        let PO_LOADING=false;
 
         function $po(id){return document.getElementById(id);}
 
@@ -1314,13 +1328,7 @@
             return valid;
         }
 
-                // Tracks whether the currently displayed pre-order is a fresh one (insert)
-        // or an existing one (update). Never used for authentication.
-        const PO_STATE={user:null,location:null};
-        let PO_EXISTING=null;   // { id, user_id, status, ... } or null
-        let PO_LOADING=false;
-
-
+        // ===== ACCOUNT BLOCK =====
         function poApplyUserToPreOrder(user){
             PO_STATE.user=user;
             $po('poAccountSignedOut').classList.add('hidden');
@@ -1336,9 +1344,12 @@
 
         function poSwitchAccount(){
             PO_STATE.user=null;
+            PO_EXISTING=null;
             $po('poAccountSignedIn').classList.add('hidden');
             $po('poAccountSignedOut').classList.remove('hidden');
             poSetError('account','');
+            poUpdateSubmitButton();
+            poUpdateStateLabels();
             initPoGoogle();
         }
 
@@ -1357,23 +1368,43 @@
             $po('updatesCheckbox').checked=false;
 
             poUpdateSubmitButton();
+            poUpdateStateLabels();
         }
 
-
-                // ===== SUBMIT BUTTON LABEL =====
+        // ===== SUBMIT BUTTON LABEL =====
         function poUpdateSubmitButton(){
             const btn=$po('poSubmitBtn');
             if(!btn)return;
             if(PO_EXISTING&&PO_EXISTING.id){
-                btn.innerHTML='<i data-lucide="refresh-cw" class="w-4 h-4 inline mr-1"></i> Update Preorder';
+                btn.innerHTML='<i data-lucide="refresh-cw" class="w-4 h-4 inline mr-1"></i> Update Your Preorder';
             }else{
                 btn.innerHTML='<i data-lucide="check" class="w-4 h-4 inline mr-1"></i> Submit Preorder';
             }
             lucide.createIcons();
         }
 
+        // ===== HEADING / INTRO / BADGE STATE =====
+        function poUpdateStateLabels(){
+            const heading=$po('poHeading');
+            const intro=$po('poIntroText');
+            const badge=$po('poSavedBadge');
+            if(!heading||!intro||!badge)return;
+
+            if(PO_EXISTING&&PO_EXISTING.id){
+                // State 2 — user already has a preorder
+                heading.innerHTML='Your <span class="accent-text-bright">Preorder</span>';
+                intro.textContent='Your preorder details are saved. You can review or update them anytime.';
+                badge.classList.remove('hidden');
+            }else{
+                // State 1 — no preorder yet
+                heading.innerHTML='Pre-order <span id="preOrderProductName" class="accent-text-bright">GodAura Pro</span>';
+                intro.textContent="Reserve your device. You won't be charged now.";
+                badge.classList.add('hidden');
+            }
+            lucide.createIcons();
+        }
+
         // ===== LOAD THE CURRENT USER'S PREORDER =====
-        // Uses the authenticated Supabase user ID. Reads only real columns.
         async function poLoadExistingPreorder(){
             if(!AUTH_STATE.user)return null;
             try{
@@ -1394,8 +1425,6 @@
         }
 
         // ===== PREFILL FROM PROFILE + PREORDER =====
-        // Phone/address come from `profiles` (the existing integration).
-        // Only fills empty fields — never overwrites what the user typed.
         async function poPrefillFromExisting(){
             if(!AUTH_STATE.user)return;
 
@@ -1432,84 +1461,14 @@
             // --- Preorder existence ---
             PO_EXISTING=await poLoadExistingPreorder();
             poUpdateSubmitButton();
+            poUpdateStateLabels();
 
             if(PO_EXISTING&&PO_EXISTING.id){
                 showToast('Existing pre-order loaded — you can update it.');
             }
         }
 
-// 
-
-        function poUpdateSubmitButton(){
-            const btn=$po('poSubmitBtn');
-            if(!btn)return;
-            if(PO_EXISTING&&PO_EXISTING.id){
-                btn.innerHTML='<i data-lucide="refresh-cw" class="w-4 h-4 inline mr-1"></i> Update Preorder';
-            }else{
-                btn.innerHTML='<i data-lucide="check" class="w-4 h-4 inline mr-1"></i> Submit Preorder';
-            }
-            lucide.createIcons();
-        }
-
-        async function poLoadExistingPreorder(){
-            if(!AUTH_STATE.user)return null;
-            try{
-                const {data,error}=await supabaseClient
-                    .from('preorders')
-                    .select('id,user_id,status,created_at,updated_at')
-                    .eq('user_id',AUTH_STATE.user.id)
-                    .maybeSingle();
-                if(error){
-                    console.warn('[preorder] load error:',error.message);
-                    return null;
-                }
-                return data||null;
-            }catch(e){
-                console.warn('[preorder] load exception:',e);
-                return null;
-            }
-        }
-
-        async function poPrefillFromExisting(){
-            if(!AUTH_STATE.user)return;
-
-            let profile=null;
-            try{
-                const {data,error}=await supabaseClient
-                    .from('profiles')
-                    .select('name,email,phone,address')
-                    .eq('id',AUTH_STATE.user.id)
-                    .maybeSingle();
-                if(error)console.warn('[preorder] profile load error:',error.message);
-                profile=data||null;
-            }catch(e){console.warn('[preorder] profile load exception:',e);}
-
-            if(profile){
-                if(profile.phone&&!$po('poPhone').value){
-                    const raw=String(profile.phone).trim();
-                    const m=raw.match(/^(\+\d+)\s*(.*)$/);
-                    if(m){
-                        const dial=m[1],local=m[2];
-                        const opt=Array.from($po('poCountryCode').options).find(o=>o.value===dial);
-                        if(opt)$po('poCountryCode').value=dial;
-                        $po('poPhone').value=local;
-                    }else{
-                        $po('poPhone').value=raw;
-                    }
-                }
-                if(profile.address&&!$po('poAddress').value){
-                    $po('poAddress').value=profile.address;
-                }
-            }
-
-            PO_EXISTING=await poLoadExistingPreorder();
-            poUpdateSubmitButton();
-
-            if(PO_EXISTING&&PO_EXISTING.id){
-                showToast('Existing pre-order loaded — you can update it.');
-            }
-        }
-
+        // ===== LOCATION =====
         function poSetLocationStatus(text,type){
             const el=$po('poLocationStatus');
             if(!el)return;
@@ -1576,8 +1535,11 @@
             );
         }
 
-                async function openPreOrder(deviceName){
-            document.getElementById('preOrderProductName').innerText=deviceName||'GodAura Pro';
+        // ===== OPEN / CLOSE PRE-ORDER =====
+        async function openPreOrder(deviceName){
+            const productName=deviceName||'GodAura Pro';
+            const nameEl=$po('preOrderProductName');
+            if(nameEl)nameEl.textContent=productName;
 
             // Reset the form fields first so we never show a previous user's data.
             ['poPhone','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
@@ -1590,6 +1552,8 @@
             poSetLocationStatus('','');
             hidePoErrorBox();
             PO_EXISTING=null;
+            poUpdateSubmitButton();
+            poUpdateStateLabels();
 
             // Wait for the Supabase session to be ready.
             await authReadyPromise;
@@ -1616,13 +1580,10 @@
                 lucide.createIcons();
             },100);
 
-            // For signed-in users, wait for the DB fetch to finish
-            // before treating the form as ready. This prevents showing
-            // an empty form when data exists.
+            // For signed-in users, wait for the DB fetch to finish.
             if(AUTH_STATE.user){
                 if(PO_LOADING)return;
                 PO_LOADING=true;
-                poUpdateSubmitButton();
                 try{
                     await poPrefillFromExisting();
                 }catch(e){
@@ -1632,6 +1593,7 @@
                 }
             }else{
                 poUpdateSubmitButton();
+                poUpdateStateLabels();
             }
         }
 
@@ -1651,10 +1613,8 @@
             box.textContent='';
         }
 
-        // ===== FIXED: submitPreOrder =====
-        // Uses getSession() + getUser() with a retry, so it never falsely
-        // reports "not signed in" when the session is actually present.
-                        async function submitPreOrder(event){
+        // ===== SUBMIT / UPDATE PRE-ORDER =====
+        async function submitPreOrder(event){
             if(event)event.preventDefault();
             hidePoErrorBox();
 
@@ -1691,7 +1651,7 @@
                 return;
             }
 
-            // Re-check whether a row exists — this is the source of truth.
+            // Re-check whether a row exists.
             if(!PO_EXISTING){
                 PO_EXISTING=await poLoadExistingPreorder();
             }
@@ -1711,7 +1671,6 @@
             const address=($po('poAddress').value||'').trim();
 
             try{
-                // 1. Save phone + address to profiles (upsert by id).
                 const meta=sbUser.user_metadata||{};
                 const profilePayload={
                     id:sbUser.id,
@@ -1725,7 +1684,6 @@
                     .upsert(profilePayload,{onConflict:'id'});
                 if(profileError)console.warn('[submit] profile upsert error:',profileError);
 
-                // 2. Insert OR update the SAME preorder row.
                 let saveError=null;
                 let savedRow=null;
 
@@ -1734,7 +1692,7 @@
                         .from('preorders')
                         .update({status:'pending'})
                         .eq('id',PO_EXISTING.id)
-                        .eq('user_id',sbUser.id)   // extra safety: RLS-style check
+                        .eq('user_id',sbUser.id)
                         .select('id,user_id,status,created_at,updated_at')
                         .maybeSingle();
                     if(error)saveError=error;
@@ -1759,11 +1717,10 @@
                     return;
                 }
 
-                // Remember the row for subsequent updates.
                 PO_EXISTING=savedRow||PO_EXISTING;
+                poUpdateStateLabels();
 
                 showToast(isUpdate?'✅ Pre-order updated.':'✅ Pre-order submitted!');
-                const deviceName=$po('preOrderProductName').textContent.trim();
                 const shell=document.getElementById('poShell');
                 shell.innerHTML=`
                     <button onclick="closePreOrder()" class="absolute top-4 right-4" style="color:var(--text-muted)">
