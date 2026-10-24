@@ -1401,7 +1401,7 @@
             const nameEl=$po('preOrderProductName');
             if(nameEl)nameEl.textContent=productName;
 
-            ['poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
+            ['poCountry','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
                 const el=$po(id);
                 if(el)el.value='';
             });
