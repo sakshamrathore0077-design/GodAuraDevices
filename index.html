@@ -12,7 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;transition:background .4s,color .4s;overflow-x:hidden;width:100%}
+        html,body{max-width:100%;overflow-x:hidden}
+        body{font-family:'Inter',sans-serif;transition:background .4s,color .4s;width:100%}
         :root{
             --bg-primary:#faf8ff;--bg-secondary:#fff;--bg-card:#fff;--bg-input:#f3f0ff;
             --text-primary:#1e1b4b;--text-secondary:#4c4574;--text-muted:#8b83a8;
@@ -67,8 +68,8 @@
         .starburst::after{content:'';position:absolute;top:-4px;right:-4px;width:12px;height:12px;background:var(--starburst-color);border-radius:50% 50% 50% 0;opacity:.5;transform:rotate(45deg)}
         .starburst-sm{font-size:.55rem;padding:4px 10px 4px 8px}
 
-        .carousel-wrapper{position:relative;display:flex;align-items:center;justify-content:center;gap:16px;max-width:1100px;margin:0 auto}
-        .carousel-viewport{position:relative;width:100%;height:560px;overflow:visible}
+        .carousel-wrapper{position:relative;display:flex;align-items:center;justify-content:center;gap:16px;max-width:1100px;margin:0 auto;max-width:100%}
+        .carousel-viewport{position:relative;width:100%;height:560px;overflow:hidden}
         .carousel-slide{position:absolute;top:50%;left:50%;width:260px;height:460px;border-radius:24px;overflow:hidden;transition:all .6s cubic-bezier(.2,.9,.4,1.1);cursor:pointer;box-shadow:var(--shadow-md);border:2px solid var(--border-color)}
         .carousel-slide img{width:100%;height:100%;object-fit:cover;display:block;background:var(--bg-secondary)}
         .slide-pos-center{transform:translate(-50%,-50%) scale(1);opacity:1;z-index:5;border-color:var(--accent-border);box-shadow:var(--shadow-lg)}
@@ -226,7 +227,6 @@
         .po-status-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(16,185,129,.12);color:#059669;font-size:13px;font-weight:600;border:1px solid rgba(16,185,129,.3)}
         [data-theme="dark"] .po-status-badge{background:rgba(16,185,129,.15);color:#34d399}
 
-        /* === NEW: small "Preorder Saved" status label === */
         .po-saved-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:rgba(16,185,129,.12);color:#059669;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border:1px solid rgba(16,185,129,.3)}
         [data-theme="dark"] .po-saved-badge{background:rgba(16,185,129,.15);color:#34d399}
 
@@ -238,34 +238,27 @@
         .po-req{color:#ef4444}
         .po-grid{display:grid;grid-template-columns:1fr;gap:12px}
         @media (min-width:640px){.po-grid-2{grid-template-columns:1fr 1fr}}
-        .po-phone-row{display:flex;gap:8px}
-        .po-phone-row .po-cc{width:118px;flex:0 0 auto}
-        @media (max-width:420px){.po-phone-row .po-cc{width:100px;font-size:13px;padding-left:10px;padding-right:6px}}
         .po-hint{font-size:11px;line-height:1.5;color:var(--text-muted);margin-top:5px}
         .po-hint.error{color:#ef4444}
         .po-hint.success{color:#10b981}
         .po-error{display:none;font-size:12px;line-height:1.4;color:#ef4444;margin-top:5px}
         .po-error.show{display:block}
         .po-invalid{border-color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.08)!important}
-        .po-locate-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;color:var(--accent-color);background:var(--accent-bg);border:1px solid var(--accent-border);cursor:pointer;transition:all .25s;width:100%;justify-content:center}
-        @media (min-width:640px){.po-locate-btn{width:auto}}
-        .po-locate-btn:hover:not(:disabled){border-color:var(--accent-color)}
-        .po-locate-btn:disabled{opacity:.65;cursor:wait}
         .po-spinner{width:14px;height:14px;border:2px solid var(--accent-border);border-top-color:var(--accent-color);border-radius:50%;display:inline-block;animation:poSpin .7s linear infinite}
     </style>
 </head>
 
 <body class="grid-bg">
 
-    <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div class="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] bg-violet-400 rounded-full blur-[120px]" style="animation:pulse-slow 6s ease-in-out infinite;opacity:var(--glow-opacity)"></div>
         <div class="absolute top-[40%] right-[-150px] w-[500px] h-[500px] bg-purple-500 rounded-full blur-[120px]" style="animation:pulse-slow 8s ease-in-out infinite 2s;opacity:var(--glow-opacity)"></div>
         <div class="absolute bottom-[-100px] left-[30%] w-[700px] h-[500px] bg-fuchsia-400 rounded-full blur-[120px]" style="animation:pulse-slow 7s ease-in-out infinite 1s;opacity:var(--glow-opacity)"></div>
     </div>
 
-    <div id="mainSite">
+    <div id="mainSite" class="pt-[72px] sm:pt-[80px]">
 
-        <nav class="sticky top-0 z-50 backdrop-blur-md border-b transition-all duration-300" style="background:var(--nav-bg);border-color:var(--border-color)">
+        <nav class="fixed top-0 left-0 w-full z-50 backdrop-blur-md border-b transition-all duration-300" style="background:var(--nav-bg);border-color:var(--border-color)">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
                 <a href="#home" class="nav-brand group" onclick="event.preventDefault(); goHome();">
                     <img src="GodAura Logo.png" alt="GodAura Logo" class="h-8 w-auto sm:h-10 rounded-lg">
@@ -639,9 +632,6 @@
             <p class="text-base sm:text-lg mb-8 sm:mb-12" style="color:var(--text-secondary)">From a bold idea to a movement in wearable wellness.</p>
             <div class="mb-12 sm:mb-16">
                 <div class="timeline-item"><div class="timeline-dot filled"></div><div class="section-card p-5 sm:p-6"><span class="text-xs sm:text-sm font-bold accent-text">Q1 2022</span><h3 class="text-lg sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">GodAura Founded</h3><p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">Three co-founders started GodAura in a small San Francisco apartment.</p></div></div>
-                <div class="timeline-item"><div class="timeline-dot filled"></div><div class="section-card p-5 sm:p-6"><span class="text-xs sm:text-sm font-bold accent-text">Q3 2022</span><h3 class="text-lg sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">First Prototype — ZenBand v0.1</h3><p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">Our first working prototype demonstrated haptic vibrations could reduce heart rate and cortisol.</p></div></div>
-                <div class="timeline-item"><div class="timeline-dot filled"></div><div class="section-card p-5 sm:p-6"><span class="text-xs sm:text-sm font-bold accent-text">Q1 2023</span><h3 class="text-lg sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">$4.2M Seed Funding</h3><p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">Secured seed funding from leading wellness-tech investors.</p></div></div>
-                <div class="timeline-item"><div class="timeline-dot"></div><div class="section-card p-5 sm:p-6"><span class="text-xs sm:text-sm font-bold accent-text">Q1 2024</span><h3 class="text-lg sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">CES Innovation Award</h3><p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">Won the CES Innovation Award in the Wellness & Wearable category.</p></div></div>
             </div>
         </div>
     </div>
@@ -699,13 +689,11 @@
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
-            <!-- Heading block — id added so JS can swap text between states -->
             <h3 id="poHeading" class="text-xl sm:text-2xl font-semibold mb-2" style="color:var(--text-primary)">Pre-Order
                 <span id="preOrderProductName" class="accent-text-bright">GodAura Pro</span>
             </h3>
             <p id="poIntroText" class="text-sm mb-4" style="color:var(--text-secondary)">Reserve your device. You won't be charged now.</p>
 
-            <!-- Preorder Saved badge (hidden by default, shown when PO_EXISTING) -->
             <div id="poSavedBadge" class="hidden mb-4">
                 <span class="po-saved-badge">
                     <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Preorder Saved
@@ -735,21 +723,7 @@
                 </div>
 
                 <div class="po-block">
-                    <div class="po-block-title"><i data-lucide="phone"></i> Contact Information</div>
-                    <label class="po-label" for="poPhone">Phone number <span class="po-req">*</span></label>
-                    <div class="po-phone-row">
-                        <select id="poCountryCode" class="themed-input po-cc" aria-label="Country calling code"></select>
-                        <input id="poPhone" type="tel" class="themed-input" placeholder="98765 43210" inputmode="tel">
-                    </div>
-                    <p class="po-error" id="err_phone"></p>
-                </div>
-
-                <div class="po-block">
                     <div class="po-block-title"><i data-lucide="map-pin"></i> Delivery Address</div>
-                    <button type="button" id="poLocationBtn" onclick="poUseMyLocation()" class="po-locate-btn mb-3">
-                        <i data-lucide="locate-fixed" class="w-4 h-4"></i> Use my current location
-                    </button>
-                    <p class="po-hint mb-2" id="poLocationStatus"></p>
                     <div class="po-grid po-grid-2">
                         <div>
                             <label class="po-label" for="poCountry">Country <span class="po-req">*</span></label>
@@ -990,7 +964,6 @@
             if(poOpen){
                 poApplyUserToPreOrder(user);
                 showToast('Signed in as '+user.email);
-                // Re-run the existing-preorder check now that we have a session
                 try{ await poPrefillFromExisting(); }catch(e){ console.warn(e); }
             }else{
                 closeSignIn();
@@ -1218,27 +1191,27 @@
 
         // ===== PRE-ORDER FORM =====
         const PO_COUNTRIES=[
-            {code:'IN',name:'India',dial:'+91'},{code:'US',name:'United States',dial:'+1'},
-            {code:'GB',name:'United Kingdom',dial:'+44'},{code:'CA',name:'Canada',dial:'+1'},
-            {code:'AU',name:'Australia',dial:'+61'},{code:'AE',name:'United Arab Emirates',dial:'+971'},
-            {code:'SG',name:'Singapore',dial:'+65'},{code:'DE',name:'Germany',dial:'+49'},
-            {code:'FR',name:'France',dial:'+33'},{code:'ES',name:'Spain',dial:'+34'},
-            {code:'IT',name:'Italy',dial:'+39'},{code:'NL',name:'Netherlands',dial:'+31'},
-            {code:'IE',name:'Ireland',dial:'+353'},{code:'NZ',name:'New Zealand',dial:'+64'},
-            {code:'ZA',name:'South Africa',dial:'+27'},{code:'BR',name:'Brazil',dial:'+55'},
-            {code:'JP',name:'Japan',dial:'+81'},{code:'KR',name:'South Korea',dial:'+82'},
-            {code:'MY',name:'Malaysia',dial:'+60'},{code:'NP',name:'Nepal',dial:'+977'},
-            {code:'LK',name:'Sri Lanka',dial:'+94'},{code:'BD',name:'Bangladesh',dial:'+880'},
-            {code:'PK',name:'Pakistan',dial:'+92'}
+            {code:'IN',name:'India'},{code:'US',name:'United States'},
+            {code:'GB',name:'United Kingdom'},{code:'CA',name:'Canada'},
+            {code:'AU',name:'Australia'},{code:'AE',name:'United Arab Emirates'},
+            {code:'SG',name:'Singapore'},{code:'DE',name:'Germany'},
+            {code:'FR',name:'France'},{code:'ES',name:'Spain'},
+            {code:'IT',name:'Italy'},{code:'NL',name:'Netherlands'},
+            {code:'IE',name:'Ireland'},{code:'NZ',name:'New Zealand'},
+            {code:'ZA',name:'South Africa'},{code:'BR',name:'Brazil'},
+            {code:'JP',name:'Japan'},{code:'KR',name:'South Korea'},
+            {code:'MY',name:'Malaysia'},{code:'NP',name:'Nepal'},
+            {code:'LK',name:'Sri Lanka'},{code:'BD',name:'Bangladesh'},
+            {code:'PK',name:'Pakistan'}
         ];
 
         const PO_ERROR_TARGETS={
-            account:[],phone:['poCountryCode','poPhone'],country:['poCountry'],state:['poStateInput'],
+            account:[],country:['poCountry'],state:['poStateInput'],
             city:['poCity'],postal:['poPostal'],address:['poAddress'],agreement:[]
         };
 
         let preOrderBusy=false;
-        const PO_STATE={user:null,location:null};
+        const PO_STATE={user:null};
         let PO_EXISTING=null;
         let PO_LOADING=false;
 
@@ -1249,13 +1222,10 @@
         }
 
         function poPopulateSelects(){
-            const dialSelect=$po('poCountryCode');
             const countrySelect=$po('poCountry');
-            if(!dialSelect||!countrySelect)return;
-            dialSelect.innerHTML=PO_COUNTRIES.map(c=>'<option value="'+poEsc(c.dial)+'">'+poEsc(c.dial)+' ('+poEsc(c.code)+')</option>').join('');
+            if(!countrySelect)return;
             countrySelect.innerHTML='<option value="">Select country</option>'+PO_COUNTRIES.map(c=>'<option value="'+poEsc(c.name)+'">'+poEsc(c.name)+'</option>').join('');
             const india=PO_COUNTRIES.find(c=>c.code==='IN');
-            dialSelect.value=india?india.dial:PO_COUNTRIES[0].dial;
             countrySelect.value=india?india.name:'';
         }
 
@@ -1271,16 +1241,6 @@
         function poClearAllErrors(){Object.keys(PO_ERROR_TARGETS).forEach(key=>poSetError(key,''));}
 
         function poValidateAccount(){return(PO_STATE.user&&PO_STATE.user.email)?'':'Please sign in with Google to continue.';}
-
-        function poValidatePhone(){
-            const raw=($po('poPhone').value||'').trim();
-            const digits=raw.replace(/[^\d]/g,'');
-            if(!raw)return'Phone number is required.';
-            if(!/^[\d\s()+-]+$/.test(raw))return'Use digits, spaces, +, - and ( ) only.';
-            if(digits.length<6)return'Phone number looks too short.';
-            if(digits.length>15)return'Phone number looks too long.';
-            return'';
-        }
 
         function poValidateCountry(){return $po('poCountry').value?'':'Please select your country.';}
         function poValidateState(){
@@ -1318,7 +1278,6 @@
             let valid=true;
             const apply=(key,message)=>{poSetError(key,message);if(message)valid=false;};
             apply('account',poValidateAccount());
-            apply('phone',poValidatePhone());
             apply('country',poValidateCountry());
             apply('state',poValidateState());
             apply('city',poValidateCity());
@@ -1359,8 +1318,7 @@
             $po('poAccountSignedIn').classList.add('hidden');
             $po('poAccountSignedOut').classList.remove('hidden');
 
-            // Clear any previously loaded data so the next user never sees it.
-            ['poPhone','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
+            ['poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
                 const el=$po(id);
                 if(el)el.value='';
             });
@@ -1391,12 +1349,10 @@
             if(!heading||!intro||!badge)return;
 
             if(PO_EXISTING&&PO_EXISTING.id){
-                // State 2 — user already has a preorder
                 heading.innerHTML='Your <span class="accent-text-bright">Preorder</span>';
                 intro.textContent='Your preorder details are saved. You can review or update them anytime.';
                 badge.classList.remove('hidden');
             }else{
-                // State 1 — no preorder yet
                 heading.innerHTML='Pre-order <span id="preOrderProductName" class="accent-text-bright">GodAura Pro</span>';
                 intro.textContent="Reserve your device. You won't be charged now.";
                 badge.classList.add('hidden');
@@ -1428,37 +1384,8 @@
         async function poPrefillFromExisting(){
             if(!AUTH_STATE.user)return;
 
-            // --- Profile (phone + address) ---
-            let profile=null;
-            try{
-                const {data,error}=await supabaseClient
-                    .from('profiles')
-                    .select('name,email,phone,address')
-                    .eq('id',AUTH_STATE.user.id)
-                    .maybeSingle();
-                if(error)console.warn('[preorder] profile load error:',error.message);
-                profile=data||null;
-            }catch(e){console.warn('[preorder] profile load exception:',e);}
+            // Note: address is NOT stored in Supabase (no column), so we skip it.
 
-            if(profile){
-                if(profile.phone&&!$po('poPhone').value){
-                    const raw=String(profile.phone).trim();
-                    const m=raw.match(/^(\+\d+)\s*(.*)$/);
-                    if(m){
-                        const dial=m[1],local=m[2];
-                        const opt=Array.from($po('poCountryCode').options).find(o=>o.value===dial);
-                        if(opt)$po('poCountryCode').value=dial;
-                        $po('poPhone').value=local;
-                    }else{
-                        $po('poPhone').value=raw;
-                    }
-                }
-                if(profile.address&&!$po('poAddress').value){
-                    $po('poAddress').value=profile.address;
-                }
-            }
-
-            // --- Preorder existence ---
             PO_EXISTING=await poLoadExistingPreorder();
             poUpdateSubmitButton();
             poUpdateStateLabels();
@@ -1468,97 +1395,26 @@
             }
         }
 
-        // ===== LOCATION =====
-        function poSetLocationStatus(text,type){
-            const el=$po('poLocationStatus');
-            if(!el)return;
-            el.textContent=text||'';
-            el.className='po-hint'+(type?' '+type:'');
-        }
-
-        function poReverseGeocode(lat,lon){
-            const url='https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&zoom=18&lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lon);
-            return fetch(url,{headers:{'Accept':'application/json'}})
-                .then(res=>{if(!res.ok)throw new Error('Reverse geocoding failed');return res.json();})
-                .then(data=>data.address||{});
-        }
-
-        function poFillAddressFromGeo(address){
-            if(!address)return;
-            const countryName=address.country||'';
-            const match=PO_COUNTRIES.find(c=>c.name.toLowerCase()===countryName.toLowerCase());
-            if(match){$po('poCountry').value=match.name;$po('poCountryCode').value=match.dial;}
-            const state=address.state||address.state_district||address.region||address.province||'';
-            const city=address.city||address.town||address.village||address.municipality||address.county||address.suburb||'';
-            const postal=address.postcode||'';
-            if(state&&!$po('poStateInput').value.trim())$po('poStateInput').value=state;
-            if(city&&!$po('poCity').value.trim())$po('poCity').value=city;
-            if(postal&&!$po('poPostal').value.trim())$po('poPostal').value=postal;
-            if(!$po('poAddress').value.trim()){
-                const parts=[address.house_number,address.house_name,address.road||address.pedestrian||address.footway,address.neighbourhood||address.suburb,address.city_district].filter(Boolean);
-                if(parts.length)$po('poAddress').value=parts.join(', ');
-                else if(address.display_name)$po('poAddress').value=address.display_name;
-            }
-        }
-
-        function poUseMyLocation(){
-            const btn=$po('poLocationBtn');
-            if(!navigator.geolocation){
-                poSetLocationStatus('Location is not supported by this browser.','error');
-                return;
-            }
-            const originalHTML=btn.innerHTML;
-            btn.disabled=true;
-            btn.innerHTML='<span class="po-spinner"></span> Detecting…';
-            poSetLocationStatus('Requesting location permission…','');
-            navigator.geolocation.getCurrentPosition(
-                function(position){
-                    const lat=position.coords.latitude;
-                    const lon=position.coords.longitude;
-                    PO_STATE.location={lat,lon};
-                    poSetLocationStatus('Location found. Looking up your address…','');
-                    poReverseGeocode(lat,lon)
-                        .then(address=>{poFillAddressFromGeo(address);poSetLocationStatus('Address filled from location. Please verify and edit.','success');})
-                        .catch(()=>{poSetLocationStatus('Could not look up address. Please enter manually.','error');})
-                        .then(()=>{btn.disabled=false;btn.innerHTML=originalHTML;lucide.createIcons();});
-                },
-                function(error){
-                    let message='Location permission denied. Please enter your address manually.';
-                    if(error.code===3)message='Location request timed out.';
-                    else if(error.code===2)message='Your location could not be determined.';
-                    poSetLocationStatus(message,'error');
-                    btn.disabled=false;
-                    btn.innerHTML=originalHTML;
-                    lucide.createIcons();
-                },
-                {enableHighAccuracy:true,timeout:10000,maximumAge:60000}
-            );
-        }
-
         // ===== OPEN / CLOSE PRE-ORDER =====
         async function openPreOrder(deviceName){
             const productName=deviceName||'GodAura Pro';
             const nameEl=$po('preOrderProductName');
             if(nameEl)nameEl.textContent=productName;
 
-            // Reset the form fields first so we never show a previous user's data.
-            ['poPhone','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
+            ['poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
                 const el=$po(id);
                 if(el)el.value='';
             });
             $po('termsCheckbox').checked=false;
             $po('updatesCheckbox').checked=false;
             poClearAllErrors();
-            poSetLocationStatus('','');
             hidePoErrorBox();
             PO_EXISTING=null;
             poUpdateSubmitButton();
             poUpdateStateLabels();
 
-            // Wait for the Supabase session to be ready.
             await authReadyPromise;
 
-            // Build the UI user from the verified session.
             let uiUser=null;
             if(AUTH_STATE.user){
                 const meta=AUTH_STATE.user.user_metadata||{};
@@ -1580,7 +1436,6 @@
                 lucide.createIcons();
             },100);
 
-            // For signed-in users, wait for the DB fetch to finish.
             if(AUTH_STATE.user){
                 if(PO_LOADING)return;
                 PO_LOADING=true;
@@ -1626,7 +1481,6 @@
 
             await authReadyPromise;
 
-            // Resolve the current authenticated user.
             let sbUser=AUTH_STATE.user;
             if(!sbUser){
                 try{
@@ -1651,7 +1505,6 @@
                 return;
             }
 
-            // Re-check whether a row exists.
             if(!PO_EXISTING){
                 PO_EXISTING=await poLoadExistingPreorder();
             }
@@ -1665,25 +1518,7 @@
             submitBtn.innerHTML='<span class="po-spinner"></span> '+(isUpdate?'Updating…':'Saving…');
             submitBtn.style.opacity='0.7';
 
-            const dial=$po('poCountryCode').value||'';
-            const phone=($po('poPhone').value||'').trim();
-            const fullPhone=dial?(dial+' '+phone).trim():phone;
-            const address=($po('poAddress').value||'').trim();
-
             try{
-                const meta=sbUser.user_metadata||{};
-                const profilePayload={
-                    id:sbUser.id,
-                    name:meta.full_name||meta.name||PO_STATE.user?.name||'',
-                    email:sbUser.email||'',
-                    phone:fullPhone,
-                    address:address
-                };
-                const {error:profileError}=await supabaseClient
-                    .from('profiles')
-                    .upsert(profilePayload,{onConflict:'id'});
-                if(profileError)console.warn('[submit] profile upsert error:',profileError);
-
                 let saveError=null;
                 let savedRow=null;
 
@@ -1826,10 +1661,10 @@
         // ===== INIT =====
         poPopulateSelects();
 
-        ['poPhone','poCountry','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
+        ['poCountry','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
             const el=document.getElementById(id);
             if(el){
-                const map={poPhone:'phone',poCountry:'country',poStateInput:'state',poCity:'city',poPostal:'postal',poAddress:'address'};
+                const map={poCountry:'country',poStateInput:'state',poCity:'city',poPostal:'postal',poAddress:'address'};
                 el.addEventListener('input',()=>poSetError(map[id]||'',''));
                 el.addEventListener('change',()=>poSetError(map[id]||'',''));
             }
