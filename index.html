@@ -1518,7 +1518,44 @@
             submitBtn.innerHTML='<span class="po-spinner"></span> '+(isUpdate?'Updating…':'Saving…');
             submitBtn.style.opacity='0.7';
 
+            // Gather all address fields and the updates checkbox
+            const country = $po('poCountry').value.trim();
+            const state = $po('poStateInput').value.trim();
+            const city = $po('poCity').value.trim();
+            const pincode = $po('poPostal').value.trim();
+            const fullAddress = $po('poAddress').value.trim();
+            const receiveUpdates = $po('updatesCheckbox').checked;
+
             try{
+                // 1. Save everything to the profiles table
+                const meta=sbUser.user_metadata||{};
+                const profilePayload={
+                    id: sbUser.id,
+                    name: meta.full_name || meta.name || PO_STATE.user?.name || '',
+                    email: sbUser.email || '',
+                    country: country,
+                    state: state,
+                    city: city,
+                    pincode: pincode,
+                    full_address: fullAddress,
+                    receive_updates: receiveUpdates
+                };
+                
+                const {error:profileError}=await supabaseClient
+                    .from('profiles')
+                    .upsert(profilePayload,{onConflict:'id'});
+                
+                if(profileError){
+                    console.error('[submit] profile upsert error:',profileError);
+                    showPoErrorBox('Could not save your address: ' + profileError.message);
+                    submitBtn.disabled=false;
+                    submitBtn.innerHTML=originalHTML;
+                    submitBtn.style.opacity='1';
+                    preOrderBusy=false;
+                    return;
+                }
+
+                // 2. Save preorder status
                 let saveError=null;
                 let savedRow=null;
 
