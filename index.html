@@ -1380,11 +1380,28 @@
             }
         }
 
-        // ===== PREFILL FROM PROFILE + PREORDER =====
+        // ===== PREFILL FROM PROFILE =====
         async function poPrefillFromExisting(){
             if(!AUTH_STATE.user)return;
 
-            // Note: address is NOT stored in Supabase (no column), so we skip it.
+            try{
+                const {data,error}=await supabaseClient
+                    .from('profiles')
+                    .select('country, state, city, pincode, full_address, receive_updates')
+                    .eq('id',AUTH_STATE.user.id)
+                    .maybeSingle();
+                    
+                if(!error && data){
+                    if(data.country && !$po('poCountry').value) $po('poCountry').value = data.country;
+                    if(data.state && !$po('poStateInput').value) $po('poStateInput').value = data.state;
+                    if(data.city && !$po('poCity').value) $po('poCity').value = data.city;
+                    if(data.pincode && !$po('poPostal').value) $po('poPostal').value = data.pincode;
+                    if(data.full_address && !$po('poAddress').value) $po('poAddress').value = data.full_address;
+                    if(data.receive_updates !== undefined && data.receive_updates !== null) {
+                        $po('updatesCheckbox').checked = data.receive_updates;
+                    }
+                }
+            }catch(e){console.warn('[preorder] profile load exception:',e);}
 
             PO_EXISTING=await poLoadExistingPreorder();
             poUpdateSubmitButton();
@@ -1396,7 +1413,7 @@
         }
 
         // ===== OPEN / CLOSE PRE-ORDER =====
-        async function openPreOrder(deviceName){
+            ['poCountry','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{{
             const productName=deviceName||'GodAura Pro';
             const nameEl=$po('preOrderProductName');
             if(nameEl)nameEl.textContent=productName;
