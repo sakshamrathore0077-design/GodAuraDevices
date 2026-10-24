@@ -1486,34 +1486,35 @@
         }
 
         // ===== SUBMIT / UPDATE PRE-ORDER =====
+        // ===== SUBMIT / UPDATE PRE-ORDER =====
         async function submitPreOrder(event){
-            if(event)event.preventDefault();
+            if(event) event.preventDefault();
             hidePoErrorBox();
 
             if(!poValidateAll()){
                 showToast('Please fix the highlighted fields.');
                 return;
             }
-            if(preOrderBusy)return;
+            if(preOrderBusy) return;
 
             await authReadyPromise;
 
-            let sbUser=AUTH_STATE.user;
+            let sbUser = AUTH_STATE.user;
             if(!sbUser){
                 try{
-                    const {data}=await supabaseClient.auth.getSession();
-                    if(data&&data.session&&data.session.user){
-                        sbUser=data.session.user;
-                        AUTH_STATE.user=sbUser;
-                        AUTH_STATE.session=data.session;
+                    const {data} = await supabaseClient.auth.getSession();
+                    if(data && data.session && data.session.user){
+                        sbUser = data.session.user;
+                        AUTH_STATE.user = sbUser;
+                        AUTH_STATE.session = data.session;
                     }
-                }catch(e){console.warn('[submit] getSession exception:',e);}
+                } catch(e){ console.warn('[submit] getSession exception:',e); }
             }
             if(!sbUser){
                 try{
-                    const {data}=await supabaseClient.auth.getUser();
-                    if(data&&data.user){sbUser=data.user;AUTH_STATE.user=data.user;}
-                }catch(e){console.warn('[submit] getUser exception:',e);}
+                    const {data} = await supabaseClient.auth.getUser();
+                    if(data && data.user){ sbUser = data.user; AUTH_STATE.user = data.user; }
+                } catch(e){ console.warn('[submit] getUser exception:',e); }
             }
 
             if(!sbUser){
@@ -1523,19 +1524,18 @@
             }
 
             if(!PO_EXISTING){
-                PO_EXISTING=await poLoadExistingPreorder();
+                PO_EXISTING = await poLoadExistingPreorder();
             }
 
-            preOrderBusy=true;
-            const submitBtn=$po('poSubmitBtn');
-            const originalHTML=submitBtn.innerHTML;
-            const isUpdate=!!(PO_EXISTING&&PO_EXISTING.id);
+            preOrderBusy = true;
+            const submitBtn = $po('poSubmitBtn');
+            const originalHTML = submitBtn.innerHTML;
+            const isUpdate = !!(PO_EXISTING && PO_EXISTING.id);
 
-            submitBtn.disabled=true;
-            submitBtn.innerHTML='<span class="po-spinner"></span> '+(isUpdate?'Updating…':'Saving…');
-            submitBtn.style.opacity='0.7';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="po-spinner"></span> ' + (isUpdate ? 'Updating…' : 'Saving…');
+            submitBtn.style.opacity = '0.7';
 
-            // Gather all address fields and the updates checkbox
             const country = $po('poCountry').value.trim();
             const state = $po('poStateInput').value.trim();
             const city = $po('poCity').value.trim();
@@ -1544,11 +1544,11 @@
             const receiveUpdates = $po('updatesCheckbox').checked;
 
             try{
-                // 1. Save everything to the profiles table
-                const meta=sbUser.user_metadata||{};
-                const profilePayload={
+                // 1. Save to PROFILES table
+                const meta = sbUser.user_metadata || {};
+                const profilePayload = {
                     id: sbUser.id,
-                    name: meta.full_name || meta.name || PO_STATE.user?.name || '',
+                    name: meta.full_name || meta.name || (PO_STATE.user ? PO_STATE.user.name : ''),
                     email: sbUser.email || '',
                     country: country,
                     state: state,
@@ -1558,60 +1558,71 @@
                     receive_updates: receiveUpdates
                 };
                 
-                const {error:profileError}=await supabaseClient
+                const {error: profileError} = await supabaseClient
                     .from('profiles')
-                    .upsert(profilePayload,{onConflict:'id'});
+                    .upsert(profilePayload, {onConflict: 'id'});
                 
                 if(profileError){
-                    console.error('[submit] profile upsert error:',profileError);
+                    console.error('[submit] profile upsert error:', profileError);
                     showPoErrorBox('Could not save your address: ' + profileError.message);
-                    submitBtn.disabled=false;
-                    submitBtn.innerHTML=originalHTML;
-                    submitBtn.style.opacity='1';
-                    preOrderBusy=false;
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalHTML;
+                    submitBtn.style.opacity = '1';
+                    preOrderBusy = false;
                     return;
                 }
 
-                // 2. Save preorder status
-                let saveError=null;
-                let savedRow=null;
+                // 2. Save to PREORDERS table
+                let saveError = null;
+                let savedRow = null;
+
+                const orderPayload = {
+                    status: 'pending',
+                    country: country,
+                    state: state,
+                    city: city,
+                    pincode: pincode,
+                    full_address: fullAddress,
+                    receive_updates: receiveUpdates
+                };
 
                 if(isUpdate){
-                    const {data,error}=await supabaseClient
+                    const {data, error} = await supabaseClient
                         .from('preorders')
-                        .update({status:'pending'})
-                        .eq('id',PO_EXISTING.id)
-                        .eq('user_id',sbUser.id)
-                        .select('id,user_id,status,created_at,updated_at')
+                        .update(orderPayload)
+                        .eq('id', PO_EXISTING.id)
+                        .eq('user_id', sbUser.id)
+                        .select('*')
                         .maybeSingle();
-                    if(error)saveError=error;
-                    else savedRow=data;
-                }else{
-                    const {data,error}=await supabaseClient
+                    if(error) saveError = error;
+                    else savedRow = data;
+                } else {
+                    orderPayload.user_id = sbUser.id;
+                    const {data, error} = await supabaseClient
                         .from('preorders')
-                        .insert({user_id:sbUser.id,status:'pending'})
-                        .select('id,user_id,status,created_at,updated_at')
+                        .insert(orderPayload)
+                        .select('*')
                         .maybeSingle();
-                    if(error)saveError=error;
-                    else savedRow=data;
+                    if(error) saveError = error;
+                    else savedRow = data;
                 }
 
                 if(saveError){
-                    console.error('[submit] save error:',saveError);
-                    showPoErrorBox('Could not save your pre-order: '+saveError.message);
-                    submitBtn.disabled=false;
-                    submitBtn.innerHTML=originalHTML;
-                    submitBtn.style.opacity='1';
-                    preOrderBusy=false;
+                    console.error('[submit] save error:', saveError);
+                    showPoErrorBox('Could not save your pre-order: ' + saveError.message);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalHTML;
+                    submitBtn.style.opacity = '1';
+                    preOrderBusy = false;
                     return;
                 }
 
-                PO_EXISTING=savedRow||PO_EXISTING;
+                PO_EXISTING = savedRow || PO_EXISTING;
                 poUpdateStateLabels();
 
-                showToast(isUpdate?'✅ Pre-order updated.':'✅ Pre-order submitted!');
-                const shell=document.getElementById('poShell');
-                shell.innerHTML=`
+                showToast(isUpdate ? '✅ Pre-order updated.' : '✅ Pre-order submitted!');
+                const shell = document.getElementById('poShell');
+                shell.innerHTML = `
                     <button onclick="closePreOrder()" class="absolute top-4 right-4" style="color:var(--text-muted)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
@@ -1619,28 +1630,28 @@
                         <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background:var(--accent-bg)">
                             <i data-lucide="check-circle-2" class="w-8 h-8 accent-text"></i>
                         </div>
-                        <h3 class="text-xl font-semibold mb-2" style="color:var(--text-primary)">${isUpdate?'Pre-Order Updated':'Pre-Order Received'}</h3>
+                        <h3 class="text-xl font-semibold mb-2" style="color:var(--text-primary)">${isUpdate ? 'Pre-Order Updated' : 'Pre-Order Received'}</h3>
                         <p class="text-sm mb-4" style="color:var(--text-secondary)">
-                            ${isUpdate?'Your pre-order changes have been saved.':'Thank you! Your pre-order has been recorded.'}
-                            We will email you at <strong>${sbUser.email||'your email'}</strong>.
+                            ${isUpdate ? 'Your pre-order changes have been saved.' : 'Thank you! Your pre-order has been recorded.'}
+                            We will email you at <strong>${sbUser.email || 'your email'}</strong>.
                         </p>
                         <div class="po-status-badge mx-auto">
-                            <i data-lucide="clock" class="w-4 h-4"></i> Status: ${savedRow&&savedRow.status?savedRow.status:'pending'}
+                            <i data-lucide="clock" class="w-4 h-4"></i> Status: ${savedRow && savedRow.status ? savedRow.status : 'pending'}
                         </div>
                         <button onclick="closePreOrder()" class="w-full text-white rounded-xl py-3 font-semibold mt-6" style="background:var(--btn-bg);box-shadow:var(--btn-shadow)">
                             Done
                         </button>
                     </div>`;
                 lucide.createIcons();
-                preOrderBusy=false;
+                preOrderBusy = false;
 
-            }catch(err){
-                console.error('[submit] exception:',err);
-                showPoErrorBox('Unexpected error: '+err.message);
-                submitBtn.disabled=false;
-                submitBtn.innerHTML=originalHTML;
-                submitBtn.style.opacity='1';
-                preOrderBusy=false;
+            } catch(err) {
+                console.error('[submit] exception:', err);
+                showPoErrorBox('Unexpected error: ' + err.message);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalHTML;
+                submitBtn.style.opacity = '1';
+                preOrderBusy = false;
             }
         }
 
