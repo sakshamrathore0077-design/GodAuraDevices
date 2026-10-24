@@ -1382,107 +1382,42 @@
 
         // ===== PREFILL FROM PROFILE =====
         async function poPrefillFromExisting(){
-            if(!AUTH_STATE.user)return;
+            if(!AUTH_STATE.user) return;
+
+            console.log("Fetching address for user:", AUTH_STATE.user.id);
 
             try{
-                const {data,error}=await supabaseClient
-                    .from('profiles')
+                // Fetch from 'preorders' table to get the actual order address
+                const {data, error} = await supabaseClient
+                    .from('preorders')
                     .select('country, state, city, pincode, full_address, receive_updates')
-                    .eq('id',AUTH_STATE.user.id)
+                    .eq('user_id', AUTH_STATE.user.id)
                     .maybeSingle();
                     
-                if(!error && data){
-                    if(data.country && !$po('poCountry').value) $po('poCountry').value = data.country;
-                    if(data.state && !$po('poStateInput').value) $po('poStateInput').value = data.state;
-                    if(data.city && !$po('poCity').value) $po('poCity').value = data.city;
-                    if(data.pincode && !$po('poPostal').value) $po('poPostal').value = data.pincode;
-                    if(data.full_address && !$po('poAddress').value) $po('poAddress').value = data.full_address;
+                if(error) {
+                    console.error("Error fetching preorder:", error);
+                } else if (data) {
+                    console.log("Address found in DB:", data);
+                    
+                    // Force populate the fields
+                    if(data.country) $po('poCountry').value = data.country;
+                    if(data.state) $po('poStateInput').value = data.state;
+                    if(data.city) $po('poCity').value = data.city;
+                    if(data.pincode) $po('poPostal').value = data.pincode;
+                    if(data.full_address) $po('poAddress').value = data.full_address;
                     if(data.receive_updates !== undefined && data.receive_updates !== null) {
                         $po('updatesCheckbox').checked = data.receive_updates;
                     }
+                } else {
+                    console.log("No address found in preorders for this user.");
                 }
-            }catch(e){console.warn('[preorder] profile load exception:',e);}
+            } catch(e){
+                console.warn('[preorder] preorder load exception:', e);
+            }
 
-            PO_EXISTING=await poLoadExistingPreorder();
+            PO_EXISTING = await poLoadExistingPreorder();
             poUpdateSubmitButton();
             poUpdateStateLabels();
-
-            if(PO_EXISTING&&PO_EXISTING.id){
-                showToast('Existing pre-order loaded — you can update it.');
-            }
-        }
-
-        // ===== OPEN / CLOSE PRE-ORDER =====
-        async function openPreOrder(deviceName){
-            const productName=deviceName||'GodAura Pro';
-            const nameEl=$po('preOrderProductName');
-            if(nameEl)nameEl.textContent=productName;
-
-            ['poCountry','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
-                const el=$po(id);
-                if(el)el.value='';
-            });
-            $po('termsCheckbox').checked=false;
-            $po('updatesCheckbox').checked=false;
-            poClearAllErrors();
-            hidePoErrorBox();
-            PO_EXISTING=null;
-            poUpdateSubmitButton();
-            poUpdateStateLabels();
-
-            await authReadyPromise;
-
-            let uiUser=null;
-            if(AUTH_STATE.user){
-                const meta=AUTH_STATE.user.user_metadata||{};
-                uiUser={
-                    name:meta.full_name||meta.name||'',
-                    email:AUTH_STATE.user.email||'',
-                    picture:meta.avatar_url||meta.picture||''
-                };
-            }
-
-            if(uiUser){poApplyUserToPreOrder(uiUser);}
-            else{poResetSignedInState();}
-
-            document.getElementById('preOrderModal').classList.add('active');
-            document.body.style.overflow='hidden';
-
-            setTimeout(()=>{
-                if(!poGoogleInitialized&&!PO_STATE.user)initPoGoogle();
-                lucide.createIcons();
-            },100);
-
-            if(AUTH_STATE.user){
-                if(PO_LOADING)return;
-                PO_LOADING=true;
-                try{
-                    await poPrefillFromExisting();
-                }catch(e){
-                    console.warn('[preorder] prefill failed:',e);
-                }finally{
-                    PO_LOADING=false;
-                }
-            }else{
-                poUpdateSubmitButton();
-                poUpdateStateLabels();
-            }
-        }
-
-        function closePreOrder(){
-            document.getElementById('preOrderModal').classList.remove('active');
-            document.body.style.overflow='';
-        }
-
-        function showPoErrorBox(msg){
-            const box=document.getElementById('poErrorBox');
-            box.textContent=msg;
-            box.classList.remove('hidden');
-        }
-        function hidePoErrorBox(){
-            const box=document.getElementById('poErrorBox');
-            box.classList.add('hidden');
-            box.textContent='';
         }
 
         // ===== SUBMIT / UPDATE PRE-ORDER =====
