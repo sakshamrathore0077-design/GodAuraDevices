@@ -1385,11 +1385,10 @@
             if(!AUTH_STATE.user)return;
 
             try{
-                // Fetch from 'preorders' this time
                 const {data,error}=await supabaseClient
-                    .from('preorders')
+                    .from('profiles')
                     .select('country, state, city, pincode, full_address, receive_updates')
-                    .eq('user_id',AUTH_STATE.user.id)
+                    .eq('id',AUTH_STATE.user.id)
                     .maybeSingle();
                     
                 if(!error && data){
@@ -1402,7 +1401,7 @@
                         $po('updatesCheckbox').checked = data.receive_updates;
                     }
                 }
-            }catch(e){console.warn('[preorder] preorder load exception:',e);}
+            }catch(e){console.warn('[preorder] profile load exception:',e);}
 
             PO_EXISTING=await poLoadExistingPreorder();
             poUpdateSubmitButton();
@@ -1414,7 +1413,7 @@
         }
 
         // ===== OPEN / CLOSE PRE-ORDER =====
-            ['poCountry','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{{
+        async function openPreOrder(deviceName){
             const productName=deviceName||'GodAura Pro';
             const nameEl=$po('preOrderProductName');
             if(nameEl)nameEl.textContent=productName;
