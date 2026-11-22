@@ -245,6 +245,47 @@
         .po-error.show{display:block}
         .po-invalid{border-color:#ef4444!important;box-shadow:0 0 0 3px rgba(239,68,68,.08)!important}
         .po-spinner{width:14px;height:14px;border:2px solid var(--accent-border);border-top-color:var(--accent-color);border-radius:50%;display:inline-block;animation:poSpin .7s linear infinite}
+
+        /* Phone input styling */
+        .phone-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+        .phone-input-group .country-code-select {
+            width: 110px;
+            flex-shrink: 0;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 8px;
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all .3s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b83a8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 24px;
+        }
+        .phone-input-group .country-code-select:focus {
+            outline: none;
+            border-color: var(--accent-border);
+            box-shadow: 0 0 15px rgba(139,92,246,.1);
+        }
+        .phone-input-group .phone-number-input {
+            flex: 1;
+            min-width: 0;
+        }
+        @media (max-width: 480px) {
+            .phone-input-group {
+                flex-direction: column;
+            }
+            .phone-input-group .country-code-select {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
@@ -681,7 +722,7 @@
         </div>
     </div>
 
-    <!-- ==================== PRE-ORDER MODAL ==================== -->
+    <!-- ==================== PRE-ORDER MODAL (UPDATED WITH PHONE) ==================== -->
     <div id="preOrderModal" class="modal-overlay" onclick="if(event.target===this) closePreOrder()">
         <div id="poShell" class="rounded-[32px] p-5 sm:p-7 md:p-8 w-full max-w-lg mx-4 relative"
             style="background:var(--bg-secondary);border:1px solid var(--border-color);box-shadow:var(--shadow-lg);animation:slideInUp .4s ease-out;max-height:95vh;overflow-y:auto;">
@@ -751,6 +792,16 @@
                         <textarea id="poAddress" rows="2" class="themed-input" placeholder="House / flat no., building, street, area"></textarea>
                         <p class="po-error" id="err_address"></p>
                     </div>
+                </div>
+
+                <!-- NEW PHONE NUMBER BLOCK -->
+                <div class="po-block">
+                    <div class="po-block-title"><i data-lucide="phone"></i> Phone Number</div>
+                    <div class="phone-input-group">
+                        <select id="poCountryCode" class="country-code-select"></select>
+                        <input id="poPhoneNumber" type="tel" class="themed-input phone-number-input" placeholder="e.g. 94248 48555" inputmode="tel">
+                    </div>
+                    <p class="po-error" id="err_phone"></p>
                 </div>
 
                 <div class="po-block">
@@ -1189,25 +1240,26 @@
             setTimeout(()=>lucide.createIcons(),50);
         });
 
-        // ===== PRE-ORDER FORM =====
+        // ===== PRE-ORDER FORM (UPDATED WITH PHONE) =====
         const PO_COUNTRIES=[
-            {code:'IN',name:'India'},{code:'US',name:'United States'},
-            {code:'GB',name:'United Kingdom'},{code:'CA',name:'Canada'},
-            {code:'AU',name:'Australia'},{code:'AE',name:'United Arab Emirates'},
-            {code:'SG',name:'Singapore'},{code:'DE',name:'Germany'},
-            {code:'FR',name:'France'},{code:'ES',name:'Spain'},
-            {code:'IT',name:'Italy'},{code:'NL',name:'Netherlands'},
-            {code:'IE',name:'Ireland'},{code:'NZ',name:'New Zealand'},
-            {code:'ZA',name:'South Africa'},{code:'BR',name:'Brazil'},
-            {code:'JP',name:'Japan'},{code:'KR',name:'South Korea'},
-            {code:'MY',name:'Malaysia'},{code:'NP',name:'Nepal'},
-            {code:'LK',name:'Sri Lanka'},{code:'BD',name:'Bangladesh'},
-            {code:'PK',name:'Pakistan'}
+            {code:'IN',name:'India',dial:'+91'},{code:'US',name:'United States',dial:'+1'},
+            {code:'GB',name:'United Kingdom',dial:'+44'},{code:'CA',name:'Canada',dial:'+1'},
+            {code:'AU',name:'Australia',dial:'+61'},{code:'AE',name:'United Arab Emirates',dial:'+971'},
+            {code:'SG',name:'Singapore',dial:'+65'},{code:'DE',name:'Germany',dial:'+49'},
+            {code:'FR',name:'France',dial:'+33'},{code:'ES',name:'Spain',dial:'+34'},
+            {code:'IT',name:'Italy',dial:'+39'},{code:'NL',name:'Netherlands',dial:'+31'},
+            {code:'IE',name:'Ireland',dial:'+353'},{code:'NZ',name:'New Zealand',dial:'+64'},
+            {code:'ZA',name:'South Africa',dial:'+27'},{code:'BR',name:'Brazil',dial:'+55'},
+            {code:'JP',name:'Japan',dial:'+81'},{code:'KR',name:'South Korea',dial:'+82'},
+            {code:'MY',name:'Malaysia',dial:'+60'},{code:'NP',name:'Nepal',dial:'+977'},
+            {code:'LK',name:'Sri Lanka',dial:'+94'},{code:'BD',name:'Bangladesh',dial:'+880'},
+            {code:'PK',name:'Pakistan',dial:'+92'}
         ];
 
         const PO_ERROR_TARGETS={
             account:[],country:['poCountry'],state:['poStateInput'],
-            city:['poCity'],postal:['poPostal'],address:['poAddress'],agreement:[]
+            city:['poCity'],postal:['poPostal'],address:['poAddress'],
+            phone:['poPhoneNumber'],agreement:[]
         };
 
         let preOrderBusy=false;
@@ -1227,6 +1279,12 @@
             countrySelect.innerHTML='<option value="">Select country</option>'+PO_COUNTRIES.map(c=>'<option value="'+poEsc(c.name)+'">'+poEsc(c.name)+'</option>').join('');
             const india=PO_COUNTRIES.find(c=>c.code==='IN');
             countrySelect.value=india?india.name:'';
+
+            const codeSelect=$po('poCountryCode');
+            if(codeSelect){
+                codeSelect.innerHTML=PO_COUNTRIES.map(c=>'<option value="'+poEsc(c.dial)+'">'+poEsc(c.dial)+' ('+poEsc(c.code)+')</option>').join('');
+                codeSelect.value=india?india.dial:'+91';
+            }
         }
 
         function poSetError(key,message){
@@ -1270,6 +1328,14 @@
             if(v.length<8)return'Please enter a more complete address.';
             return'';
         }
+        function poValidatePhone(){
+            const code=$po('poCountryCode').value;
+            const number=($po('poPhoneNumber').value||'').trim();
+            if(!number)return'Phone number is required.';
+            const digits=number.replace(/\D/g,'');
+            if(digits.length<6||digits.length>15)return'Please enter a valid phone number (6–15 digits).';
+            return'';
+        }
         function poValidateAgreement(){
             return $po('termsCheckbox').checked?'':'You must accept the user agreement to continue.';
         }
@@ -1283,6 +1349,7 @@
             apply('city',poValidateCity());
             apply('postal',poValidatePostal());
             apply('address',poValidateAddress());
+            apply('phone',poValidatePhone());
             apply('agreement',poValidateAgreement());
             return valid;
         }
@@ -1318,10 +1385,11 @@
             $po('poAccountSignedIn').classList.add('hidden');
             $po('poAccountSignedOut').classList.remove('hidden');
 
-            ['poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
+            ['poStateInput','poCity','poPostal','poAddress','poPhoneNumber'].forEach(id=>{
                 const el=$po(id);
                 if(el)el.value='';
             });
+            $po('poCountryCode').value='+91';
             $po('termsCheckbox').checked=false;
             $po('updatesCheckbox').checked=false;
 
@@ -1388,7 +1456,7 @@
                 // Fetch from 'preorders' table to get the actual order address
                 const {data, error} = await supabaseClient
                     .from('preorders')
-                    .select('country, state, city, pincode, full_address, receive_updates')
+                    .select('country, state, city, pincode, full_address, receive_updates, phone_country_code, phone_number')
                     .eq('user_id', AUTH_STATE.user.id)
                     .maybeSingle();
                     
@@ -1404,6 +1472,8 @@
                     if(data.receive_updates !== undefined && data.receive_updates !== null) {
                         $po('updatesCheckbox').checked = data.receive_updates;
                     }
+                    if(data.phone_country_code) $po('poCountryCode').value = data.phone_country_code;
+                    if(data.phone_number) $po('poPhoneNumber').value = data.phone_number;
                 }
             } catch(e){
                 console.warn('[preorder] preorder load exception:', e);
@@ -1420,10 +1490,11 @@
             const nameEl=$po('preOrderProductName');
             if(nameEl)nameEl.textContent=productName;
 
-            ['poCountry','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
+            ['poCountry','poStateInput','poCity','poPostal','poAddress','poPhoneNumber'].forEach(id=>{
                 const el=$po(id);
                 if(el)el.value='';
             });
+            $po('poCountryCode').value='+91';
             $po('termsCheckbox').checked=false;
             $po('updatesCheckbox').checked=false;
             poClearAllErrors();
@@ -1487,7 +1558,7 @@
             box.textContent='';
         }
 
-        // ===== SUBMIT / UPDATE PRE-ORDER =====
+        // ===== SUBMIT / UPDATE PRE-ORDER (UPDATED WITH PHONE) =====
         async function submitPreOrder(event){
             if(event) event.preventDefault();
             hidePoErrorBox();
@@ -1543,6 +1614,8 @@
             const pincode = $po('poPostal').value.trim();
             const fullAddress = $po('poAddress').value.trim();
             const receiveUpdates = $po('updatesCheckbox').checked;
+            const phoneCountryCode = $po('poCountryCode').value;
+            const phoneNumber = $po('poPhoneNumber').value.trim();
 
             try{
                 // 1. Save to PROFILES table
@@ -1556,7 +1629,9 @@
                     city: city,
                     pincode: pincode,
                     full_address: fullAddress,
-                    receive_updates: receiveUpdates
+                    receive_updates: receiveUpdates,
+                    phone_country_code: phoneCountryCode,
+                    phone_number: phoneNumber
                 };
                 
                 const {error: profileError} = await supabaseClient
@@ -1584,7 +1659,9 @@
                     city: city,
                     pincode: pincode,
                     full_address: fullAddress,
-                    receive_updates: receiveUpdates
+                    receive_updates: receiveUpdates,
+                    phone_country_code: phoneCountryCode,
+                    phone_number: phoneNumber
                 };
 
                 if(isUpdate){
@@ -1727,10 +1804,10 @@
         // ===== INIT =====
         poPopulateSelects();
 
-        ['poCountry','poStateInput','poCity','poPostal','poAddress'].forEach(id=>{
+        ['poCountry','poStateInput','poCity','poPostal','poAddress','poPhoneNumber'].forEach(id=>{
             const el=document.getElementById(id);
             if(el){
-                const map={poCountry:'country',poStateInput:'state',poCity:'city',poPostal:'postal',poAddress:'address'};
+                const map={poCountry:'country',poStateInput:'state',poCity:'city',poPostal:'postal',poAddress:'address',poPhoneNumber:'phone'};
                 el.addEventListener('input',()=>poSetError(map[id]||'',''));
                 el.addEventListener('change',()=>poSetError(map[id]||'',''));
             }
