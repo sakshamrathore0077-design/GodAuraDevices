@@ -253,7 +253,7 @@
             align-items: stretch;
         }
         .phone-input-group .country-code-select {
-            width: 110px;
+            width: 130px;
             flex-shrink: 0;
             background: var(--bg-input);
             border: 1px solid var(--border-color);
@@ -286,6 +286,140 @@
                 width: 100%;
             }
         }
+
+        /* Floating WhatsApp Button */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 90;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #25D366;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 28px rgba(37, 211, 102, 0.5);
+        }
+        .whatsapp-float svg {
+            width: 30px;
+            height: 30px;
+            fill: #fff;
+        }
+        .whatsapp-confirm-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 95;
+            background: rgba(0,0,0,.3);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .whatsapp-confirm-overlay.active {
+            display: flex;
+        }
+        .whatsapp-confirm-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 32px 28px;
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            animation: slideInUp .35s ease-out;
+        }
+        .whatsapp-confirm-box .wa-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #25D366;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .whatsapp-confirm-box .wa-icon svg {
+            width: 34px;
+            height: 34px;
+            fill: #fff;
+        }
+        .whatsapp-confirm-box h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        .whatsapp-confirm-box p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .whatsapp-confirm-box .wa-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .whatsapp-confirm-box .wa-btn-primary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            background: #25D366;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: all .3s;
+            text-decoration: none;
+        }
+        .whatsapp-confirm-box .wa-btn-primary:hover {
+            background: #1ebe5b;
+            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+        }
+        .whatsapp-confirm-box .wa-btn-secondary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all .3s;
+        }
+        .whatsapp-confirm-box .wa-btn-secondary:hover {
+            background: var(--border-color);
+        }
+        @media (max-width: 480px) {
+            .whatsapp-float {
+                bottom: 16px;
+                left: 16px;
+                width: 50px;
+                height: 50px;
+            }
+            .whatsapp-float svg {
+                width: 26px;
+                height: 26px;
+            }
+        }
     </style>
 </head>
 
@@ -295,6 +429,29 @@
         <div class="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] bg-violet-400 rounded-full blur-[120px]" style="animation:pulse-slow 6s ease-in-out infinite;opacity:var(--glow-opacity)"></div>
         <div class="absolute top-[40%] right-[-150px] w-[500px] h-[500px] bg-purple-500 rounded-full blur-[120px]" style="animation:pulse-slow 8s ease-in-out infinite 2s;opacity:var(--glow-opacity)"></div>
         <div class="absolute bottom-[-100px] left-[30%] w-[700px] h-[500px] bg-fuchsia-400 rounded-full blur-[120px]" style="animation:pulse-slow 7s ease-in-out infinite 1s;opacity:var(--glow-opacity)"></div>
+    </div>
+
+    <!-- Floating WhatsApp Button -->
+    <button class="whatsapp-float" onclick="openWhatsAppConfirm()" aria-label="Contact on WhatsApp">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16.004 0h-.008C7.174 0 0 7.176 0 16.004c0 3.502 1.134 6.75 3.062 9.39L1.06 31.34l6.128-1.978A15.9 15.9 0 0 0 16.004 32C24.826 32 32 24.826 32 16.004 32 7.174 24.826 0 16.004 0zm9.31 22.61c-.39 1.1-2.26 2.1-3.1 2.18-.84.08-1.64.38-5.5-1.14-4.66-1.84-7.62-6.6-7.86-6.9-.24-.3-1.88-2.5-1.88-4.78 0-2.28 1.18-3.4 1.6-3.86.42-.46.92-.58 1.22-.58.3 0 .6 0 .86.02.28.02.64-.1 1 .76.36.88 1.24 3.02 1.34 3.24.1.22.16.48.02.76-.14.28-.22.46-.44.72-.22.26-.46.58-.66.78-.22.22-.44.46-.2.9.24.44 1.08 1.78 2.32 2.88 1.6 1.42 2.94 1.86 3.36 2.06.42.2.66.18.9-.1.24-.28 1.04-1.22 1.32-1.64.28-.42.56-.34.94-.2.38.14 2.42 1.14 2.84 1.34.42.2.7.3.8.46.1.18.1 1-.28 2.1z"/></svg>
+    </button>
+
+    <!-- WhatsApp Confirmation Overlay -->
+    <div id="whatsappConfirmOverlay" class="whatsapp-confirm-overlay" onclick="if(event.target===this) closeWhatsAppConfirm()">
+        <div class="whatsapp-confirm-box">
+            <div class="wa-icon">
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16.004 0h-.008C7.174 0 0 7.176 0 16.004c0 3.502 1.134 6.75 3.062 9.39L1.06 31.34l6.128-1.978A15.9 15.9 0 0 0 16.004 32C24.826 32 32 24.826 32 16.004 32 7.174 24.826 0 16.004 0zm9.31 22.61c-.39 1.1-2.26 2.1-3.1 2.18-.84.08-1.64.38-5.5-1.14-4.66-1.84-7.62-6.6-7.86-6.9-.24-.3-1.88-2.5-1.88-4.78 0-2.28 1.18-3.4 1.6-3.86.42-.46.92-.58 1.22-.58.3 0 .6 0 .86.02.28.02.64-.1 1 .76.36.88 1.24 3.02 1.34 3.24.1.22.16.48.02.76-.14.28-.22.46-.44.72-.22.26-.46.58-.66.78-.22.22-.44.46-.2.9.24.44 1.08 1.78 2.32 2.88 1.6 1.42 2.94 1.86 3.36 2.06.42.2.66.18.9-.1.24-.28 1.04-1.22 1.32-1.64.28-.42.56-.34.94-.2.38.14 2.42 1.14 2.84 1.34.42.2.7.3.8.46.1.18.1 1-.28 2.1z"/></svg>
+            </div>
+            <h3>Contact on WhatsApp?</h3>
+            <p>You'll be redirected to WhatsApp to chat with our team. We typically respond within a few hours.</p>
+            <div class="wa-buttons">
+                <a href="https://wa.me/919424848555?text=Hi%20GodAura%20team!%20I%20have%20a%20question." target="_blank" rel="noopener" class="wa-btn-primary" onclick="closeWhatsAppConfirm()">
+                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;fill:#fff"><path d="M16.004 0h-.008C7.174 0 0 7.176 0 16.004c0 3.502 1.134 6.75 3.062 9.39L1.06 31.34l6.128-1.978A15.9 15.9 0 0 0 16.004 32C24.826 32 32 24.826 32 16.004 32 7.174 24.826 0 16.004 0zm9.31 22.61c-.39 1.1-2.26 2.1-3.1 2.18-.84.08-1.64.38-5.5-1.14-4.66-1.84-7.62-6.6-7.86-6.9-.24-.3-1.88-2.5-1.88-4.78 0-2.28 1.18-3.4 1.6-3.86.42-.46.92-.58 1.22-.58.3 0 .6 0 .86.02.28.02.64-.1 1 .76.36.88 1.24 3.02 1.34 3.24.1.22.16.48.02.76-.14.28-.22.46-.44.72-.22.26-.46.58-.66.78-.22.22-.44.46-.2.9.24.44 1.08 1.78 2.32 2.88 1.6 1.42 2.94 1.86 3.36 2.06.42.2.66.18.9-.1.24-.28 1.04-1.22 1.32-1.64.28-.42.56-.34.94-.2.38.14 2.42 1.14 2.84 1.34.42.2.7.3.8.46.1.18.1 1-.28 2.1z"/></svg>
+                    Yes, open WhatsApp
+                </a>
+                <button onclick="closeWhatsAppConfirm()" class="wa-btn-secondary">Cancel</button>
+            </div>
+        </div>
     </div>
 
     <div id="mainSite" class="pt-[72px] sm:pt-[80px]">
@@ -600,16 +757,23 @@
                     </div>
                     <div>
                         <h4 class="text-sm font-semibold mb-3 sm:mb-4" style="color:var(--text-primary)">Contact</h4>
-                        <div class="space-y-2 sm:space-y-3">
+                        <div class="space-y-3 sm:space-y-3">
                             <a href="https://www.instagram.com/godauradevices" target="_blank" class="flex items-center gap-2 text-sm hover:opacity-70" style="color:var(--text-secondary)">
-                                <span class="insta-icon-bw"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" fill="currentColor"/><circle cx="12" cy="12" r="5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="#fff"/></svg></span>
+                                <span class="insta-icon-bw"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ig-gradient" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="25%" stop-color="#e6683c"/><stop offset="50%" stop-color="#dc2743"/><stop offset="75%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#ig-gradient)"/><circle cx="12" cy="12" r="5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="#fff"/></svg></span>
                                 @godauradevices
                             </a>
-                            <a href="tel:+919424848555" class="flex items-center gap-2 text-sm hover:opacity-70" style="color:var(--text-secondary)"><i data-lucide="phone" class="w-4 h-4"></i> +91 94248 48555</a>
-                            <div class="flex items-center gap-2 text-sm incomplete-email" style="color:var(--text-secondary)">
-                                <i data-lucide="mail" class="w-4 h-4"></i>
-                                <span>godaura.devices@gmail<span class="ellipsis">…</span></span>
-                            </div>
+                            <a href="https://wa.me/919424848555?text=Hi%20GodAura%20team!%20I%20have%20a%20question." target="_blank" rel="noopener" class="flex items-center gap-2 text-sm hover:opacity-70" style="color:var(--text-secondary)">
+                                <span class="insta-icon-bw" style="background:#25D366"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="width:14px;height:14px;fill:#fff"><path d="M16.004 0h-.008C7.174 0 0 7.176 0 16.004c0 3.502 1.134 6.75 3.062 9.39L1.06 31.34l6.128-1.978A15.9 15.9 0 0 0 16.004 32C24.826 32 32 24.826 32 16.004 32 7.174 24.826 0 16.004 0zm9.31 22.61c-.39 1.1-2.26 2.1-3.1 2.18-.84.08-1.64.38-5.5-1.14-4.66-1.84-7.62-6.6-7.86-6.9-.24-.3-1.88-2.5-1.88-4.78 0-2.28 1.18-3.4 1.6-3.86.42-.46.92-.58 1.22-.58.3 0 .6 0 .86.02.28.02.64-.1 1 .76.36.88 1.24 3.02 1.34 3.24.1.22.16.48.02.76-.14.28-.22.46-.44.72-.22.26-.46.58-.66.78-.22.22-.44.46-.2.9.24.44 1.08 1.78 2.32 2.88 1.6 1.42 2.94 1.86 3.36 2.06.42.2.66.18.9-.1.24-.28 1.04-1.22 1.32-1.64.28-.42.56-.34.94-.2.38.14 2.42 1.14 2.84 1.34.42.2.7.3.8.46.1.18.1 1-.28 2.1z"/></svg></span>
+                                WhatsApp
+                            </a>
+                            <a href="tel:+919424848555" class="flex items-center gap-2 text-sm hover:opacity-70" style="color:var(--text-secondary)">
+                                <span class="insta-icon-bw" style="background:#34B7F1"><i data-lucide="phone" style="width:14px;height:14px;color:#fff"></i></span>
+                                +91 94248 48555
+                            </a>
+                            <a href="mailto:godauradevices@gmail.com" class="flex items-center gap-2 text-sm hover:opacity-70" style="color:var(--text-secondary)">
+                                <span class="insta-icon-bw" style="background:#EA4335"><i data-lucide="mail" style="width:14px;height:14px;color:#fff"></i></span>
+                                godauradevices@gmail.com
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -670,9 +834,10 @@
             <h1 class="subpage-title text-3xl sm:text-5xl md:text-6xl font-extrabold leading-[1.05] tracking-tight mt-6 sm:mt-8 mb-3 sm:mb-4" style="color:var(--text-primary)">
                 Our Past <span class="accent-text-bright">Achievements</span>
             </h1>
-            <p class="text-base sm:text-lg mb-8 sm:mb-12" style="color:var(--text-secondary)">From a bold idea to a movement in wearable wellness.</p>
+            <p class="text-base sm:text-lg mb-8 sm:mb-12" style="color:var(--text-secondary)">From a patented idea to a growing movement in wearable wellness.</p>
             <div class="mb-12 sm:mb-16">
-                <div class="timeline-item"><div class="timeline-dot filled"></div><div class="section-card p-5 sm:p-6"><span class="text-xs sm:text-sm font-bold accent-text">2022</span><h3 class="text-lg sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">GodAura Founded</h3><p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)"></p></div></div>
+                <div class="timeline-item"><div class="timeline-dot filled"></div><div class="section-card p-5 sm:p-6"><span class="text-xs sm:text-sm font-bold accent-text">2021</span><h3 class="text-lg sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">GodAura Device Idea Patented</h3><p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">The core concept behind GodAura's wearable meditation technology was officially patented, laying the foundation for what was to come.</p></div></div>
+                <div class="timeline-item"><div class="timeline-dot filled"></div><div class="section-card p-5 sm:p-6"><span class="text-xs sm:text-sm font-bold accent-text">2022</span><h3 class="text-lg sm:text-xl font-semibold mt-1" style="color:var(--text-primary)">GodAura Devices Established</h3><p class="mt-2 text-sm sm:text-base" style="color:var(--text-secondary)">With the patent secured, GodAura Devices was officially founded — driven by a mission to make meditation easier and more accessible for everyone.</p></div></div>
             </div>
         </div>
     </div>
@@ -1102,6 +1267,14 @@
             document.body.style.overflow='';
         }
 
+        // ===== WHATSAPP FLOATING BUTTON =====
+        function openWhatsAppConfirm(){
+            document.getElementById('whatsappConfirmOverlay').classList.add('active');
+        }
+        function closeWhatsAppConfirm(){
+            document.getElementById('whatsappConfirmOverlay').classList.remove('active');
+        }
+
         // ===== CAROUSEL =====
         let currentSlide=0;
         const totalSlides=10;
@@ -1240,20 +1413,114 @@
             setTimeout(()=>lucide.createIcons(),50);
         });
 
-        // ===== PRE-ORDER FORM (UPDATED WITH PHONE) =====
+        // ===== PRE-ORDER FORM (UPDATED WITH PHONE AND EXPANDED COUNTRY LIST) =====
         const PO_COUNTRIES=[
-            {code:'IN',name:'India',dial:'+91'},{code:'US',name:'United States',dial:'+1'},
-            {code:'GB',name:'United Kingdom',dial:'+44'},{code:'CA',name:'Canada',dial:'+1'},
-            {code:'AU',name:'Australia',dial:'+61'},{code:'AE',name:'United Arab Emirates',dial:'+971'},
-            {code:'SG',name:'Singapore',dial:'+65'},{code:'DE',name:'Germany',dial:'+49'},
-            {code:'FR',name:'France',dial:'+33'},{code:'ES',name:'Spain',dial:'+34'},
-            {code:'IT',name:'Italy',dial:'+39'},{code:'NL',name:'Netherlands',dial:'+31'},
-            {code:'IE',name:'Ireland',dial:'+353'},{code:'NZ',name:'New Zealand',dial:'+64'},
-            {code:'ZA',name:'South Africa',dial:'+27'},{code:'BR',name:'Brazil',dial:'+55'},
-            {code:'JP',name:'Japan',dial:'+81'},{code:'KR',name:'South Korea',dial:'+82'},
-            {code:'MY',name:'Malaysia',dial:'+60'},{code:'NP',name:'Nepal',dial:'+977'},
-            {code:'LK',name:'Sri Lanka',dial:'+94'},{code:'BD',name:'Bangladesh',dial:'+880'},
-            {code:'PK',name:'Pakistan',dial:'+92'}
+            {code:'AF',name:'Afghanistan',dial:'+93'},{code:'AL',name:'Albania',dial:'+355'},
+            {code:'DZ',name:'Algeria',dial:'+213'},{code:'AD',name:'Andorra',dial:'+376'},
+            {code:'AO',name:'Angola',dial:'+244'},{code:'AG',name:'Antigua & Barbuda',dial:'+1-268'},
+            {code:'AR',name:'Argentina',dial:'+54'},{code:'AM',name:'Armenia',dial:'+374'},
+            {code:'AU',name:'Australia',dial:'+61'},{code:'AT',name:'Austria',dial:'+43'},
+            {code:'AZ',name:'Azerbaijan',dial:'+994'},{code:'BS',name:'Bahamas',dial:'+1-242'},
+            {code:'BH',name:'Bahrain',dial:'+973'},{code:'BD',name:'Bangladesh',dial:'+880'},
+            {code:'BB',name:'Barbados',dial:'+1-246'},{code:'BY',name:'Belarus',dial:'+375'},
+            {code:'BE',name:'Belgium',dial:'+32'},{code:'BZ',name:'Belize',dial:'+501'},
+            {code:'BJ',name:'Benin',dial:'+229'},{code:'BT',name:'Bhutan',dial:'+975'},
+            {code:'BO',name:'Bolivia',dial:'+591'},{code:'BA',name:'Bosnia & Herzegovina',dial:'+387'},
+            {code:'BW',name:'Botswana',dial:'+267'},{code:'BR',name:'Brazil',dial:'+55'},
+            {code:'BN',name:'Brunei',dial:'+673'},{code:'BG',name:'Bulgaria',dial:'+359'},
+            {code:'BF',name:'Burkina Faso',dial:'+226'},{code:'BI',name:'Burundi',dial:'+257'},
+            {code:'CV',name:'Cabo Verde',dial:'+238'},{code:'KH',name:'Cambodia',dial:'+855'},
+            {code:'CM',name:'Cameroon',dial:'+237'},{code:'CA',name:'Canada',dial:'+1'},
+            {code:'CF',name:'Central African Republic',dial:'+236'},{code:'TD',name:'Chad',dial:'+235'},
+            {code:'CL',name:'Chile',dial:'+56'},{code:'CN',name:'China',dial:'+86'},
+            {code:'CO',name:'Colombia',dial:'+57'},{code:'KM',name:'Comoros',dial:'+269'},
+            {code:'CG',name:'Congo (Republic)',dial:'+242'},{code:'CD',name:'Congo (DRC)',dial:'+243'},
+            {code:'CR',name:'Costa Rica',dial:'+506'},{code:'HR',name:'Croatia',dial:'+385'},
+            {code:'CU',name:'Cuba',dial:'+53'},{code:'CY',name:'Cyprus',dial:'+357'},
+            {code:'CZ',name:'Czechia',dial:'+420'},{code:'DK',name:'Denmark',dial:'+45'},
+            {code:'DJ',name:'Djibouti',dial:'+253'},{code:'DM',name:'Dominica',dial:'+1-767'},
+            {code:'DO',name:'Dominican Republic',dial:'+1-809'},{code:'EC',name:'Ecuador',dial:'+593'},
+            {code:'EG',name:'Egypt',dial:'+20'},{code:'SV',name:'El Salvador',dial:'+503'},
+            {code:'GQ',name:'Equatorial Guinea',dial:'+240'},{code:'ER',name:'Eritrea',dial:'+291'},
+            {code:'EE',name:'Estonia',dial:'+372'},{code:'SZ',name:'Eswatini',dial:'+268'},
+            {code:'ET',name:'Ethiopia',dial:'+251'},{code:'FJ',name:'Fiji',dial:'+679'},
+            {code:'FI',name:'Finland',dial:'+358'},{code:'FR',name:'France',dial:'+33'},
+            {code:'GA',name:'Gabon',dial:'+241'},{code:'GM',name:'Gambia',dial:'+220'},
+            {code:'GE',name:'Georgia',dial:'+995'},{code:'DE',name:'Germany',dial:'+49'},
+            {code:'GH',name:'Ghana',dial:'+233'},{code:'GR',name:'Greece',dial:'+30'},
+            {code:'GD',name:'Grenada',dial:'+1-473'},{code:'GT',name:'Guatemala',dial:'+502'},
+            {code:'GN',name:'Guinea',dial:'+224'},{code:'GW',name:'Guinea-Bissau',dial:'+245'},
+            {code:'GY',name:'Guyana',dial:'+592'},{code:'HT',name:'Haiti',dial:'+509'},
+            {code:'HN',name:'Honduras',dial:'+504'},{code:'HU',name:'Hungary',dial:'+36'},
+            {code:'IS',name:'Iceland',dial:'+354'},{code:'IN',name:'India',dial:'+91'},
+            {code:'ID',name:'Indonesia',dial:'+62'},{code:'IR',name:'Iran',dial:'+98'},
+            {code:'IQ',name:'Iraq',dial:'+964'},{code:'IE',name:'Ireland',dial:'+353'},
+            {code:'IL',name:'Israel',dial:'+972'},{code:'IT',name:'Italy',dial:'+39'},
+            {code:'JM',name:'Jamaica',dial:'+1-876'},{code:'JP',name:'Japan',dial:'+81'},
+            {code:'JO',name:'Jordan',dial:'+962'},{code:'KZ',name:'Kazakhstan',dial:'+7'},
+            {code:'KE',name:'Kenya',dial:'+254'},{code:'KI',name:'Kiribati',dial:'+686'},
+            {code:'KW',name:'Kuwait',dial:'+965'},{code:'KG',name:'Kyrgyzstan',dial:'+996'},
+            {code:'LA',name:'Laos',dial:'+856'},{code:'LV',name:'Latvia',dial:'+371'},
+            {code:'LB',name:'Lebanon',dial:'+961'},{code:'LS',name:'Lesotho',dial:'+266'},
+            {code:'LR',name:'Liberia',dial:'+231'},{code:'LY',name:'Libya',dial:'+218'},
+            {code:'LI',name:'Liechtenstein',dial:'+423'},{code:'LT',name:'Lithuania',dial:'+370'},
+            {code:'LU',name:'Luxembourg',dial:'+352'},{code:'MG',name:'Madagascar',dial:'+261'},
+            {code:'MW',name:'Malawi',dial:'+265'},{code:'MY',name:'Malaysia',dial:'+60'},
+            {code:'MV',name:'Maldives',dial:'+960'},{code:'ML',name:'Mali',dial:'+223'},
+            {code:'MT',name:'Malta',dial:'+356'},{code:'MH',name:'Marshall Islands',dial:'+692'},
+            {code:'MR',name:'Mauritania',dial:'+222'},{code:'MU',name:'Mauritius',dial:'+230'},
+            {code:'MX',name:'Mexico',dial:'+52'},{code:'FM',name:'Micronesia',dial:'+691'},
+            {code:'MD',name:'Moldova',dial:'+373'},{code:'MC',name:'Monaco',dial:'+377'},
+            {code:'MN',name:'Mongolia',dial:'+976'},{code:'ME',name:'Montenegro',dial:'+382'},
+            {code:'MA',name:'Morocco',dial:'+212'},{code:'MZ',name:'Mozambique',dial:'+258'},
+            {code:'MM',name:'Myanmar',dial:'+95'},{code:'NA',name:'Namibia',dial:'+264'},
+            {code:'NR',name:'Nauru',dial:'+674'},{code:'NP',name:'Nepal',dial:'+977'},
+            {code:'NL',name:'Netherlands',dial:'+31'},{code:'NZ',name:'New Zealand',dial:'+64'},
+            {code:'NI',name:'Nicaragua',dial:'+505'},{code:'NE',name:'Niger',dial:'+227'},
+            {code:'NG',name:'Nigeria',dial:'+234'},{code:'KP',name:'North Korea',dial:'+850'},
+            {code:'MK',name:'North Macedonia',dial:'+389'},{code:'NO',name:'Norway',dial:'+47'},
+            {code:'OM',name:'Oman',dial:'+968'},{code:'PK',name:'Pakistan',dial:'+92'},
+            {code:'PW',name:'Palau',dial:'+680'},{code:'PS',name:'Palestine',dial:'+970'},
+            {code:'PA',name:'Panama',dial:'+507'},{code:'PG',name:'Papua New Guinea',dial:'+675'},
+            {code:'PY',name:'Paraguay',dial:'+595'},{code:'PE',name:'Peru',dial:'+51'},
+            {code:'PH',name:'Philippines',dial:'+63'},{code:'PL',name:'Poland',dial:'+48'},
+            {code:'PT',name:'Portugal',dial:'+351'},{code:'QA',name:'Qatar',dial:'+974'},
+            {code:'RO',name:'Romania',dial:'+40'},{code:'RU',name:'Russia',dial:'+7'},
+            {code:'RW',name:'Rwanda',dial:'+250'},{code:'KN',name:'Saint Kitts & Nevis',dial:'+1-869'},
+            {code:'LC',name:'Saint Lucia',dial:'+1-758'},{code:'VC',name:'Saint Vincent & Grenadines',dial:'+1-784'},
+            {code:'WS',name:'Samoa',dial:'+685'},{code:'SM',name:'San Marino',dial:'+378'},
+            {code:'ST',name:'São Tomé & Príncipe',dial:'+239'},{code:'SA',name:'Saudi Arabia',dial:'+966'},
+            {code:'SN',name:'Senegal',dial:'+221'},{code:'RS',name:'Serbia',dial:'+381'},
+            {code:'SC',name:'Seychelles',dial:'+248'},{code:'SL',name:'Sierra Leone',dial:'+232'},
+            {code:'SG',name:'Singapore',dial:'+65'},{code:'SK',name:'Slovakia',dial:'+421'},
+            {code:'SI',name:'Slovenia',dial:'+386'},{code:'SB',name:'Solomon Islands',dial:'+677'},
+            {code:'SO',name:'Somalia',dial:'+252'},{code:'ZA',name:'South Africa',dial:'+27'},
+            {code:'KR',name:'South Korea',dial:'+82'},{code:'SS',name:'South Sudan',dial:'+211'},
+            {code:'ES',name:'Spain',dial:'+34'},{code:'LK',name:'Sri Lanka',dial:'+94'},
+            {code:'SD',name:'Sudan',dial:'+249'},{code:'SR',name:'Suriname',dial:'+597'},
+            {code:'SE',name:'Sweden',dial:'+46'},{code:'CH',name:'Switzerland',dial:'+41'},
+            {code:'SY',name:'Syria',dial:'+963'},{code:'TJ',name:'Tajikistan',dial:'+992'},
+            {code:'TZ',name:'Tanzania',dial:'+255'},{code:'TH',name:'Thailand',dial:'+66'},
+            {code:'TL',name:'Timor-Leste',dial:'+670'},{code:'TG',name:'Togo',dial:'+228'},
+            {code:'TO',name:'Tonga',dial:'+676'},{code:'TT',name:'Trinidad & Tobago',dial:'+1-868'},
+            {code:'TN',name:'Tunisia',dial:'+216'},{code:'TR',name:'Türkiye (Turkey)',dial:'+90'},
+            {code:'TM',name:'Turkmenistan',dial:'+993'},{code:'TV',name:'Tuvalu',dial:'+688'},
+            {code:'UG',name:'Uganda',dial:'+256'},{code:'UA',name:'Ukraine',dial:'+380'},
+            {code:'AE',name:'United Arab Emirates',dial:'+971'},{code:'GB',name:'United Kingdom',dial:'+44'},
+            {code:'US',name:'United States',dial:'+1'},{code:'UY',name:'Uruguay',dial:'+598'},
+            {code:'UZ',name:'Uzbekistan',dial:'+998'},{code:'VU',name:'Vanuatu',dial:'+678'},
+            {code:'VA',name:'Vatican City',dial:'+39'},{code:'VE',name:'Venezuela',dial:'+58'},
+            {code:'VN',name:'Vietnam',dial:'+84'},{code:'YE',name:'Yemen',dial:'+967'},
+            {code:'ZM',name:'Zambia',dial:'+260'},{code:'ZW',name:'Zimbabwe',dial:'+263'},
+            {code:'HK',name:'Hong Kong',dial:'+852'},{code:'MO',name:'Macau',dial:'+853'},
+            {code:'TW',name:'Taiwan',dial:'+886'},{code:'XK',name:'Kosovo',dial:'+383'},
+            {code:'PR',name:'Puerto Rico',dial:'+1-787'},{code:'GL',name:'Greenland',dial:'+299'},
+            {code:'FO',name:'Faroe Islands',dial:'+298'},{code:'BM',name:'Bermuda',dial:'+1-441'},
+            {code:'KY',name:'Cayman Islands',dial:'+1-345'},{code:'GU',name:'Guam',dial:'+1-671'},
+            {code:'IM',name:'Isle of Man',dial:'+44-1624'},{code:'JE',name:'Jersey',dial:'+44-1534'},
+            {code:'GG',name:'Guernsey',dial:'+44-1481'},{code:'PF',name:'French Polynesia',dial:'+689'},
+            {code:'AW',name:'Aruba',dial:'+297'},{code:'CW',name:'Curaçao',dial:'+599'},
+            {code:'VG',name:'British Virgin Islands',dial:'+1-284'},{code:'VI',name:'US Virgin Islands',dial:'+1-340'}
         ];
 
         const PO_ERROR_TARGETS={
@@ -1282,7 +1549,7 @@
 
             const codeSelect=$po('poCountryCode');
             if(codeSelect){
-                codeSelect.innerHTML=PO_COUNTRIES.map(c=>'<option value="'+poEsc(c.dial)+'">'+poEsc(c.dial)+' ('+poEsc(c.code)+')</option>').join('');
+                codeSelect.innerHTML=PO_COUNTRIES.map(c=>'<option value="'+poEsc(c.dial)+'">'+poEsc(c.name)+' ('+poEsc(c.dial)+')</option>').join('');
                 codeSelect.value=india?india.dial:'+91';
             }
         }
@@ -1794,6 +2061,7 @@
                 closePreOrder();
                 closeSignIn();
                 closeUserModal();
+                closeWhatsAppConfirm();
                 if(document.getElementById('mobileMenu').classList.contains('open'))toggleMobileMenu();
             }
         });
